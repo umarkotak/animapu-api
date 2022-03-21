@@ -1,0 +1,53 @@
+package manga_controller
+
+import (
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper"
+	"github.com/umarkotak/animapu-api/internal/utils/render"
+)
+
+func GetMangaLatest(c *gin.Context) {
+	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
+	queryParams := models.QueryParams{
+		MangaSource: c.Param("manga_source"),
+		Page:        page,
+	}
+
+	mangas := []models.Manga{}
+	var err error
+
+	switch queryParams.MangaSource {
+	case "mangaupdates":
+		mangas, err = manga_scrapper.GetMangaupdatesLatestManga(c.Request.Context(), queryParams)
+	case "mangadex":
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		return
+	case "maidmy":
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		return
+	case "klikmanga":
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		return
+	case "mangareadorg":
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		return
+	case "mangabat":
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		return
+	default:
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotFound)
+		return
+	}
+
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Error(err)
+		render.ErrorResponse(c.Request.Context(), c, err)
+		return
+	}
+
+	render.Response(c.Request.Context(), c, mangas, nil, 200)
+}

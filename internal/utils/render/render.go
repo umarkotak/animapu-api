@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -26,8 +27,10 @@ func Response(ctx context.Context, c *gin.Context, bodyPayload interface{}, err 
 func ErrorResponse(ctx context.Context, c *gin.Context, err error) {
 	animapuError, ok := models.ERROR_MAP[err]
 	if !ok {
-		animapuError = models.ERROR_MAP[models.ErrInternal]
+		err = models.ErrInternal
+		animapuError = models.ERROR_MAP[err]
 	}
 
+	logrus.WithContext(ctx).Error(err)
 	Response(ctx, c, map[string]string{}, animapuError, animapuError.StatusCode)
 }

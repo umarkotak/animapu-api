@@ -11,7 +11,9 @@ type AnimapuError struct {
 }
 
 var (
-	ErrInternal = errors.New("unknown error")
+	ErrInternal                  = errors.New("unknown error")
+	ErrMangaSourceNotFound       = errors.New("manga source not found")
+	ErrMangaSourceNotImplemented = errors.New("manga source not implemented yet")
 )
 
 var (
@@ -20,6 +22,16 @@ var (
 			StatusCode: 500,
 			ErrorCode:  "Internal server error",
 			Message:    "Terjadi kesalahan internal pada system, silahkan coba lagi.",
+		},
+		ErrMangaSourceNotFound: {
+			StatusCode: 404,
+			ErrorCode:  "Manga source not found",
+			Message:    "Sumber manga yang anda cari tidak dapat ditemukan.",
+		},
+		ErrMangaSourceNotImplemented: {
+			StatusCode: 422,
+			ErrorCode:  "Manga source not implemented",
+			Message:    "Sumber yang anda pilih masih dalam proses pengerjaan.",
 		},
 	}
 )

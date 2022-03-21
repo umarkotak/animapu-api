@@ -23,7 +23,8 @@ func Start() {
 	r.GET("/health", health_controller.GetHealth)
 	r.GET("/logs", health_controller.GetLogs)
 
-	r.GET("/mangas/:source/home", manga_controller.GetMangaHome)
+	r.GET("/mangas/:manga_source/latest", manga_controller.GetMangaLatest)
+	r.GET("/mangas/:manga_source/detail/:manga_id", manga_controller.GetMangaDetail)
 
 	port := os.Getenv("PORT")
 	if port == "" {
