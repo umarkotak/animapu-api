@@ -13,7 +13,7 @@ type (
 		Status              string       `json:"status"`
 		Rating              string       `json:"rating"`
 		LatestChapterID     string       `json:"latest_chapter_id"`
-		LatestCahpterNumber float64      `json:"latest_chapter_number"`
+		LatestChapterNumber float64      `json:"latest_chapter_number"`
 		LatestChapterTitle  string       `json:"latest_chapter_title"`
 		Chapters            []Chapter    `json:"chapters"`
 		CoverImages         []CoverImage `json:"cover_image"`

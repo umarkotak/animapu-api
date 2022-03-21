@@ -10,14 +10,15 @@ import (
 
 func GetMangaDetail(c *gin.Context) {
 	queryParams := models.QueryParams{
-		MangaSource: c.Param("manga_source"),
-		MangaID:     c.Param("manga_id"),
+		Source:            c.Param("manga_source"),
+		SourceID:          c.Param("manga_id"),
+		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
 	}
 
 	manga := models.Manga{}
 	var err error
 
-	switch queryParams.MangaSource {
+	switch queryParams.Source {
 	case "mangaupdates":
 		manga, err = manga_scrapper.GetMangaupdatesDetailManga(c.Request.Context(), queryParams)
 	case "mangadex":

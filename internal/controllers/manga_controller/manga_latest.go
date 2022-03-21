@@ -13,14 +13,14 @@ import (
 func GetMangaLatest(c *gin.Context) {
 	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
 	queryParams := models.QueryParams{
-		MangaSource: c.Param("manga_source"),
-		Page:        page,
+		Source: c.Param("manga_source"),
+		Page:   page,
 	}
 
 	mangas := []models.Manga{}
 	var err error
 
-	switch queryParams.MangaSource {
+	switch queryParams.Source {
 	case "mangaupdates":
 		mangas, err = manga_scrapper.GetMangaupdatesLatestManga(c.Request.Context(), queryParams)
 	case "mangadex":

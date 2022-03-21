@@ -61,7 +61,7 @@ func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryPar
 				Status:              "",
 				Rating:              "",
 				LatestChapterID:     fmt.Sprintf("%v", latestChapter),
-				LatestCahpterNumber: latestChapter,
+				LatestChapterNumber: latestChapter,
 				LatestChapterTitle:  fmt.Sprintf("%v", latestChapter),
 				Chapters:            []models.Chapter{},
 				CoverImages: []models.CoverImage{
@@ -89,7 +89,81 @@ func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryPar
 }
 
 func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
-	return models.Manga{}, nil
+	manga := models.Manga{
+		Source:            "mangaupdates",
+		SourceID:          queryParams.SourceID,
+		SecondarySource:   "mangahub",
+		SecondarySourceID: queryParams.SecondarySourceID,
+		Status:            "Ongoing",
+		Chapters:          []models.Chapter{},
+	}
+	c := colly.NewCollector()
+	c.SetRequestTimeout(60 * time.Second)
+
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div.col-12.p-2 > span.releasestitle.tabletitle", func(e *colly.HTMLElement) {
+		manga.Title = e.Text
+	})
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(3) > div:nth-child(2)", func(e *colly.HTMLElement) {
+		manga.Description = e.Text
+	})
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(4) > div:nth-child(5) > a", func(e *colly.HTMLElement) {
+		manga.Genres = append(manga.Genres, e.Text)
+	})
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(3) > div:nth-child(20)", func(e *colly.HTMLElement) {
+		if strings.Contains(e.Text, "Complete") {
+			manga.Status = "Complete"
+		}
+	})
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(4) > div:nth-child(2) > center > img", func(e *colly.HTMLElement) {
+		manga.CoverImages = []models.CoverImage{
+			{
+				Index:     1,
+				ImageUrls: []string{e.Attr("src")},
+			},
+		}
+	})
+
+	err := c.Visit(fmt.Sprintf("https://www.mangaupdates.com/series.html?id=%v", manga.SourceID))
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return manga, err
+	}
+
+	cc := colly.NewCollector()
+	cc.SetRequestTimeout(60 * time.Second)
+
+	cc.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-list-story > div:nth-child(1) > div > a:nth-child(2)", func(e *colly.HTMLElement) {
+		manga.LatestChapterTitle = e.Text
+		latestChapterSplitted := strings.Split(manga.LatestChapterTitle, " ")
+		if len(latestChapterSplitted) > 0 {
+			manga.LatestChapterID = latestChapterSplitted[1]
+			manga.LatestChapterNumber, _ = strconv.ParseFloat(manga.LatestChapterID, 64)
+		}
+	})
+
+	idx := int64(1)
+	for i := int64(manga.LatestChapterNumber); i > 0; i-- {
+		manga.Chapters = append(manga.Chapters, models.Chapter{
+			ID:                fmt.Sprintf("%v-%v", manga.SecondarySourceID, i),
+			SourceID:          manga.SourceID,
+			Source:            "mangaupdates",
+			SecondarySourceID: manga.SecondarySourceID,
+			SecondarySource:   "mangahub",
+			Title:             fmt.Sprintf("Chapter %v", i),
+			Index:             idx,
+			Number:            float64(i),
+		})
+		idx++
+	}
+
+	logrus.Infof("VISITING: %v", fmt.Sprintf("https://m.mangabat.com/search/manga/%v", manga.SecondarySourceID))
+	err = cc.Visit(fmt.Sprintf("https://m.mangabat.com/search/manga/%v", manga.SecondarySourceID))
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return manga, err
+	}
+
+	return manga, nil
 }
 
 func convertTitleToMangahubTitle(initialTitle string) string {
