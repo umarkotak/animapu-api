@@ -2,12 +2,19 @@
 Open source API to fetch latest manga from multiple sources. CORS friendly.
 
 ## AVAILABLE SOURCES
-1. Mangaupdates X Mangahub
-2. Klik Manga
-3. Mangabat
-4. Mangadex
-5. Maid My
+| Source Name             | Source ID      | Status      |
+| ----------------------- | -------------- | ----------- |
+| Mangaupdates X Mangahub | mangaupdates   | |
+| Klik Manga              | klikmanga      | |
+| Mangabat                | mangabat       | |
+| Mangadex                | mangadex       | |
+| Maid My                 | maidmy         | |
 
 ## USAGES
-1. Get latest manga
-  - PATH: GET /mangas/:manga_source/latest
+
+| Name         | Method      | PATH                                                                         |
+| -----------  | ----------- | ---------------------------------------------------------------------------- |
+| Latest Manga | GET         | {HOST}/mangas/:manga_source/latest?page=                                     |
+| Search Manga | GET         | {HOST}/mangas/:manga_source/search?title=                                    |
+| Detail Manga | GET         | {HOST}/mangas/:manga_source/detail/:manga_id?secondary_source_id=            |
+| Read Manga   | GET         | {HOST}/mangas/:manga_source/read/:manga_id/:chapter_id? secondary_source_id= |
