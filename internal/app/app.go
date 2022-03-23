@@ -25,6 +25,8 @@ func Start() {
 
 	r.GET("/mangas/:manga_source/latest", manga_controller.GetMangaLatest)
 	r.GET("/mangas/:manga_source/detail/:manga_id", manga_controller.GetMangaDetail)
+	r.GET("/mangas/:manga_source/read/:manga_id/:chapter_id", manga_controller.ReadManga)
+	r.GET("/mangas/:manga_source/search", manga_controller.SearchManga)
 
 	port := os.Getenv("PORT")
 	if port == "" {
