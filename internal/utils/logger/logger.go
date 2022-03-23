@@ -10,14 +10,19 @@ import (
 type (
 	AnimapuHook struct {
 	}
+
+	AnimapuLog struct {
+		RequestID    string `json:"request_id"`
+		ErrorMessage string `json:"error_message"`
+	}
 )
 
 var (
-	GlobalLog []string
+	GlobalLog []AnimapuLog
 )
 
 func Initialize() {
-	GlobalLog = []string{}
+	GlobalLog = []AnimapuLog{}
 }
 
 func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
@@ -27,7 +32,7 @@ func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
 		reqID = ctx.Value("request_id")
 	}
 	formattedLog := fmt.Sprintf("[%v][%v]: %v", time.Now().UTC(), reqID, entry.Message)
-	GlobalLog = append(GlobalLog, formattedLog)
+	GlobalLog = append(GlobalLog, AnimapuLog{RequestID: fmt.Sprintf("%v", reqID), ErrorMessage: formattedLog})
 	return nil
 }
 
