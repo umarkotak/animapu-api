@@ -70,8 +70,8 @@ func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryPar
 						Index: 1,
 						ImageUrls: []string{
 							fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", secondarySourceID),
-							fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg`", secondarySourceID),
-							fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg`", secondarySourceID),
+							fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", secondarySourceID),
+							fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", secondarySourceID),
 						},
 					},
 				},
