@@ -1,8 +1,12 @@
 package manga_controller
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
@@ -17,6 +21,13 @@ func GetMangaDetail(c *gin.Context) {
 
 	manga := models.Manga{}
 	var err error
+
+	cacheKey := fmt.Sprintf("CACHED_MANGA:%v:%v:%v", queryParams.Source, queryParams.SourceID, queryParams.SecondarySourceID)
+	cachedManga, found := config.Get().CacheObj.Get(cacheKey)
+	if found {
+		render.Response(c.Request.Context(), c, cachedManga, nil, 200)
+		return
+	}
 
 	switch queryParams.Source {
 	case "mangaupdates":
@@ -46,6 +57,8 @@ func GetMangaDetail(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, err)
 		return
 	}
+
+	config.Get().CacheObj.Set(cacheKey, manga, 30*time.Minute)
 
 	render.Response(c.Request.Context(), c, manga, nil, 200)
 }

@@ -107,6 +107,14 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 	c.OnHTML("#div_desc_link", func(e *colly.HTMLElement) {
 		manga.Description = e.Text
 	})
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(3) > div:nth-child(2)", func(e *colly.HTMLElement) {
+		if manga.Description == "" {
+			manga.Description = e.Text
+		}
+	})
+	if manga.Description == "" {
+		manga.Description = "Description unavailable"
+	}
 	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(4) > div:nth-child(5) > a", func(e *colly.HTMLElement) {
 		manga.Genres = append(manga.Genres, e.Text)
 	})
@@ -121,6 +129,13 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 				Index:     1,
 				ImageUrls: []string{e.Attr("src")},
 			},
+		}
+	})
+	var latestCahpter float64
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(3) > div:nth-child(17) > i:nth-child(1)", func(e *colly.HTMLElement) {
+		latestChapterSplitted := strings.Split(e.Text, "-")
+		if len(latestChapterSplitted) > 0 {
+			latestCahpter, _ = strconv.ParseFloat(latestChapterSplitted[0], 64)
 		}
 	})
 
@@ -146,6 +161,13 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return manga, err
+	}
+
+	if latestCahpter > manga.LatestChapterNumber {
+		manga.LatestChapterNumber = latestCahpter
+	}
+	if manga.LatestChapterNumber <= 0 {
+		manga.LatestChapterNumber = 150
 	}
 
 	idx := int64(1)

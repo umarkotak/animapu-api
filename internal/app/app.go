@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
@@ -13,6 +14,7 @@ import (
 func Initialize() {
 	logger.Initialize()
 	logrus.AddHook(&logger.AnimapuHook{})
+	config.Initialize()
 }
 
 func Start() {
