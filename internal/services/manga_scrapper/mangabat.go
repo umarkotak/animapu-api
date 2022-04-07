@@ -3,7 +3,6 @@ package manga_scrapper
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -181,7 +180,8 @@ func GetMangabatByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/search/manga/%v", url.QueryEscape(queryParams.Title)))
+	query := strings.Replace(queryParams.Title, " ", "_", -1)
+	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/search/manga/%v", query))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
