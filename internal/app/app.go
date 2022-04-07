@@ -8,6 +8,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
 
@@ -25,6 +26,8 @@ func Start() {
 	r.GET("/health", health_controller.GetHealth)
 	r.GET("/logs", health_controller.GetLogs)
 
+	r.GET("/mangas/sources", setting_controller.GetAvailableSource)
+
 	r.GET("/mangas/:manga_source/latest", manga_controller.GetMangaLatest)
 	r.GET("/mangas/:manga_source/detail/:manga_id", manga_controller.GetMangaDetail)
 	r.GET("/mangas/:manga_source/read/:manga_id/:chapter_id", manga_controller.ReadManga)
@@ -32,7 +35,7 @@ func Start() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "6000"
+		port = "6001"
 	}
 	r.Run(":" + port)
 }

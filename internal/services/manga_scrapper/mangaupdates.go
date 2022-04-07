@@ -97,6 +97,7 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 		SecondarySourceID: queryParams.SecondarySourceID,
 		Status:            "Ongoing",
 		Chapters:          []models.Chapter{},
+		Description:       "Description unavailable",
 	}
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
@@ -104,17 +105,19 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div.col-12.p-2 > span.releasestitle.tabletitle", func(e *colly.HTMLElement) {
 		manga.Title = e.Text
 	})
-	c.OnHTML("#div_desc_link", func(e *colly.HTMLElement) {
-		manga.Description = e.Text
-	})
+	descriptionFound := false
 	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(3) > div:nth-child(2)", func(e *colly.HTMLElement) {
-		if manga.Description == "" {
+		if !descriptionFound && e.Text != "" {
 			manga.Description = e.Text
+			descriptionFound = true
 		}
 	})
-	if manga.Description == "" {
-		manga.Description = "Description unavailable"
-	}
+	c.OnHTML("#div_desc_link", func(e *colly.HTMLElement) {
+		if !descriptionFound && e.Text != "" {
+			manga.Description = e.Text
+			descriptionFound = true
+		}
+	})
 	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(4) > div:nth-child(5) > a", func(e *colly.HTMLElement) {
 		manga.Genres = append(manga.Genres, e.Text)
 	})
@@ -207,10 +210,12 @@ func GetMangaSearchByQuery(ctx context.Context, queryParams models.QueryParams) 
 			mangaupdatesID = mangaupdatesDetailLinkSplitted[1]
 		}
 
+		secondarySourceID := convertTitleToMangahubTitle(title)
+
 		mangas = append(mangas, models.Manga{
 			ID:                  mangaupdatesID,
 			SourceID:            mangaupdatesID,
-			SecondarySourceID:   convertTitleToMangahubTitle(title),
+			SecondarySourceID:   secondarySourceID,
 			Source:              "mangaupdates",
 			SecondarySource:     "mangahub",
 			Title:               title,
@@ -226,7 +231,9 @@ func GetMangaSearchByQuery(ctx context.Context, queryParams models.QueryParams) 
 				{
 					Index: 1,
 					ImageUrls: []string{
-						e.ChildAttr("div.col-auto.align-self-center.series_thumb.p-0 > a > img", "src"),
+						fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", secondarySourceID),
+						fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", secondarySourceID),
+						fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", secondarySourceID),
 					},
 				},
 			},
