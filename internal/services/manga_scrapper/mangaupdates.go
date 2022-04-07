@@ -192,7 +192,7 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 }
 
 // Used at search manga page
-func GetMangaSearchByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func GetMangaupdatesByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
 	c := colly.NewCollector()

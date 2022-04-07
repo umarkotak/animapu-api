@@ -36,8 +36,7 @@ func GetMangaLatest(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
 		return
 	case "mangabat":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
-		return
+		mangas, err = manga_scrapper.GetMangabatLatestManga(c.Request.Context(), queryParams)
 	default:
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotFound)
 		return

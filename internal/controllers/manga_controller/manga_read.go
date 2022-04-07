@@ -35,8 +35,7 @@ func ReadManga(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
 		return
 	case "mangabat":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
-		return
+		chapter, err = manga_scrapper.GetMangabatDetailChapter(c.Request.Context(), queryParams)
 	default:
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotFound)
 		return
