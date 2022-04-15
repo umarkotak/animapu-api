@@ -216,9 +216,9 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
-				fmt.Sprintf("http://localhost:6001/mangas/mangabat/image_proxy/%v", e.Attr("src")),
 				fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/mangabat/image_proxy/%v", e.Attr("src")),
 				fmt.Sprintf("https://go-animapu.herokuapp.com/image_proxy/%v", e.Attr("src")),
+				fmt.Sprintf("http://localhost:6001/mangas/mangabat/image_proxy/%v", e.Attr("src")),
 			},
 		})
 	})
