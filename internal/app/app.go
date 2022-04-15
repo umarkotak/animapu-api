@@ -8,6 +8,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
@@ -32,6 +33,8 @@ func Start() {
 	r.GET("/mangas/:manga_source/detail/:manga_id", manga_controller.GetMangaDetail)
 	r.GET("/mangas/:manga_source/read/:manga_id/:chapter_id", manga_controller.ReadManga)
 	r.GET("/mangas/:manga_source/search", manga_controller.SearchManga)
+
+	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
 
 	port := os.Getenv("PORT")
 	if port == "" {

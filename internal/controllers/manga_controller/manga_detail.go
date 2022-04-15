@@ -33,27 +33,27 @@ func GetMangaDetail(c *gin.Context) {
 	case "mangaupdates":
 		manga, err = manga_scrapper.GetMangaupdatesDetailManga(c.Request.Context(), queryParams)
 	case "mangadex":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
 	case "maidmy":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
 	case "klikmanga":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
 	case "mangareadorg":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
 	case "mangabat":
 		manga, err = manga_scrapper.GetMangabatDetailManga(c.Request.Context(), queryParams)
 	default:
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotFound)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotFound, false)
 		return
 	}
 
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err)
+		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
 

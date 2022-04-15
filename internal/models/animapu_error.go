@@ -8,6 +8,7 @@ type AnimapuError struct {
 	StatusCode int    `json:"status_code"`
 	ErrorCode  string `json:"error_code"`
 	Message    string `json:"message"`
+	RawError   string `json:"raw_error"`
 }
 
 var (

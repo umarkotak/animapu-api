@@ -35,6 +35,14 @@ func GetMangabatLatestManga(ctx context.Context, queryParams models.QueryParams)
 		latestChapterNumberString := strings.Replace(latestChapterText, "Chapter ", "", -1)
 		latestChapterNumber, _ := strconv.ParseFloat(latestChapterNumberString, 64)
 
+		if latestChapterNumber == 0 {
+			latestChapterNumberSplitted := strings.Split(latestChapterID, "-")
+			if len(latestChapterNumberSplitted) > 0 {
+				latestChapterNumberString = latestChapterNumberSplitted[len(latestChapterNumberSplitted)-1]
+				latestChapterNumber, _ = strconv.ParseFloat(latestChapterNumberString, 64)
+			}
+		}
+
 		mangas = append(mangas, models.Manga{
 			ID:                  sourceID,
 			SourceID:            sourceID,
@@ -208,6 +216,8 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
+				fmt.Sprintf("http://localhost:6001/mangas/mangabat/image_proxy/%v", e.Attr("src")),
+				fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/mangabat/image_proxy/%v", e.Attr("src")),
 				fmt.Sprintf("https://go-animapu.herokuapp.com/image_proxy/%v", e.Attr("src")),
 			},
 		})

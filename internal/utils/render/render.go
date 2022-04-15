@@ -24,11 +24,15 @@ func Response(ctx context.Context, c *gin.Context, bodyPayload interface{}, err 
 	})
 }
 
-func ErrorResponse(ctx context.Context, c *gin.Context, err error) {
+func ErrorResponse(ctx context.Context, c *gin.Context, err error, showErr bool) {
 	animapuError, ok := models.ERROR_MAP[err]
 	if !ok {
 		err = models.ErrInternal
 		animapuError = models.ERROR_MAP[err]
+	}
+
+	if showErr {
+		animapuError.RawError = err.Error()
 	}
 
 	logrus.WithContext(ctx).Error(err)
