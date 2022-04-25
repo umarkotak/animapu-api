@@ -45,10 +45,8 @@ func GetMangabatLatestManga(ctx context.Context, queryParams models.QueryParams)
 
 		mangas = append(mangas, models.Manga{
 			ID:                  sourceID,
-			SourceID:            sourceID,
-			SecondarySourceID:   "",
 			Source:              "mangabat",
-			SecondarySource:     "",
+			SourceID:            sourceID,
 			Title:               e.ChildText("div > h3 > a"),
 			Description:         "",
 			Genres:              []string{},
@@ -119,8 +117,8 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 
 		manga.Chapters = append(manga.Chapters, models.Chapter{
 			ID:       id,
-			SourceID: id,
 			Source:   "mangabat",
+			SourceID: id,
 			Title:    e.ChildText("a"),
 			Index:    idx,
 			Number:   chapterNumber,
@@ -141,6 +139,12 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 			logrus.WithContext(ctx).Error(err)
 			return manga, err
 		}
+	}
+
+	if len(manga.Chapters) > 0 {
+		manga.LatestChapterID = manga.Chapters[0].ID
+		manga.LatestChapterNumber = manga.Chapters[0].Number
+		manga.LatestChapterTitle = manga.Chapters[0].Title
 	}
 
 	return manga, nil

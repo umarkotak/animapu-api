@@ -31,8 +31,7 @@ func SearchManga(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
 	case "klikmanga":
-		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
-		return
+		mangas, err = manga_scrapper.GetKlikmangaByQuery(c.Request.Context(), queryParams)
 	case "mangareadorg":
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return

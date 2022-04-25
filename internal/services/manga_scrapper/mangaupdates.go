@@ -91,6 +91,7 @@ func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryPar
 // Used at manga detail page
 func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	manga := models.Manga{
+		ID:                queryParams.SourceID,
 		Source:            "mangaupdates",
 		SourceID:          queryParams.SourceID,
 		SecondarySource:   "mangahub",
@@ -186,6 +187,12 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 			Number:            float64(i),
 		})
 		idx++
+	}
+
+	if len(manga.Chapters) > 0 {
+		manga.LatestChapterID = manga.Chapters[0].ID
+		manga.LatestChapterNumber = manga.Chapters[0].Number
+		manga.LatestChapterTitle = manga.Chapters[0].Title
 	}
 
 	return manga, nil
