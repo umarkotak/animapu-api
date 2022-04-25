@@ -19,77 +19,47 @@ func GetKlikmangaLatestManga(ctx context.Context, queryParams models.QueryParams
 
 	mangas := []models.Manga{}
 
-	if queryParams.Page <= 1 {
-		c.OnHTML("#loop-content > div > div > div > div", func(e *colly.HTMLElement) {
-			sourceID := e.ChildAttr("div.item-summary > div.post-title.font-title > h3 > a", "href")
-			sourceID = strings.Replace(sourceID, "https://klikmanga.id/manga/", "", -1)
-			sourceID = strings.Replace(sourceID, "/", "", -1)
-
-			lastestChapterID := e.ChildAttr("div.item-summary > div.list-chapter > div:nth-child(1) > span.chapter.font-meta > a", "href")
-			lastestChapterIDSplitted := strings.Split(lastestChapterID, "/")
-			if len(lastestChapterIDSplitted) > 0 {
-				lastestChapterID = lastestChapterIDSplitted[len(lastestChapterIDSplitted)-2]
-			}
-
-			latestChapterTitle := strings.Replace(lastestChapterID, "-", " ", -1)
-			lastestChapterNumberString := strings.Replace(lastestChapterID, "chapter-", "", -1)
-			lastestChapterNumberString = strings.Replace(lastestChapterNumberString, "-", ".", -1)
-			latestChapterNumber, _ := strconv.ParseFloat(lastestChapterNumberString, 64)
-
-			mangas = append(mangas, models.Manga{
-				ID:                  sourceID,
-				Source:              "klikmanga",
-				SourceID:            sourceID,
-				Title:               e.ChildText("div.item-summary > div.post-title.font-title > h3 > a"),
-				LatestChapterID:     lastestChapterID,
-				LatestChapterNumber: latestChapterNumber,
-				LatestChapterTitle:  latestChapterTitle,
-				CoverImages: []models.CoverImage{
-					{
-						Index: 1,
-						ImageUrls: []string{
-							e.ChildAttr("div.item-thumb.hover-details.c-image-hover > a > img", "src"),
-						},
-					},
-				},
-			})
-		})
-	} else {
-		c.OnHTML("div.page-item-detail", func(e *colly.HTMLElement) {
-			sourceID := e.ChildAttr("div.item-summary > div.post-title.font-title > h3 > a", "href")
-			sourceID = strings.Replace(sourceID, "https://klikmanga.id/manga/", "", -1)
-			sourceID = strings.Replace(sourceID, "/", "", -1)
-
-			lastestChapterID := e.ChildAttr("div.item-summary > div.list-chapter > div:nth-child(1) > span.chapter.font-meta > a", "href")
-			lastestChapterIDSplitted := strings.Split(lastestChapterID, "/")
-			if len(lastestChapterIDSplitted) > 1 {
-				lastestChapterID = lastestChapterIDSplitted[len(lastestChapterIDSplitted)-2]
-			}
-
-			latestChapterTitle := strings.Replace(lastestChapterID, "-", " ", -1)
-			lastestChapterNumberString := strings.Replace(lastestChapterID, "chapter-", "", -1)
-			lastestChapterNumberString = strings.Replace(lastestChapterNumberString, "-", ".", -1)
-			latestChapterNumber, _ := strconv.ParseFloat(lastestChapterNumberString, 64)
-
-			mangas = append(mangas, models.Manga{
-				ID:                  sourceID,
-				Source:              "klikmanga",
-				SourceID:            sourceID,
-				Title:               e.ChildText("div.item-summary > div.post-title.font-title > h3 > a"),
-				LatestChapterID:     lastestChapterID,
-				LatestChapterNumber: latestChapterNumber,
-				LatestChapterTitle:  latestChapterTitle,
-				CoverImages: []models.CoverImage{
-					{
-						Index: 1,
-						ImageUrls: []string{
-							e.ChildAttr("div.item-thumb.hover-details.c-image-hover > a > img", "src"),
-						},
-					},
-				},
-			})
-		})
+	selector := "#loop-content > div > div > div > div"
+	if queryParams.Page > 1 {
+		selector = "div.page-item-detail"
 	}
+
+	c.OnHTML(selector, func(e *colly.HTMLElement) {
+		sourceID := e.ChildAttr("div.item-summary > div.post-title.font-title > h3 > a", "href")
+		sourceID = strings.Replace(sourceID, "https://klikmanga.id/manga/", "", -1)
+		sourceID = strings.Replace(sourceID, "/", "", -1)
+
+		lastestChapterID := e.ChildAttr("div.item-summary > div.list-chapter > div:nth-child(1) > span.chapter.font-meta > a", "href")
+		lastestChapterIDSplitted := strings.Split(lastestChapterID, "/")
+		if len(lastestChapterIDSplitted) > 0 {
+			lastestChapterID = lastestChapterIDSplitted[len(lastestChapterIDSplitted)-2]
+		}
+
+		latestChapterTitle := strings.Replace(lastestChapterID, "-", " ", -1)
+		lastestChapterNumberString := strings.Replace(lastestChapterID, "chapter-", "", -1)
+		lastestChapterNumberString = strings.Replace(lastestChapterNumberString, "-", ".", -1)
+		latestChapterNumber, _ := strconv.ParseFloat(lastestChapterNumberString, 64)
+
+		mangas = append(mangas, models.Manga{
+			ID:                  sourceID,
+			Source:              "klikmanga",
+			SourceID:            sourceID,
+			Title:               e.ChildText("div.item-summary > div.post-title.font-title > h3 > a"),
+			LatestChapterID:     lastestChapterID,
+			LatestChapterNumber: latestChapterNumber,
+			LatestChapterTitle:  latestChapterTitle,
+			CoverImages: []models.CoverImage{
+				{
+					Index: 1,
+					ImageUrls: []string{
+						fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", sourceID),
+						fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", sourceID),
+						fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", sourceID),
+					},
+				},
+			},
+		})
+	})
 
 	var err error
 	if queryParams.Page <= 1 {
