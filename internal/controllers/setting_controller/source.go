@@ -37,7 +37,7 @@ func GetAvailableSource(c *gin.Context) {
 				Language: "id",
 				Title:    "Klik Manga",
 				WebLink:  "https://klikmanga.id/",
-				Active:   false,
+				Active:   true,
 			},
 			{
 				ID:       "mangadex",
