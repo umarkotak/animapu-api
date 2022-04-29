@@ -100,9 +100,64 @@ func GetKlikmangaDetailManga(ctx context.Context, queryParams models.QueryParams
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
-	manga := models.Manga{}
+	manga := models.Manga{
+		ID:          queryParams.SourceID,
+		Source:      "klikmanga",
+		SourceID:    queryParams.SourceID,
+		Chapters:    []models.Chapter{},
+		CoverImages: []models.CoverImage{},
+	}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	c.OnHTML("body > div.wrap > div > div.site-content > div > div.profile-manga > div > div > div > div.tab-summary > div.summary_image > a > img", func(e *colly.HTMLElement) {
+		// manga.CoverImages = []models.CoverImage{
+		// 	{Index: 1, ImageUrls: []string{e.Attr("src")}},
+		// }
+
+		manga.CoverImages = []models.CoverImage{{
+			Index: 1,
+			ImageUrls: []string{
+				fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", queryParams.SourceID),
+				fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", queryParams.SourceID),
+				fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", queryParams.SourceID),
+			},
+		}}
+	})
+
+	c.OnHTML("body > div.wrap > div > div.site-content > div > div.c-page-content.style-1 > div > div > div > div.main-col.col-md-8.col-sm-8 > div > div.c-page > div > div.description-summary > div > p", func(e *colly.HTMLElement) {
+		manga.Description = e.Text
+	})
+
+	c.OnHTML("body > div.wrap > div > div.site-content > div > div.profile-manga > div > div > div > div.tab-summary > div.summary_content_wrap > div > div.post-content > div:nth-child(8) > div.summary-content > div", func(e *colly.HTMLElement) {
+		manga.Genres = strings.Split(e.Text, ", ")
+	})
+
+	c.OnHTML("body > div.wrap > div > div.site-content > div > div.profile-manga > div > div > div > div.post-title > h1", func(e *colly.HTMLElement) {
+		manga.Title = e.Text
+	})
+
+	idx := int64(1)
+	c.OnHTML("body > div.wrap > div > div.site-content > div > div.c-page-content.style-1 > div > div > div > div.main-col.col-md-8.col-sm-8 > div > div.c-page > div > div.page-content-listing.single-page > div > ul > li", func(e *colly.HTMLElement) {
+		rawChapterLink := e.ChildAttr("a", "href")
+		chapterLinkId := strings.Replace(rawChapterLink, fmt.Sprintf("https://klikmanga.id/manga/%v", queryParams.SourceID), "", -1)
+		chapterLinkId = strings.Replace(chapterLinkId, "/", "", -1)
+
+		chapterString := e.ChildText("a")
+		chapterString = strings.Replace(chapterString, "Chapter ", "", -1)
+		chapterNumber, _ := strconv.ParseFloat(chapterString, 64)
+
+		manga.Chapters = append(manga.Chapters, models.Chapter{
+			ID:            chapterLinkId,
+			SourceID:      queryParams.SourceID,
+			Source:        "klikmanga",
+			Title:         chapterString,
+			Index:         idx,
+			Number:        chapterNumber,
+			ChapterImages: []models.ChapterImage{},
+		})
+		idx += 1
+	})
+
+	err := c.Visit(fmt.Sprintf("https://klikmanga.id/manga/%v", queryParams.SourceID))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return manga, err
