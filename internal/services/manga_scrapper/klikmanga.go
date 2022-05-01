@@ -172,7 +172,74 @@ func GetKlikmangaByQuery(ctx context.Context, queryParams models.QueryParams) ([
 
 	mangas := []models.Manga{}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	selector := "body > div.wrap > div > div.site-content > div.c-page-content > div > div > div > div > div.main-col-inner > div > div.tab-content-wrap > div > div"
+	if queryParams.Page > 1 {
+		selector = "div.row.c-tabs-item__content"
+	}
+
+	c.OnHTML(selector, func(e *colly.HTMLElement) {
+		rawLink := e.ChildAttr("div div a", "href")
+		sourceID := strings.Replace(rawLink, "https://klikmanga.id/manga/", "", -1)
+		sourceID = strings.Replace(sourceID, "/", "", -1)
+
+		lastChapterLink := e.ChildAttr("div.col-8.col-12.col-md-10 > div.tab-meta > div.meta-item.latest-chap > span.font-meta.chapter > a", "href")
+		prefix := fmt.Sprintf("https://klikmanga.id/manga/%v", sourceID)
+		lastChapterID := strings.Replace(lastChapterLink, prefix, "", -1)
+		lastChapterID = strings.Replace(lastChapterID, "/", "", -1)
+
+		lastChapterString := strings.Replace(lastChapterID, "chapter-", "", -1)
+		lastChapterNumber, _ := strconv.ParseFloat(lastChapterString, 64)
+
+		mangas = append(mangas, models.Manga{
+			ID:                  sourceID,
+			SourceID:            sourceID,
+			Source:              "klikmanga",
+			Title:               e.ChildText("div div h3 a"),
+			LatestChapterID:     lastChapterID,
+			LatestChapterNumber: lastChapterNumber,
+			LatestChapterTitle:  e.ChildText("div.col-8.col-12.col-md-10 > div.tab-meta > div.meta-item.latest-chap > span.font-meta.chapter > a"),
+			CoverImages: []models.CoverImage{
+				{
+					Index: 1,
+					ImageUrls: []string{
+						fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", sourceID),
+						fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", sourceID),
+						fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", sourceID),
+					},
+				},
+			},
+		})
+	})
+
+	var err error
+	if queryParams.Page <= 1 {
+		err = c.Visit(fmt.Sprintf("https://klikmanga.id/?s=%v&post_type=wp-manga&op=&author=&artist=&release=&adult=&m_orderby=latest", queryParams.Title))
+	} else {
+		requestData := strings.NewReader(fmt.Sprintf(`action=madara_load_more&page=%v&template=madara-core/content/content-search&vars[s]=%v&vars[orderby]=meta_value_num&vars[paged]=1&vars[template]=search&vars[meta_query][0][0][key]=_wp_manga_status&vars[meta_query][0][0][value][]=end&vars[meta_query][0][0][compare]=IN&vars[meta_query][0][relation]=AND&vars[meta_query][relation]=OR&vars[post_type]=wp-manga&vars[post_status]=publish&vars[meta_key]=_latest_update&vars[order]=desc&vars[manga_archives_item_layout]=big_thumbnail`, queryParams.Page, queryParams.Title))
+		err = c.Request(
+			"POST",
+			"https://klikmanga.id/wp-admin/admin-ajax.php",
+			requestData,
+			colly.NewContext(),
+			http.Header{
+				"content-type":       []string{"application/x-www-form-urlencoded; charset=UTF-8"},
+				"Authority":          []string{"klikmanga.id"},
+				"Sec-Ch-Ua":          []string{"\"Google Chrome\";v=\"93\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"93\""},
+				"Accept-Language":    []string{"en-US,en;q=0.9,id;q=0.8"},
+				"Sec-Ch-Ua-Mobile":   []string{"?0"},
+				"User-Agent":         []string{"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36"},
+				"Content-Type":       []string{"application/x-www-form-urlencoded; charset=UTF-8"},
+				"Accept":             []string{"*/*"},
+				"X-Requested-With":   []string{"XMLHttpRequest"},
+				"Sec-Ch-Ua-Platform": []string{"\"macOS\""},
+				"Origin":             []string{"https://klikmanga.id"},
+				"Sec-Fetch-Site":     []string{"same-origin"},
+				"Sec-Fetch-Mode":     []string{"cors"},
+				"Sec-Fetch-Dest":     []string{"empty"},
+				"Referer":            []string{"https://klikmanga.id/"},
+			},
+		)
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
@@ -185,9 +252,24 @@ func GetKlikmangaDetailChapter(ctx context.Context, queryParams models.QueryPara
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
-	chapter := models.Chapter{}
+	chapter := models.Chapter{
+		ID:            queryParams.ChapterID,
+		SourceID:      queryParams.ChapterID,
+		Source:        "klikmanga",
+		ChapterImages: []models.ChapterImage{},
+	}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	idx := int64(1)
+	c.OnHTML("body > div.wrap > div > div.site-content > div > div > div > div > div > div > div.c-blog-post > div.entry-content > div > div > div.reading-content > div", func(e *colly.HTMLElement) {
+		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+			Index:     idx,
+			ImageUrls: []string{e.ChildAttr("img.wp-manga-chapter-img", "src")},
+		})
+
+		idx += 1
+	})
+
+	err := c.Visit(fmt.Sprintf("https://klikmanga.id/manga/%v/%v/?style=list", queryParams.SourceID, queryParams.ChapterID))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return chapter, err
