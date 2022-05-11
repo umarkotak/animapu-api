@@ -15,6 +15,7 @@ type (
 		LatestChapterID     string       `json:"latest_chapter_id"`
 		LatestChapterNumber float64      `json:"latest_chapter_number"`
 		LatestChapterTitle  string       `json:"latest_chapter_title"`
+		ChapterPaginated    bool         `json:"chapter_paginated"`
 		Chapters            []Chapter    `json:"chapters"`
 		CoverImages         []CoverImage `json:"cover_image"`
 	}

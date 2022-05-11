@@ -40,6 +40,20 @@ func GetAvailableSource(c *gin.Context) {
 				Active:   true,
 			},
 			{
+				ID:       "fizmanga",
+				Language: "en",
+				Title:    "Fizmanga",
+				WebLink:  "https://fizmanga.com/",
+				Active:   true,
+			},
+			{
+				ID:       "webtoonsid",
+				Language: "id",
+				Title:    "WebToon ID",
+				WebLink:  "https://www.webtoons.com/id/",
+				Active:   true,
+			},
+			{
 				ID:       "mangadex",
 				Language: "mix",
 				Title:    "Manga Dex",
