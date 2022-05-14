@@ -25,12 +25,14 @@ func GetMangabatLatestManga(ctx context.Context, queryParams models.QueryParams)
 	c.OnHTML("body div.body-site div.container.container-main div.container-main-left div.panel-list-story .list-story-item", func(e *colly.HTMLElement) {
 		sourceID := strings.Replace(e.ChildAttr("div > h3 > a", "href"), "https://read.mangabat.com/", "", -1)
 		sourceID = strings.Replace(sourceID, "https://m.mangabat.com/", "", -1)
+		sourceID = strings.Replace(sourceID, "https://readmangabat.com/", "", -1)
 
 		imageURL := e.ChildAttr("a > img", "src")
 
 		latestChapterText := e.ChildText("div > a:nth-child(2)")
 		latestChapterID := strings.Replace(e.ChildAttr("div > a:nth-child(2)", "href"), "https://read.mangabat.com/", "", -1)
 		latestChapterID = strings.Replace(latestChapterID, "https://m.mangabat.com/", "", -1)
+		latestChapterID = strings.Replace(latestChapterID, "https://readmangabat.com/", "", -1)
 
 		latestChapterNumberString := strings.Replace(latestChapterText, "Chapter ", "", -1)
 		latestChapterNumber, _ := strconv.ParseFloat(latestChapterNumberString, 64)
@@ -81,7 +83,7 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 		Source:      "mangabat",
 		SourceID:    queryParams.SourceID,
 		Status:      "Ongoing",
-		Chapters:    []models.Chapter{},
+		Chapters:    []models.Chapter{{ChapterImages: []models.ChapterImage{{ImageUrls: []string{""}}}}},
 		Description: "Description unavailable",
 		CoverImages: []models.CoverImage{{ImageUrls: []string{""}}},
 	}
@@ -128,17 +130,18 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 	})
 
 	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/%v", queryParams.SourceID))
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return manga, err
-	}
 
 	if manga.Title == "" {
 		err = c.Visit(fmt.Sprintf("https://read.mangabat.com/%v", queryParams.SourceID))
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			return manga, err
-		}
+	}
+
+	if manga.Title == "" {
+		err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v", queryParams.SourceID))
+	}
+
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return manga, err
 	}
 
 	if len(manga.Chapters) > 0 {
@@ -160,6 +163,7 @@ func GetMangabatByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 		detailUrl := e.ChildAttr("a.item-img", "href")
 		detailUrl = strings.Replace(detailUrl, "https://read.mangabat.com/", "", -1)
 		sourceID := strings.Replace(detailUrl, "https://m.mangabat.com/", "", -1)
+		sourceID = strings.Replace(sourceID, "https://readmangabat.com/", "", -1)
 
 		title := e.ChildText("div > h3 > a")
 
@@ -228,17 +232,18 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 	})
 
 	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return chapter, err
-	}
 
 	if len(chapter.ChapterImages) <= 0 {
 		err = c.Visit(fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			return chapter, err
-		}
+	}
+
+	if len(chapter.ChapterImages) <= 0 {
+		err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
+	}
+
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return chapter, err
 	}
 
 	return chapter, nil

@@ -28,9 +28,10 @@ func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryPar
 	c.OnHTML("div.alt.p-1 div.row.no-gutters div", func(e *colly.HTMLElement) {
 		if e.Attr("class") == "col-6 pbreak" {
 			sourceDetailLink = e.ChildAttr("a", "href")
-			sourceDetailLinkSplitted := strings.Split(sourceDetailLink, "series.html?id=")
-			if len(sourceDetailLinkSplitted) >= 2 {
-				sourceID = sourceDetailLinkSplitted[1]
+			sourceDetailLinkSplitted := strings.Split(sourceDetailLink, "/series/")
+			if len(sourceDetailLinkSplitted) >= 1 {
+				sourceID = sourceDetailLinkSplitted[len(sourceDetailLinkSplitted)-1]
+				sourceID = strings.Replace(sourceID, "/", "Z2F", -1)
 			}
 			title = e.ChildText("a")
 			secondarySourceID = convertTitleToMangahubTitle(title)
@@ -99,6 +100,7 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 		Status:            "Ongoing",
 		Chapters:          []models.Chapter{},
 		Description:       "Description unavailable",
+		CoverImages:       []models.CoverImage{{ImageUrls: []string{""}}},
 	}
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
@@ -141,9 +143,31 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 		if len(latestChapterSplitted) > 0 {
 			latestCahpter, _ = strconv.ParseFloat(latestChapterSplitted[0], 64)
 		}
+		if len(latestChapterSplitted) > 0 {
+			temp, _ := strconv.ParseFloat(latestChapterSplitted[len(latestChapterSplitted)-1], 64)
+			if temp > latestCahpter {
+				latestCahpter = temp
+			}
+		}
+	})
+	c.OnHTML("#main_content > div:nth-child(2) > div.row.no-gutters > div:nth-child(3) > div:nth-child(17) > i:nth-child(2)", func(e *colly.HTMLElement) {
+		latestChapterSplitted := strings.Split(e.Text, "-")
+		if len(latestChapterSplitted) > 0 {
+			temp, _ := strconv.ParseFloat(latestChapterSplitted[0], 64)
+			if temp > latestCahpter {
+				latestCahpter = temp
+			}
+		}
+		if len(latestChapterSplitted) > 0 {
+			temp, _ := strconv.ParseFloat(latestChapterSplitted[len(latestChapterSplitted)-1], 64)
+			if temp > latestCahpter {
+				latestCahpter = temp
+			}
+		}
 	})
 
-	err := c.Visit(fmt.Sprintf("https://www.mangaupdates.com/series.html?id=%v", manga.SourceID))
+	formattedSourceID := strings.Replace(manga.SourceID, "Z2F", "/", -1)
+	err := c.Visit(fmt.Sprintf("https://www.mangaupdates.com/series/%v", formattedSourceID))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return manga, err
