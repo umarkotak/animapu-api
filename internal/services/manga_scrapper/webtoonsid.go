@@ -3,6 +3,8 @@ package manga_scrapper
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -60,7 +62,6 @@ func GetWebtoonsidLatestManga(ctx context.Context, queryParams models.QueryParam
 }
 
 func GetWebtoonsidDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
-	fmt.Println("hello")
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -89,13 +90,23 @@ func GetWebtoonsidDetailManga(ctx context.Context, queryParams models.QueryParam
 
 	idx := int64(1)
 	c.OnHTML("div.detail_body > div.detail_lst > ul#_listUl > li", func(e *colly.HTMLElement) {
+		chapterID := e.ChildAttr("a", "href")
+		chapterID = strings.Replace(chapterID, "https://www.webtoons.com/id/", "", -1)
+		chapterID = strings.Replace(chapterID, "/", "Z2F", -1)
+		chapterID = strings.Replace(chapterID, "?", "Z3F", -1)
+
+		numberString := e.ChildText("span.subj")
+		reg, _ := regexp.Compile("[^0-9]+")
+		numberString = reg.ReplaceAllString(numberString, "")
+		number, _ := strconv.ParseFloat(numberString, 64)
+
 		manga.Chapters = append(manga.Chapters, models.Chapter{
-			ID:       "id",
+			ID:       chapterID,
 			Source:   "webtoonsid",
-			SourceID: "id",
-			Title:    e.ChildText("span.subj"),
+			SourceID: queryParams.SourceID,
+			Title:    strings.Replace(e.ChildText("span.subj"), "UP", "", -1),
 			Index:    idx,
-			Number:   0,
+			Number:   number,
 		})
 
 		idx += 1
@@ -110,6 +121,25 @@ func GetWebtoonsidDetailManga(ctx context.Context, queryParams models.QueryParam
 		return manga, err
 	}
 
+	checkNextPage := len(manga.Chapters) > 0 && manga.Chapters[len(manga.Chapters)-1].Number/10 >= 1
+	nextPage := int64(2)
+	for checkNextPage {
+		err := c.Visit(fmt.Sprintf("https://www.webtoons.com/id/%v&page=%v", formattedID, nextPage))
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return manga, err
+		}
+		nextPage += 1
+
+		if manga.Chapters[len(manga.Chapters)-1].Number <= 1 {
+			checkNextPage = false
+		}
+
+		if nextPage == 20 {
+			checkNextPage = false
+		}
+	}
+
 	return manga, nil
 }
 
@@ -119,7 +149,7 @@ func GetWebtoonsidByQuery(ctx context.Context, queryParams models.QueryParams) (
 
 	mangas := []models.Manga{}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	err := c.Visit(fmt.Sprintf("https://www.webtoons.com/id/search?keyword=%v", queryParams.Title))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
@@ -132,9 +162,40 @@ func GetWebtoonsidDetailChapter(ctx context.Context, queryParams models.QueryPar
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
-	chapter := models.Chapter{}
+	chapter := models.Chapter{
+		ID:            queryParams.ChapterID,
+		SourceID:      queryParams.SourceID,
+		Source:        "webtoonsid",
+		Title:         "",
+		Index:         0,
+		Number:        0,
+		ChapterImages: []models.ChapterImage{},
+	}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	idx := int64(1)
+	c.OnHTML("div#container > div#content > div.cont_box > div.viewer_lst > div.viewer_img._img_viewer_area > img", func(e *colly.HTMLElement) {
+		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+			Index: idx,
+			ImageUrls: []string{
+				fmt.Sprintf("http://localhost:6001/mangas/webtoons/image_proxy/%v", e.Attr("data-url")),
+				fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/webtoons/image_proxy/%v", e.Attr("data-url")),
+			},
+		})
+		idx += 1
+	})
+
+	c.OnHTML("div.paginate.v2 > span.tx", func(e *colly.HTMLElement) {
+		numberString := e.Text
+		reg, _ := regexp.Compile("[^0-9]+")
+		numberString = reg.ReplaceAllString(numberString, "")
+		number, _ := strconv.ParseFloat(numberString, 64)
+		chapter.Number = number
+	})
+
+	formattedID := queryParams.ChapterID
+	formattedID = strings.Replace(formattedID, "Z2F", "/", -1)
+	formattedID = strings.Replace(formattedID, "Z3F", "?", -1)
+	err := c.Visit(fmt.Sprintf("https://www.webtoons.com/id/%v", formattedID))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return chapter, err

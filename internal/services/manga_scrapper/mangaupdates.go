@@ -235,17 +235,18 @@ func GetMangaupdatesByQuery(ctx context.Context, queryParams models.QueryParams)
 			return
 		}
 		mangaupdatesDetailLink := e.ChildAttr("div.col-auto.align-self-center.series_thumb.p-0 > a", "href")
-		mangaupdatesDetailLinkSplitted := strings.Split(mangaupdatesDetailLink, "series.html?id=")
-		var mangaupdatesID string
-		if len(mangaupdatesDetailLinkSplitted) >= 2 {
-			mangaupdatesID = mangaupdatesDetailLinkSplitted[1]
+		mangaupdatesDetailLinkSplitted := strings.Split(mangaupdatesDetailLink, "/series/")
+		var sourceID string
+		if len(mangaupdatesDetailLinkSplitted) >= 1 {
+			sourceID = mangaupdatesDetailLinkSplitted[len(mangaupdatesDetailLinkSplitted)-1]
+			sourceID = strings.Replace(sourceID, "/", "Z2F", -1)
 		}
 
 		secondarySourceID := convertTitleToMangahubTitle(title)
 
 		mangas = append(mangas, models.Manga{
-			ID:                  mangaupdatesID,
-			SourceID:            mangaupdatesID,
+			ID:                  sourceID,
+			SourceID:            sourceID,
 			SecondarySourceID:   secondarySourceID,
 			Source:              "mangaupdates",
 			SecondarySource:     "mangahub",
@@ -295,6 +296,7 @@ func GetMangaupdatesDetailChapter(ctx context.Context, queryParams models.QueryP
 		Title:             "",
 		Index:             0,
 		Number:            chapterNumber,
+		ChapterImages:     []models.ChapterImage{},
 	}
 
 	for i := int64(1); i <= pageCountConfig; i++ {

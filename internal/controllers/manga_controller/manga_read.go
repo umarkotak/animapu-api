@@ -22,6 +22,8 @@ func ReadManga(c *gin.Context) {
 	switch queryParams.Source {
 	case "mangaupdates":
 		chapter, err = manga_scrapper.GetMangaupdatesDetailChapter(c.Request.Context(), queryParams)
+	case "webtoonsid":
+		chapter, err = manga_scrapper.GetWebtoonsidDetailChapter(c.Request.Context(), queryParams)
 	case "mangadex":
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
