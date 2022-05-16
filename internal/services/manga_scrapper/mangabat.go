@@ -83,7 +83,7 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 		Source:      "mangabat",
 		SourceID:    queryParams.SourceID,
 		Status:      "Ongoing",
-		Chapters:    []models.Chapter{{ChapterImages: []models.ChapterImage{{ImageUrls: []string{""}}}}},
+		Chapters:    []models.Chapter{},
 		Description: "Description unavailable",
 		CoverImages: []models.CoverImage{{ImageUrls: []string{""}}},
 	}

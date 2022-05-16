@@ -23,6 +23,7 @@ func Start() {
 	r := gin.New()
 	r.Use(RequestID())
 	r.Use(CORSMiddleware())
+	r.Use(LogRequest())
 
 	r.GET("/health", health_controller.GetHealth)
 	r.GET("/logs", health_controller.GetLogs)

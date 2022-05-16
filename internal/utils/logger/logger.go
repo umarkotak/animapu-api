@@ -32,6 +32,11 @@ func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
 		reqID = ctx.Value("request_id")
 	}
 	formattedLog := fmt.Sprintf("[%v][%v]: %v", time.Now().UTC(), reqID, entry.Message)
+
+	if reqID == nil {
+		return nil
+	}
+
 	GlobalLog = append(GlobalLog, AnimapuLog{RequestID: fmt.Sprintf("%v", reqID), ErrorMessage: formattedLog})
 	return nil
 }
