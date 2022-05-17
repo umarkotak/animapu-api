@@ -34,6 +34,8 @@ func GetMangaDetail(c *gin.Context) {
 		manga, err = manga_scrapper.GetMangaupdatesDetailManga(c.Request.Context(), queryParams)
 	case "webtoonsid":
 		manga, err = manga_scrapper.GetWebtoonsidDetailManga(c.Request.Context(), queryParams)
+	case "fizmanga":
+		manga, err = manga_scrapper.GetFizmangaDetailManga(c.Request.Context(), queryParams)
 	case "mangadex":
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return

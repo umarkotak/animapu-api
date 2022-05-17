@@ -144,11 +144,7 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 		return manga, err
 	}
 
-	if len(manga.Chapters) > 0 {
-		manga.LatestChapterID = manga.Chapters[0].ID
-		manga.LatestChapterNumber = manga.Chapters[0].Number
-		manga.LatestChapterTitle = manga.Chapters[0].Title
-	}
+	manga.GenerateLatestChapter()
 
 	return manga, nil
 }

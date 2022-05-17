@@ -25,3 +25,11 @@ type (
 		ImageUrls []string `json:"image_urls"`
 	}
 )
+
+func (m *Manga) GenerateLatestChapter() {
+	if len(m.Chapters) > 0 {
+		m.LatestChapterID = m.Chapters[0].ID
+		m.LatestChapterNumber = m.Chapters[0].Number
+		m.LatestChapterTitle = m.Chapters[0].Title
+	}
+}

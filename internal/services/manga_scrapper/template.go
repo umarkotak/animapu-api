@@ -31,9 +31,23 @@ func GetMangasourceDetailManga(ctx context.Context, queryParams models.QueryPara
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
-	manga := models.Manga{}
+	// Base template, please scrap according to this orders
+	manga := models.Manga{
+		ID:                  queryParams.SourceID,
+		Source:              "source",
+		SourceID:            queryParams.SourceID,
+		Title:               "Untitled",
+		Description:         "Description unavailable",
+		Genres:              []string{},
+		Status:              "Ongoing",
+		CoverImages:         []models.CoverImage{{ImageUrls: []string{}}},
+		Chapters:            []models.Chapter{},
+		LatestChapterID:     "",
+		LatestChapterNumber: 0,
+		LatestChapterTitle:  "",
+	}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.SourceID))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return manga, err
@@ -61,7 +75,12 @@ func GetMangasourceDetailChapter(ctx context.Context, queryParams models.QueryPa
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
-	chapter := models.Chapter{}
+	chapter := models.Chapter{
+		ID:            "",
+		SourceID:      "",
+		Source:        "source",
+		ChapterImages: []models.ChapterImage{{ImageUrls: []string{""}}},
+	}
 
 	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
 	if err != nil {

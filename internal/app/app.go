@@ -37,7 +37,8 @@ func Start() {
 
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
 	r.GET("/mangas/webtoons/image_proxy/*url", proxy_controller.WebtoonsImage)
-	r.GET("/mangas/fizmannga/image_proxy/*url", proxy_controller.FizmangaImage)
+	r.GET("/mangas/fizmanga/image_proxy/*url", proxy_controller.FizmangaImage)
+	r.GET("/mangas/klikmanga/image_proxy/*url", proxy_controller.KlikmangaImage)
 
 	port := os.Getenv("PORT")
 	if port == "" {

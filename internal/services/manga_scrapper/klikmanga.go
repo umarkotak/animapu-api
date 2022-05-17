@@ -52,6 +52,7 @@ func GetKlikmangaLatestManga(ctx context.Context, queryParams models.QueryParams
 				{
 					Index: 1,
 					ImageUrls: []string{
+						fmt.Sprintf("http://localhost:60001/mangas/klikmanga/image_proxy/%s", e.ChildAttr("img.img-responsive", "src")),
 						fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", sourceID),
 						fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", sourceID),
 						fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", sourceID),
@@ -116,6 +117,7 @@ func GetKlikmangaDetailManga(ctx context.Context, queryParams models.QueryParams
 		manga.CoverImages = []models.CoverImage{{
 			Index: 1,
 			ImageUrls: []string{
+				fmt.Sprintf("http://localhost:60001/mangas/klikmanga/image_proxy/%s", e.Attr("src")),
 				fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", queryParams.SourceID),
 				fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", queryParams.SourceID),
 				fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", queryParams.SourceID),
