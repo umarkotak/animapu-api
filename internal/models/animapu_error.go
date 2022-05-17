@@ -15,6 +15,8 @@ var (
 	ErrInternal                  = errors.New("unknown error")
 	ErrMangaSourceNotFound       = errors.New("manga source not found")
 	ErrMangaSourceNotImplemented = errors.New("manga source not implemented yet")
+	ErrInvalidFormat             = errors.New("invalid format")
+	ErrInvalidTargetURL          = errors.New("invalid target url")
 )
 
 var (
@@ -33,6 +35,16 @@ var (
 			StatusCode: 422,
 			ErrorCode:  "Manga source not implemented",
 			Message:    "Sumber yang anda pilih masih dalam proses pengerjaan.",
+		},
+		ErrInvalidFormat: {
+			StatusCode: 400,
+			ErrorCode:  "Invalid format",
+			Message:    "Format anda salah.",
+		},
+		ErrInvalidTargetURL: {
+			StatusCode: 400,
+			ErrorCode:  "Invalid target url",
+			Message:    "Target URL anda salah.",
 		},
 	}
 )

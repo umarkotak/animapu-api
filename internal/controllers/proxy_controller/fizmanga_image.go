@@ -11,7 +11,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
-func MangabatImage(c *gin.Context) {
+func FizmangaImage(c *gin.Context) {
 	currPath := c.Request.URL.String()
 	splitPath := strings.Split(currPath, "/image_proxy/")
 	if len(splitPath) != 2 {
@@ -35,7 +35,7 @@ func MangabatImage(c *gin.Context) {
 		return
 	}
 	req.Header.Set("Sec-Ch-Ua", "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"98\", \"Google Chrome\";v=\"98\"")
-	req.Header.Set("Referer", "https://m.mangabat.com/")
+	req.Header.Set("Referer", "https://fizmanga.com/")
 	req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
 	req.Header.Set("Sec-Ch-Ua-Platform", "\"macOS\"")

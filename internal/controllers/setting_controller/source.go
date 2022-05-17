@@ -26,6 +26,13 @@ func GetAvailableSource(c *gin.Context) {
 				Active:   true,
 			},
 			{
+				ID:       "fizmanga",
+				Language: "en",
+				Title:    "Fizmanga",
+				WebLink:  "https://fizmanga.com/",
+				Active:   true,
+			},
+			{
 				ID:       "mangaupdates",
 				Language: "en",
 				Title:    "Manga Updates",
@@ -37,13 +44,6 @@ func GetAvailableSource(c *gin.Context) {
 				Language: "id",
 				Title:    "Klik Manga",
 				WebLink:  "https://klikmanga.id/",
-				Active:   true,
-			},
-			{
-				ID:       "fizmanga",
-				Language: "en",
-				Title:    "Fizmanga",
-				WebLink:  "https://fizmanga.com/",
 				Active:   true,
 			},
 			{

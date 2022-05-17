@@ -311,6 +311,8 @@ func GetMangaupdatesDetailChapter(ctx context.Context, queryParams models.QueryP
 		})
 	}
 
+	chapter.SourceLink = "#"
+
 	return chapter, nil
 }
 

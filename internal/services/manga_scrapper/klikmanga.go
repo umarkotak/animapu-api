@@ -275,5 +275,7 @@ func GetKlikmangaDetailChapter(ctx context.Context, queryParams models.QueryPara
 		return chapter, err
 	}
 
+	chapter.SourceLink = fmt.Sprintf("https://klikmanga.id/manga/%v/%v/?style=list", queryParams.SourceID, queryParams.ChapterID)
+
 	return chapter, nil
 }

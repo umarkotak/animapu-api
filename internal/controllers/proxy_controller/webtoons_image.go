@@ -1,13 +1,13 @@
 package proxy_controller
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
@@ -15,11 +15,18 @@ func WebtoonsImage(c *gin.Context) {
 	currPath := c.Request.URL.String()
 	splitPath := strings.Split(currPath, "/image_proxy/")
 	if len(splitPath) != 2 {
-		render.ErrorResponse(c.Request.Context(), c, fmt.Errorf("Invalid format"), false)
+		logrus.WithContext(c.Request.Context()).Error(models.ErrInvalidFormat)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrInvalidFormat, false)
 		return
 	}
 
 	targetUrl := splitPath[1]
+
+	if targetUrl == "" {
+		logrus.WithContext(c.Request.Context()).Error(models.ErrInvalidTargetURL)
+		render.ErrorResponse(c.Request.Context(), c, models.ErrInvalidTargetURL, false)
+		return
+	}
 
 	req, err := http.NewRequest("GET", targetUrl, nil)
 	if err != nil {

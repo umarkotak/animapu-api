@@ -5,6 +5,7 @@ type (
 		ID                string         `json:"id"`
 		SourceID          string         `json:"source_id"`
 		Source            string         `json:"source"`
+		SourceLink        string         `json:"source_link"`
 		SecondarySourceID string         `json:"secondary_source_id"`
 		SecondarySource   string         `json:"secondary_source"`
 		Title             string         `json:"title"`

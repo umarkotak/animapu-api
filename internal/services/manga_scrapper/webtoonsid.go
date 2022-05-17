@@ -201,5 +201,7 @@ func GetWebtoonsidDetailChapter(ctx context.Context, queryParams models.QueryPar
 		return chapter, err
 	}
 
+	chapter.SourceLink = fmt.Sprintf("https://www.webtoons.com/id/%v", formattedID)
+
 	return chapter, nil
 }
