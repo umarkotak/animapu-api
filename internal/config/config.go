@@ -7,7 +7,9 @@ import (
 )
 
 type Config struct {
-	CacheObj *cache.Cache
+	CacheObj          *cache.Cache
+	AnimapuOnlineHost string
+	AnimapuLocalHost  string
 }
 
 var config Config
@@ -16,7 +18,9 @@ func Initialize() {
 	cacheObj := cache.New(5*time.Minute, 10*time.Minute)
 
 	config = Config{
-		CacheObj: cacheObj,
+		CacheObj:          cacheObj,
+		AnimapuOnlineHost: "https://animapu-api.herokuapp.com",
+		AnimapuLocalHost:  "http://localhost:6001",
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -220,9 +221,7 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
-				fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/mangabat/image_proxy/%v", e.Attr("src")),
-				fmt.Sprintf("https://go-animapu.herokuapp.com/image_proxy/%v", e.Attr("src")),
-				fmt.Sprintf("http://localhost:6001/mangas/mangabat/image_proxy/%v", e.Attr("src")),
+				fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
 			},
 		})
 	})

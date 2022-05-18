@@ -10,6 +10,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -52,10 +53,7 @@ func GetKlikmangaLatestManga(ctx context.Context, queryParams models.QueryParams
 				{
 					Index: 1,
 					ImageUrls: []string{
-						fmt.Sprintf("http://localhost:60001/mangas/klikmanga/image_proxy/%s", e.ChildAttr("img.img-responsive", "src")),
-						fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", sourceID),
-						fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", sourceID),
-						fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", sourceID),
+						fmt.Sprintf("%v/mangas/klikmanga/image_proxy/%s", config.Get().AnimapuOnlineHost, e.ChildAttr("img.img-responsive", "src")),
 					},
 				},
 			},
@@ -110,17 +108,10 @@ func GetKlikmangaDetailManga(ctx context.Context, queryParams models.QueryParams
 	}
 
 	c.OnHTML("body > div.wrap > div > div.site-content > div > div.profile-manga > div > div > div > div.tab-summary > div.summary_image > a > img", func(e *colly.HTMLElement) {
-		// manga.CoverImages = []models.CoverImage{
-		// 	{Index: 1, ImageUrls: []string{e.Attr("src")}},
-		// }
-
 		manga.CoverImages = []models.CoverImage{{
 			Index: 1,
 			ImageUrls: []string{
-				fmt.Sprintf("http://localhost:60001/mangas/klikmanga/image_proxy/%s", e.Attr("src")),
-				fmt.Sprintf("https://thumb.mghubcdn.com/mn/%s.jpg", queryParams.SourceID),
-				fmt.Sprintf("https://thumb.mghubcdn.com/md/%s.jpg", queryParams.SourceID),
-				fmt.Sprintf("https://thumb.mghubcdn.com/m4l/%s.jpg", queryParams.SourceID),
+				fmt.Sprintf("%v/mangas/klikmanga/image_proxy/%s", config.Get().AnimapuOnlineHost, e.Attr("src")),
 			},
 		}}
 	})

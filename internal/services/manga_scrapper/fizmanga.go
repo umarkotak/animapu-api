@@ -11,6 +11,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -53,10 +54,7 @@ func GetFizmangaLatestManga(ctx context.Context, queryParams models.QueryParams)
 				{
 					Index: 1,
 					ImageUrls: []string{
-						fmt.Sprintf("http://localhost:6001/mangas/fizmanga/image_proxy/%v", e.ChildAttr("a img", "data-lazy-src")),
-						fmt.Sprintf("http://localhost:6001/mangas/fizmanga/image_proxy/%v", e.ChildAttr("a img", "src")),
-						fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/fizmanga/image_proxy/%v", e.ChildAttr("a img", "data-lazy-src")),
-						fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/fizmanga/image_proxy/%v", e.ChildAttr("a img", "src")),
+						fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a img", "data-lazy-src")),
 					},
 				},
 			},
@@ -148,8 +146,7 @@ func GetFizmangaDetailManga(ctx context.Context, queryParams models.QueryParams)
 	c.OnHTML("div.tab-summary > div.summary_image > a > img", func(e *colly.HTMLElement) {
 		manga.CoverImages = []models.CoverImage{
 			{Index: 1, ImageUrls: []string{
-				fmt.Sprintf("http://localhost:6001/mangas/fizmanga/image_proxy/%v", e.Attr("data-lazy-src")),
-				fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/fizmanga/image_proxy/%v", e.Attr("data-lazy-src")),
+				fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("data-lazy-src")),
 			}},
 		}
 	})
@@ -229,10 +226,14 @@ func GetFizmangaDetailChapter(ctx context.Context, queryParams models.QueryParam
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
+	chapterNumberSplitted := strings.Split(queryParams.ChapterID, "-")
+	chapterNumber, _ := strconv.ParseFloat(chapterNumberSplitted[1], 64)
+
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        "fizmanga",
+		Number:        chapterNumber,
 		ChapterImages: []models.ChapterImage{},
 	}
 
@@ -241,8 +242,7 @@ func GetFizmangaDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: idx,
 			ImageUrls: []string{
-				fmt.Sprintf("http://localhost:6001/mangas/fizmanga/image_proxy/%v", e.Attr("data-lazy-src")),
-				fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/fizmanga/image_proxy/%v", e.Attr("data-lazy-src")),
+				fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("data-lazy-src")),
 			},
 		})
 		idx += 1

@@ -22,6 +22,10 @@ func ReadManga(c *gin.Context) {
 	switch queryParams.Source {
 	case "mangaupdates":
 		chapter, err = manga_scrapper.GetMangaupdatesDetailChapter(c.Request.Context(), queryParams)
+	case "mangabat":
+		chapter, err = manga_scrapper.GetMangabatDetailChapter(c.Request.Context(), queryParams)
+	case "klikmanga":
+		chapter, err = manga_scrapper.GetKlikmangaDetailChapter(c.Request.Context(), queryParams)
 	case "webtoonsid":
 		chapter, err = manga_scrapper.GetWebtoonsidDetailChapter(c.Request.Context(), queryParams)
 	case "fizmanga":
@@ -32,13 +36,9 @@ func ReadManga(c *gin.Context) {
 	case "maidmy":
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
-	case "klikmanga":
-		chapter, err = manga_scrapper.GetKlikmangaDetailChapter(c.Request.Context(), queryParams)
 	case "mangareadorg":
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return
-	case "mangabat":
-		chapter, err = manga_scrapper.GetMangabatDetailChapter(c.Request.Context(), queryParams)
 	default:
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotFound, false)
 		return
