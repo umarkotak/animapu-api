@@ -210,10 +210,82 @@ func GetFizmangaDetailManga(ctx context.Context, queryParams models.QueryParams)
 func GetFizmangaByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
+	var err error
 
 	mangas := []models.Manga{}
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	selector := "div.c-tabs-item > div.row.c-tabs-item__content"
+	if queryParams.Page > 1 {
+		selector = "div.row.c-tabs-item__content"
+	}
+
+	c.OnHTML(selector, func(e *colly.HTMLElement) {
+		sourceID := e.ChildAttr("div.tab-thumb.c-image-hover a", "href")
+		sourceID = strings.Replace(sourceID, "https://fizmanga.com/manga/", "", -1)
+		sourceID = strings.Replace(sourceID, "/", "", -1)
+
+		latestChapterID := e.ChildAttr("div.font-meta.chapter a", "href")
+		latestChapterID = strings.Replace(latestChapterID, "https://fizmanga.com/manga/", "", -1)
+		latestChapterID = strings.Replace(latestChapterID, sourceID, "", -1)
+		latestChapterID = strings.Replace(latestChapterID, "/", "", -1)
+
+		reg, _ := regexp.Compile("[^0-9]+")
+		latestChapterNumberString := reg.ReplaceAllString(latestChapterID, "")
+		number, _ := strconv.ParseFloat(latestChapterNumberString, 64)
+
+		mangas = append(mangas, models.Manga{
+			ID:                  sourceID,
+			Source:              "fizmanga",
+			SourceID:            sourceID,
+			Title:               e.ChildText("h3.h4 a"),
+			LatestChapterID:     latestChapterID,
+			LatestChapterNumber: number,
+			LatestChapterTitle:  e.ChildText("div.font-meta.chapter a"),
+			CoverImages: []models.CoverImage{
+				{
+					Index: 1,
+					ImageUrls: []string{
+						fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a img", "src")),
+					},
+				},
+			},
+		})
+	})
+
+	if queryParams.Page <= 1 {
+		err = c.Visit(fmt.Sprintf("https://fizmanga.com/?s=%v&post_type=wp-manga", queryParams.Title))
+	} else {
+		requestData := strings.NewReader(
+			strings.Join([]string{
+				"action=madara_load_more",
+				fmt.Sprintf("page=%v", queryParams.Page-1),
+				"template=madara-core/content/content-search",
+				fmt.Sprintf("vars[s]:%v", queryParams.Title),
+				"vars[orderby]:",
+				"vars[paged]:1",
+				"vars[template]:search",
+				"vars[meta_query][0][relation]:AND",
+				"vars[meta_query][relation]:OR",
+				"vars[post_type]:wp-manga",
+				"vars[post_status]:publish",
+				"vars[manga_archives_item_layout]:default",
+			}, "&"),
+		)
+		err = c.Request(
+			"POST",
+			"Request URL: https://fizmanga.com/wp-admin/admin-ajax.php",
+			requestData,
+			colly.NewContext(),
+			http.Header{
+				"Authority":      []string{"fizmanga.com"},
+				"Origin":         []string{"https://fizmanga.com"},
+				"Sec-Fetch-Site": []string{"same-origin"},
+				"Sec-Fetch-Mode": []string{"cors"},
+				"Sec-Fetch-Dest": []string{"empty"},
+				"Referer":        []string{"https://fizmanga.com/"},
+			},
+		)
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
