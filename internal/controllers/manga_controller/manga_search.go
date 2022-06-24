@@ -32,6 +32,8 @@ func SearchManga(c *gin.Context) {
 		mangas, err = manga_scrapper.GetWebtoonsidByQuery(c.Request.Context(), queryParams)
 	case "fizmanga":
 		mangas, err = manga_scrapper.GetFizmangaByQuery(c.Request.Context(), queryParams)
+	case "mangahub":
+		mangas, err = manga_scrapper.GetMangahubByQuery(c.Request.Context(), queryParams)
 	case "mangadex":
 		render.ErrorResponse(c.Request.Context(), c, models.ErrMangaSourceNotImplemented, false)
 		return

@@ -40,6 +40,13 @@ func GetAvailableSource(c *gin.Context) {
 				Active:   true,
 			},
 			{
+				ID:       "mangahub",
+				Language: "en",
+				Title:    "Manga Hub",
+				WebLink:  "https://www.mangahub.io/",
+				Active:   true,
+			},
+			{
 				ID:       "klikmanga",
 				Language: "id",
 				Title:    "Klik Manga",

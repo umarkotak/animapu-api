@@ -17,6 +17,7 @@ var (
 	ErrMangaSourceNotImplemented = errors.New("manga source not implemented yet")
 	ErrInvalidFormat             = errors.New("invalid format")
 	ErrInvalidTargetURL          = errors.New("invalid target url")
+	ErrCacheNotFound             = errors.New("cache not found")
 )
 
 var (

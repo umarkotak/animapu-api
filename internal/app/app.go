@@ -1,7 +1,10 @@
 package app
 
 import (
+	"fmt"
 	"os"
+	"path"
+	"runtime"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -10,13 +13,23 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
+	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
 
 func Initialize() {
 	logger.Initialize()
 	logrus.AddHook(&logger.AnimapuHook{})
+	logrus.SetReportCaller(true)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
+			// frame.File: For exact path
+			return "", fmt.Sprintf("[%v:%v]:", path.Base(frame.File), frame.Line)
+		},
+	})
+
 	config.Initialize()
+	repository.Initialize()
 }
 
 func Start() {
