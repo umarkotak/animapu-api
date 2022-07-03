@@ -7,6 +7,7 @@ import (
 	"firebase.google.com/go/v4/db"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/internal/models"
 	"google.golang.org/api/option"
 )
 
@@ -14,7 +15,7 @@ var (
 	firebaseApp       *firebase.App
 	firebaseClient    *db.Client
 	animapuLiteApiRef *db.Ref
-	mangahubRef       *db.Ref
+	popularMangaRef   *db.Ref
 )
 
 func Initialize() {
@@ -50,13 +51,24 @@ func Initialize() {
 		}
 	}
 
-	mangahubRef = animapuLiteApiRef.Child("mangahub")
-	if mangahubRef == nil {
-		err = mangahubRef.Set(ctx, map[string]interface{}{
-			"mangahub": map[string]interface{}{},
-		})
+	popularMangaRef = animapuLiteApiRef.Child("popular_manga")
+	if popularMangaRef == nil {
+		err = popularMangaRef.Set(ctx, map[string]interface{}{})
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
+		}
+	}
+
+	for _, mangaSource := range models.MangaSources {
+		mangaSourceRef := animapuLiteApiRef.Child(mangaSource.ID)
+		if mangaSourceRef == nil {
+			err = mangaSourceRef.Set(ctx, map[string]interface{}{
+				mangaSource.ID: map[string]interface{}{},
+				"available":    true,
+			})
+			if err != nil {
+				logrus.WithContext(ctx).Error(err)
+			}
 		}
 	}
 }

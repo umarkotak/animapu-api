@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type (
 	Manga struct {
 		ID                  string       `json:"id"`
@@ -18,6 +20,7 @@ type (
 		ChapterPaginated    bool         `json:"chapter_paginated"`
 		Chapters            []Chapter    `json:"chapters"`
 		CoverImages         []CoverImage `json:"cover_image"`
+		PopularityPoint     int64        `json:"popularity_point"`
 	}
 
 	CoverImage struct {
@@ -25,6 +28,12 @@ type (
 		ImageUrls []string `json:"image_urls"`
 	}
 )
+
+func (m *Manga) GetUniqueKey() string {
+	return fmt.Sprintf(
+		"%v:%v:%v:%v", m.Source, m.SourceID, m.SecondarySource, m.SecondarySourceID,
+	)
+}
 
 func (m *Manga) GenerateLatestChapter() {
 	if len(m.Chapters) > 0 {

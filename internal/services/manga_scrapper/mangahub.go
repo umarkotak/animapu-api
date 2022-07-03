@@ -18,7 +18,7 @@ import (
 func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
-	fbMangaHubHome, err := repository.FbMangahubGetHome(ctx)
+	fbMangaHubHome, err := repository.FbGetHomeByMangaSource(ctx, models.SOURCE_MANGAHUB)
 	cachedMangas := fbMangaHubHome.Mangas
 	if err == nil &&
 		time.Now().UTC().Before(fbMangaHubHome.ExpiredAt) &&
@@ -66,7 +66,7 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 		mangas = append(mangas, models.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
-			Source:              "mangahub",
+			Source:              models.SOURCE_MANGAHUB,
 			Title:               s.Find("a._31Z6T.text-secondary").Text(),
 			Description:         "Description unavailable",
 			Genres:              []string{},
@@ -92,7 +92,7 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 		if err != nil || len(mangas) <= 0 {
 			return
 		}
-		_, err = repository.FbMangahubUpsertHome(context.Background(), mangas)
+		_, err = repository.FbUpsertHomeByMangaSource(context.Background(), models.SOURCE_MANGAHUB, mangas)
 		if err != nil {
 			logrus.WithContext(context.Background()).Error(err)
 		}
@@ -104,7 +104,7 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	manga := models.Manga{
 		ID:          queryParams.SourceID,
-		Source:      "mangahub",
+		Source:      models.SOURCE_MANGAHUB,
 		SourceID:    queryParams.SourceID,
 		Description: "Description unavailable",
 		Genres:      []string{},
@@ -113,7 +113,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 		Chapters:    []models.Chapter{},
 	}
 
-	fbMangaHubDetail, err := repository.FbMangahubGetDetail(ctx, manga)
+	fbMangaHubDetail, err := repository.FbGetMangaDetailByMangaSource(ctx, models.SOURCE_MANGAHUB, manga)
 	cachedManga := fbMangaHubDetail.Manga
 	if err != nil &&
 		time.Now().UTC().Before(fbMangaHubDetail.ExpiredAt) &&
@@ -172,7 +172,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 
 		manga.Chapters = append(manga.Chapters, models.Chapter{
 			ID:       chapterID,
-			Source:   "mangahub",
+			Source:   models.SOURCE_MANGAHUB,
 			SourceID: chapterID,
 			Title:    fmt.Sprintf("%v %v", chapterNumber, s.Find("a span._2IG5P").Text()),
 			Index:    idx,
@@ -189,7 +189,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 
 	// Cache mangahub manga detail to firebase
 	if err == nil && len(manga.Chapters) > 0 {
-		_, err = repository.FbMangahubUpsertDetail(context.Background(), manga)
+		_, err = repository.FbUpsertMangaDetailByMangaSource(context.Background(), models.SOURCE_MANGAHUB, manga)
 		if err != nil {
 			logrus.WithContext(context.Background()).Error(err)
 		}
@@ -246,7 +246,7 @@ func GetMangahubDetailChapter(ctx context.Context, queryParams models.QueryParam
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
-		Source:        "mangahub",
+		Source:        models.SOURCE_MANGAHUB,
 		Title:         "",
 		Index:         0,
 		Number:        chapterNumber,

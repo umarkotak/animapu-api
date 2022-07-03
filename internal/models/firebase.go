@@ -2,14 +2,14 @@ package models
 
 import "time"
 
-type FbMangahubHome struct {
+type FbMangaHomeCache struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 	UpdatedAtUnix int64     `json:"updated_at_unix"`
 	ExpiredAt     time.Time `json:"expired_at"`
 	Mangas        []Manga   `json:"mangas"`
 }
 
-type FbMangahubDetail struct {
+type FbMangaDetailCache struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 	UpdatedAtUnix int64     `json:"updated_at_unix"`
 	ExpiredAt     time.Time `json:"expired_at"`

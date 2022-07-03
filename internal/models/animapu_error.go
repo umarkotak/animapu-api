@@ -18,6 +18,7 @@ var (
 	ErrInvalidFormat             = errors.New("invalid format")
 	ErrInvalidTargetURL          = errors.New("invalid target url")
 	ErrCacheNotFound             = errors.New("cache not found")
+	ErrNotFound                  = errors.New("not found")
 )
 
 var (
@@ -31,6 +32,11 @@ var (
 			StatusCode: 404,
 			ErrorCode:  "Manga source not found",
 			Message:    "Sumber manga yang anda cari tidak dapat ditemukan.",
+		},
+		ErrNotFound: {
+			StatusCode: 404,
+			ErrorCode:  "Not found",
+			Message:    "Tidak dapat ditemukan.",
 		},
 		ErrMangaSourceNotImplemented: {
 			StatusCode: 422,
