@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -155,7 +156,9 @@ func FbGetPopularManga(ctx context.Context) ([]models.Manga, error) {
 		mangas = append(mangas, oneManga)
 	}
 
-	// TODO: sort by popularity point
+	sort.Slice(mangas, func(i, j int) bool {
+		return mangas[i].PopularityPoint > mangas[j].PopularityPoint
+	})
 
 	return mangas, nil
 }

@@ -26,6 +26,7 @@ func PostMangaUpvote(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
+	manga.Chapters = []models.Chapter{}
 	manga, err = repository.FbUpvoteManga(c.Request.Context(), manga)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
