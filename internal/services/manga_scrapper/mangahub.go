@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository"
@@ -43,6 +42,7 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 		return MangasPaginate(cachedMangas, queryParams.Page, 30), nil
 	}
 
+	var prevMangaCh, currentMangaCh float64
 	doc.Find(".iqzwK.list-group-item").Each(func(i int, s *goquery.Selection) {
 		imageUrl, _ := s.Find("img").Attr("src")
 
@@ -63,28 +63,33 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 		chapterNumberString := utils.RemoveNonNumeric(chapterID)
 		chapterNumber, _ := strconv.ParseFloat(chapterNumberString, 64)
 
-		mangas = append(mangas, models.Manga{
-			ID:                  mangaID,
-			SourceID:            mangaID,
-			Source:              models.SOURCE_MANGAHUB,
-			Title:               s.Find("a._31Z6T.text-secondary").Text(),
-			Description:         "Description unavailable",
-			Genres:              []string{},
-			Status:              "Ongoing",
-			Rating:              "10",
-			LatestChapterID:     chapterID,
-			LatestChapterNumber: chapterNumber,
-			LatestChapterTitle:  chapterID,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
-				{
-					Index: 1,
-					ImageUrls: []string{
-						imageUrl,
+		currentMangaCh = chapterNumber
+		if currentMangaCh != prevMangaCh {
+			mangas = append(mangas, models.Manga{
+				ID:                  mangaID,
+				SourceID:            mangaID,
+				Source:              models.SOURCE_MANGAHUB,
+				Title:               s.Find("a._31Z6T.text-secondary").Text(),
+				Description:         "Description unavailable",
+				Genres:              []string{},
+				Status:              "Ongoing",
+				Rating:              "10",
+				LatestChapterID:     chapterID,
+				LatestChapterNumber: chapterNumber,
+				LatestChapterTitle:  chapterID,
+				Chapters:            []models.Chapter{},
+				CoverImages: []models.CoverImage{
+					{
+						Index: 1,
+						ImageUrls: []string{
+							imageUrl,
+						},
 					},
 				},
-			},
-		})
+			})
+		}
+		prevMangaCh = currentMangaCh
+
 	})
 
 	// Cache mangahub home to firebase
@@ -140,6 +145,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 		return manga, nil
 	}
 
+	// doc, err := goquery.NewDocumentFromReader(strings.NewReader(models.DUMMY_MANGAHUB_DETAIL_EMPTY))
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(scrapeNinjaResponse.Body))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -182,9 +188,25 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 		idx += 1
 	})
 
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return manga, err
+	if len(manga.Chapters) <= 0 {
+		tempString := doc.Find("._3QCtP div div span a").Text()
+		chapterNumberString := utils.RemoveNonNumeric(tempString)
+		tempLastChapter, _ := strconv.ParseFloat(chapterNumberString, 64)
+
+		if tempLastChapter > 0 {
+			idx := int64(1)
+			for i := int64(tempLastChapter); i >= int64(1); i-- {
+				manga.Chapters = append(manga.Chapters, models.Chapter{
+					ID:       fmt.Sprintf("chapter-%v", i),
+					Source:   models.SOURCE_MANGAHUB,
+					SourceID: fmt.Sprintf("chapter-%v", i),
+					Title:    fmt.Sprintf("Chapter %v", i),
+					Index:    idx,
+					Number:   float64(i),
+				})
+				idx += 1
+			}
+		}
 	}
 
 	// Cache mangahub manga detail to firebase
@@ -200,40 +222,69 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 }
 
 func GetMangahubByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	query := strings.Replace(queryParams.Title, " ", "%20", -1)
+	scrapeNinjaResponse, err := repository.QuickScrape(ctx, fmt.Sprintf("https://mangahub.io/search?q=%v", query))
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, nil
+	}
+	if scrapeNinjaResponse.Info.StatusCode != 200 {
+		logrus.WithContext(ctx).Error(fmt.Errorf("Scrape ninja non 200"))
+		return []models.Manga{}, nil
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(scrapeNinjaResponse.Body))
+	// doc, err := goquery.NewDocumentFromReader(strings.NewReader(models.DUMMY_MANGAHUB_SEARCH))
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, nil
+	}
 
 	mangas := []models.Manga{}
 
-	mangas = append(mangas, models.Manga{
-		ID:                  "",
-		SourceID:            "",
-		Source:              "source",
-		SecondarySourceID:   "",
-		SecondarySource:     "secondary_source",
-		Title:               "Untitled",
-		Description:         "Description unavailable",
-		Genres:              []string{},
-		Status:              "Ongoing",
-		Rating:              "10",
-		LatestChapterID:     "chapter_id",
-		LatestChapterNumber: 0,
-		LatestChapterTitle:  "Chapter 0",
-		CoverImages: []models.CoverImage{
-			{
-				Index: 1,
-				ImageUrls: []string{
-					fmt.Sprintf("https://animapu-lite.vercel.app/images/manga/%v", "image_id"),
+	doc.Find("._1KYcM.col-sm-6.col-xs-12 .media-manga.media").Each(func(i int, s *goquery.Selection) {
+		imageUrl, _ := s.Find("img").Attr("src")
+
+		mangaLink, _ := s.Find(".media-heading a").Attr("href")
+		mangaLinkSplit := strings.Split(mangaLink, "/")
+		if len(mangaLinkSplit) <= 0 {
+			return
+		}
+		mangaID := mangaLinkSplit[len(mangaLinkSplit)-1]
+
+		chapterLink, _ := s.Find("a._8Qtbo.text-secondary._2euQb").Attr("href")
+		chapterLinkSplit := strings.Split(chapterLink, "/")
+		if len(chapterLinkSplit) <= 0 {
+			return
+		}
+		chapterID := chapterLinkSplit[len(chapterLinkSplit)-1]
+
+		chapterNumberString := utils.RemoveNonNumeric(chapterID)
+		chapterNumber, _ := strconv.ParseFloat(chapterNumberString, 64)
+
+		mangas = append(mangas, models.Manga{
+			ID:                  mangaID,
+			SourceID:            mangaID,
+			Source:              models.SOURCE_MANGAHUB,
+			Title:               s.Find(".media-heading a").Text(),
+			Description:         "Description unavailable",
+			Genres:              []string{},
+			Status:              "Ongoing",
+			Rating:              "10",
+			LatestChapterID:     chapterID,
+			LatestChapterNumber: chapterNumber,
+			LatestChapterTitle:  chapterID,
+			Chapters:            []models.Chapter{},
+			CoverImages: []models.CoverImage{
+				{
+					Index: 1,
+					ImageUrls: []string{
+						imageUrl,
+					},
 				},
 			},
-		},
+		})
 	})
-
-	err := c.Visit(fmt.Sprintf("https://animapu-lite.vercel.app/search/%v", queryParams.Page))
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return mangas, err
-	}
 
 	return mangas, nil
 }
@@ -253,6 +304,12 @@ func GetMangahubDetailChapter(ctx context.Context, queryParams models.QueryParam
 		ChapterImages: []models.ChapterImage{},
 	}
 
+	sourceIdCleaned := queryParams.SourceID
+	sourceIdCleanedArr := strings.Split(sourceIdCleaned, "_")
+	if len(sourceIdCleanedArr) > 0 {
+		sourceIdCleaned = sourceIdCleanedArr[0]
+	}
+
 	for i := int64(1); i <= pageCountConfig; i++ {
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: i,
@@ -261,6 +318,7 @@ func GetMangahubDetailChapter(ctx context.Context, queryParams models.QueryParam
 				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.png", queryParams.SourceID, chapterNumber, i),
 				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.jpeg", queryParams.SourceID, chapterNumber, i),
 				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.webp", queryParams.SourceID, chapterNumber, i),
+				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.jpg", sourceIdCleaned, chapterNumber, i),
 			},
 		})
 	}
