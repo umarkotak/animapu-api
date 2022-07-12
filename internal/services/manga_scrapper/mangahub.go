@@ -242,6 +242,8 @@ func GetMangahubByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 
 	mangas := []models.Manga{}
 
+	duplicateTitles := []string{}
+
 	doc.Find("._1KYcM.col-sm-6.col-xs-12 .media-manga.media").Each(func(i int, s *goquery.Selection) {
 		imageUrl, _ := s.Find("img").Attr("src")
 
@@ -262,28 +264,32 @@ func GetMangahubByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 		chapterNumberString := utils.RemoveNonNumeric(chapterID)
 		chapterNumber, _ := strconv.ParseFloat(chapterNumberString, 64)
 
-		mangas = append(mangas, models.Manga{
-			ID:                  mangaID,
-			SourceID:            mangaID,
-			Source:              models.SOURCE_MANGAHUB,
-			Title:               s.Find(".media-heading a").Text(),
-			Description:         "Description unavailable",
-			Genres:              []string{},
-			Status:              "Ongoing",
-			Rating:              "10",
-			LatestChapterID:     chapterID,
-			LatestChapterNumber: chapterNumber,
-			LatestChapterTitle:  chapterID,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
-				{
-					Index: 1,
-					ImageUrls: []string{
-						imageUrl,
+		compactTitle := strings.ToLower(utils.RemoveNonAlphabet(s.Find(".media-heading a").Text()))
+		if !utils.StringContains(duplicateTitles, compactTitle) {
+			mangas = append(mangas, models.Manga{
+				ID:                  mangaID,
+				SourceID:            mangaID,
+				Source:              models.SOURCE_MANGAHUB,
+				Title:               s.Find(".media-heading a").Text(),
+				Description:         "Description unavailable",
+				Genres:              []string{},
+				Status:              "Ongoing",
+				Rating:              "10",
+				LatestChapterID:     chapterID,
+				LatestChapterNumber: chapterNumber,
+				LatestChapterTitle:  chapterID,
+				Chapters:            []models.Chapter{},
+				CoverImages: []models.CoverImage{
+					{
+						Index: 1,
+						ImageUrls: []string{
+							imageUrl,
+						},
 					},
 				},
-			},
-		})
+			})
+		}
+		duplicateTitles = append(duplicateTitles, compactTitle)
 	})
 
 	return mangas, nil
