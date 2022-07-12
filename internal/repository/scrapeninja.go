@@ -19,23 +19,24 @@ func QuickScrape(ctx context.Context, targetUrl string) (models.ScrapeNinjaRespo
 	scrapeNinjaResponse := models.ScrapeNinjaResponse{}
 
 	scrapeUrl := fmt.Sprintf("%v/scrape", config.Get().ScrapeNinjaConfig.Host)
-	params := map[string]interface{}{
-		"url": targetUrl,
-	}
-	payload, _ := json.Marshal(params)
-	req, _ := http.NewRequest(
-		"POST", scrapeUrl, strings.NewReader(string(payload)),
-	)
-	req.Header.Add("content-type", "application/json")
-	req.Header.Add("X-RapidAPI-Host", "scrapeninja.p.rapidapi.com")
 
 	for _, rapidApiKey := range config.Get().ScrapeNinjaConfig.RapidApiKeys {
+		params := map[string]interface{}{
+			"url": targetUrl,
+		}
+		payload, _ := json.Marshal(params)
+		req, _ := http.NewRequest(
+			"POST", scrapeUrl, strings.NewReader(string(payload)),
+		)
+		req.Header.Add("content-type", "application/json")
+		req.Header.Add("X-RapidAPI-Host", "scrapeninja.p.rapidapi.com")
+
 		req.Header.Del("X-RapidAPI-Key")
 		req.Header.Add("X-RapidAPI-Key", rapidApiKey)
 
 		res, err = http.DefaultClient.Do(req)
 
-		if err != nil {
+		if err != nil || res.StatusCode != 200 {
 			continue
 		}
 		break

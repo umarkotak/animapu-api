@@ -3,6 +3,7 @@ package manga_scrapper
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -226,17 +227,51 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-	chapter.SourceLink = fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
+	// err := c.Visit(fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
+	// chapter.SourceLink = fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
 
-	if len(chapter.ChapterImages) <= 0 {
-		err = c.Visit(fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-		chapter.SourceLink = fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
+	// if len(chapter.ChapterImages) <= 0 {
+	// 	err = c.Visit(fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
+	// 	chapter.SourceLink = fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
+	// }
+
+	// if len(chapter.ChapterImages) <= 0 {
+	// 	err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
+	// 	chapter.SourceLink = fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
+	// }
+
+	var err error
+	targets := []string{
+		fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
+		fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
+		fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
 	}
-
-	if len(chapter.ChapterImages) <= 0 {
-		err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-		chapter.SourceLink = fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
+	for _, targetLink := range targets {
+		err = c.Request(
+			"GET",
+			targetLink,
+			strings.NewReader("{}"),
+			colly.NewContext(),
+			http.Header{
+				"Authority":                 []string{"readmangabat.com"},
+				"Accept":                    []string{"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+				"Accept-Language":           []string{"en-US,en;q=0.9,id;q=0.8"},
+				"Cache-Control":             []string{"max-age=0"},
+				"Sec-Fetch-Site":            []string{"same-origin"},
+				"Sec-Fetch-Mode":            []string{"navigate"},
+				"Sec-Fetch-Dest":            []string{"document"},
+				"Sec-Fetch-User":            []string{"?1"},
+				"Upgrade-Insecure-Requests": []string{"1"},
+				"User-Agent":                []string{"Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"},
+				"Referer":                   []string{targetLink},
+			},
+		)
+		if err != nil {
+			continue
+		}
+		if len(chapter.ChapterImages) > 0 {
+			break
+		}
 	}
 
 	if err != nil {

@@ -31,7 +31,7 @@ func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
 	if ctx != nil {
 		reqID = ctx.Value("request_id")
 	}
-	formattedLog := fmt.Sprintf("[%v][%v]: %v", time.Now().UTC(), reqID, entry.Message)
+	formattedLog := fmt.Sprintf("[%v][%v]: %v; %+v", time.Now().UTC(), reqID, entry.Message, entry.Data)
 
 	if reqID == nil {
 		return nil

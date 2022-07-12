@@ -140,6 +140,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 			return cachedManga, nil
 		}
 		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"target_path":           fmt.Sprintf("https://mangahub.io/manga/%v", manga.SourceID),
 			"scrape_ninja_response": scrapeNinjaResponse,
 		}).Error(fmt.Errorf("Scrape ninja non 200"))
 		return manga, nil
