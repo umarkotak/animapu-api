@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type (
 	QueryParams struct {
 		Source            string `json:"source"`
@@ -10,3 +12,15 @@ type (
 		Title             string `json:"title"`
 	}
 )
+
+func (qp *QueryParams) ToKey() string {
+	return fmt.Sprintf(
+		"%v:%v:%v:%v:%v:%v",
+		qp.Source,
+		qp.SourceID,
+		qp.SecondarySourceID,
+		qp.Page,
+		qp.ChapterID,
+		qp.Title,
+	)
+}

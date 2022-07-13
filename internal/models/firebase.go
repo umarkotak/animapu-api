@@ -17,4 +17,6 @@ type FbMangaDetailCache struct {
 }
 
 type FbGenericCache struct {
+	ExpiredAt time.Time   `json:"expired_at"`
+	Data      interface{} `json:"data"`
 }

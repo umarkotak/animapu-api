@@ -16,6 +16,7 @@ var (
 	firebaseClient    *db.Client
 	animapuLiteApiRef *db.Ref
 	popularMangaRef   *db.Ref
+	genericCacheRef   *db.Ref
 )
 
 func Initialize() {
@@ -54,6 +55,14 @@ func Initialize() {
 	popularMangaRef = animapuLiteApiRef.Child("popular_manga")
 	if popularMangaRef == nil {
 		err = popularMangaRef.Set(ctx, map[string]interface{}{})
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+		}
+	}
+
+	genericCacheRef = animapuLiteApiRef.Child("generic_cache")
+	if genericCacheRef == nil {
+		err = genericCacheRef.Set(ctx, map[string]interface{}{})
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 		}
