@@ -189,6 +189,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 		idx += 1
 	})
 
+	// Manual chapter generation
 	if len(manga.Chapters) <= 0 {
 		tempString := doc.Find("._3QCtP div div span a").Text()
 		chapterNumberString := utils.RemoveNonNumeric(tempString)
@@ -208,6 +209,12 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 				idx += 1
 			}
 		}
+	}
+
+	if len(manga.Chapters) > 0 {
+		manga.LatestChapterID = manga.Chapters[len(manga.Chapters)-1].ID
+		manga.LatestChapterNumber = manga.Chapters[len(manga.Chapters)-1].Number
+		manga.LatestChapterTitle = manga.Chapters[len(manga.Chapters)-1].Title
 	}
 
 	// Cache mangahub manga detail to firebase
