@@ -212,9 +212,9 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 	}
 
 	if len(manga.Chapters) > 0 {
-		manga.LatestChapterID = manga.Chapters[len(manga.Chapters)-1].ID
-		manga.LatestChapterNumber = manga.Chapters[len(manga.Chapters)-1].Number
-		manga.LatestChapterTitle = manga.Chapters[len(manga.Chapters)-1].Title
+		manga.LatestChapterID = manga.Chapters[0].ID
+		manga.LatestChapterNumber = manga.Chapters[0].Number
+		manga.LatestChapterTitle = manga.Chapters[0].Title
 	}
 
 	// Cache mangahub manga detail to firebase
