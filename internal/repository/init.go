@@ -5,6 +5,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/db"
+	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
@@ -17,11 +18,19 @@ var (
 	animapuLiteApiRef *db.Ref
 	popularMangaRef   *db.Ref
 	genericCacheRef   *db.Ref
+	rdb               *redis.Client
 )
 
 func Initialize() {
 	var err error
 	ctx := context.Background()
+
+	// Init Redis
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     config.Get().RedisConfig.Endpoint,
+		Password: config.Get().RedisConfig.Password,
+		DB:       0,
+	})
 
 	// Init FB app
 	firebaseConfig := &firebase.Config{

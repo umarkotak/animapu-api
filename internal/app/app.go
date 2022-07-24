@@ -51,6 +51,9 @@ func Start() {
 	r.GET("/mangas/popular", manga_controller.GetMangaPopular)
 	r.POST("/mangas/upvote", manga_controller.PostMangaUpvote)
 
+	r.GET("/users/mangas/histories", health_controller.GetHealth)
+	r.POST("/users/mangas/histories", health_controller.GetHealth)
+
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
 	r.GET("/mangas/webtoons/image_proxy/*url", proxy_controller.WebtoonsImage)
 	r.GET("/mangas/fizmanga/image_proxy/*url", proxy_controller.FizmangaImage)

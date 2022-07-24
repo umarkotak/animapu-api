@@ -1,13 +1,16 @@
 package manga_controller
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
@@ -23,10 +26,18 @@ func GetMangaDetail(c *gin.Context) {
 	var err error
 
 	cacheKey := fmt.Sprintf("CACHED_MANGA:%v:%v:%v", queryParams.Source, queryParams.SourceID, queryParams.SecondarySourceID)
-	cachedManga, found := config.Get().CacheObj.Get(cacheKey)
-	if found {
-		render.Response(c.Request.Context(), c, cachedManga, nil, 200)
-		return
+
+	cachedJson, err := repository.Redis().Get(c.Request.Context(), cacheKey).Result()
+	if err != nil && err != redis.Nil {
+		logrus.WithContext(c.Request.Context()).Error(err)
+	}
+	if err == nil {
+		var cachedManga interface{}
+		err = json.Unmarshal([]byte(cachedJson), &cachedManga)
+		if err == nil {
+			render.Response(c.Request.Context(), c, cachedManga, nil, 200)
+			return
+		}
 	}
 
 	switch queryParams.Source {
@@ -62,7 +73,19 @@ func GetMangaDetail(c *gin.Context) {
 		return
 	}
 
-	config.Get().CacheObj.Set(cacheKey, manga, 30*time.Minute)
+	go cacheManga(context.Background(), cacheKey, manga)
 
 	render.Response(c.Request.Context(), c, manga, nil, 200)
+}
+
+func cacheManga(ctx context.Context, cacheKey string, manga models.Manga) {
+	mangaByte, err := json.Marshal(manga)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return
+	}
+	_, err = repository.Redis().Set(ctx, cacheKey, string(mangaByte), 30*time.Minute).Result()
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+	}
 }
