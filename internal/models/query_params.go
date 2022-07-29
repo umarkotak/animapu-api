@@ -13,14 +13,15 @@ type (
 	}
 )
 
-func (qp *QueryParams) ToKey() string {
+func (qp *QueryParams) ToKey(page string) string {
 	return fmt.Sprintf(
-		"%v:%v:%v:%v:%v:%v",
+		"%v:%v:%v:%v:%v:%v:%v",
 		qp.Source,
 		qp.SourceID,
 		qp.SecondarySourceID,
 		qp.Page,
 		qp.ChapterID,
 		qp.Title,
+		page,
 	)
 }

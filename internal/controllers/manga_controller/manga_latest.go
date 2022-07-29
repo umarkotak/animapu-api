@@ -2,10 +2,12 @@ package manga_controller
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
@@ -19,6 +21,12 @@ func GetMangaLatest(c *gin.Context) {
 
 	mangas := []models.Manga{}
 	var err error
+
+	cachedMangas, found := repository.GoCache().Get(queryParams.ToKey("page_latest"))
+	if found {
+		render.Response(c.Request.Context(), c, cachedMangas, nil, 200)
+		return
+	}
 
 	switch queryParams.Source {
 	case "mangaupdates":
@@ -51,6 +59,10 @@ func GetMangaLatest(c *gin.Context) {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
+	}
+
+	if len(mangas) > 0 {
+		go repository.GoCache().Set(queryParams.ToKey("page_latest"), mangas, 5*time.Minute)
 	}
 
 	render.Response(c.Request.Context(), c, mangas, nil, 200)

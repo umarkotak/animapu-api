@@ -3,7 +3,6 @@ package manga_controller
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -25,9 +24,13 @@ func GetMangaDetail(c *gin.Context) {
 	manga := models.Manga{}
 	var err error
 
-	cacheKey := fmt.Sprintf("CACHED_MANGA:%v:%v:%v", queryParams.Source, queryParams.SourceID, queryParams.SecondarySourceID)
+	cachedManga, found := repository.GoCache().Get(queryParams.ToKey("page_detail"))
+	if found {
+		render.Response(c.Request.Context(), c, cachedManga, nil, 200)
+		return
+	}
 
-	cachedJson, err := repository.Redis().Get(c.Request.Context(), cacheKey).Result()
+	cachedJson, err := repository.Redis().Get(c.Request.Context(), queryParams.ToKey("page_detail")).Result()
 	if err != nil && err != redis.Nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 	}
@@ -35,6 +38,8 @@ func GetMangaDetail(c *gin.Context) {
 		var cachedManga interface{}
 		err = json.Unmarshal([]byte(cachedJson), &cachedManga)
 		if err == nil {
+			go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 30*time.Minute)
+
 			render.Response(c.Request.Context(), c, cachedManga, nil, 200)
 			return
 		}
@@ -73,7 +78,11 @@ func GetMangaDetail(c *gin.Context) {
 		return
 	}
 
-	go cacheManga(context.Background(), cacheKey, manga)
+	if len(manga.Chapters) > 0 {
+		go cacheManga(context.Background(), queryParams.ToKey("page_detail"), manga)
+
+		go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 30*time.Minute)
+	}
 
 	render.Response(c.Request.Context(), c, manga, nil, 200)
 }
