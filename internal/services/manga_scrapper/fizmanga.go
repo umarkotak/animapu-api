@@ -42,6 +42,11 @@ func GetFizmangaLatestManga(ctx context.Context, queryParams models.QueryParams)
 		latestChapterNumberString := reg.ReplaceAllString(latestChapterID, "")
 		number, _ := strconv.ParseFloat(latestChapterNumberString, 64)
 
+		imageUrl := fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a img", "data-lazy-src"))
+		if queryParams.Page > 1 {
+			imageUrl = fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a img", "src"))
+		}
+
 		mangas = append(mangas, models.Manga{
 			ID:                  sourceID,
 			Source:              "fizmanga",
@@ -52,10 +57,8 @@ func GetFizmangaLatestManga(ctx context.Context, queryParams models.QueryParams)
 			LatestChapterTitle:  e.ChildText("div.list-chapter > div:nth-child(1) > span.chapter.font-meta > a"),
 			CoverImages: []models.CoverImage{
 				{
-					Index: 1,
-					ImageUrls: []string{
-						fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a img", "data-lazy-src")),
-					},
+					Index:     1,
+					ImageUrls: []string{imageUrl},
 				},
 			},
 		})

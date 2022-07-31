@@ -156,6 +156,8 @@ func GetKlikmangaDetailManga(ctx context.Context, queryParams models.QueryParams
 		return manga, err
 	}
 
+	manga.GenerateLatestChapter()
+
 	return manga, nil
 }
 
