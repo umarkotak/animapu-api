@@ -24,7 +24,7 @@ func ReadManga(c *gin.Context) {
 		ChapterID:         c.Param("chapter_id"),
 	}
 
-	_, chapterJsonByte, err := repository.FbGet(ctx, queryParams.ToKey("page_read"))
+	_, chapterJsonByte, err := repository.FbGet(ctx, queryParams.ToFbKey("page_read"))
 	if err == nil {
 		json.Unmarshal(chapterJsonByte, &chapter)
 		render.Response(ctx, c, chapter, nil, 200)
@@ -65,7 +65,7 @@ func ReadManga(c *gin.Context) {
 	}
 
 	if err == nil && len(chapter.ChapterImages) > 5 {
-		err = repository.FbSet(ctx, queryParams.ToKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
+		err = repository.FbSet(ctx, queryParams.ToFbKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 		}

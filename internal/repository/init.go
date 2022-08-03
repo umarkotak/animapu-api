@@ -20,6 +20,7 @@ var (
 	animapuLiteApiRef *db.Ref
 	popularMangaRef   *db.Ref
 	genericCacheRef   *db.Ref
+	usersRef          *db.Ref
 	rdb               *redis.Client
 	goCache           *cache.Cache
 )
@@ -92,6 +93,14 @@ func Initialize() {
 			if err != nil {
 				logrus.WithContext(ctx).Error(err)
 			}
+		}
+	}
+
+	usersRef = animapuLiteApiRef.Child("users")
+	if usersRef == nil {
+		err = usersRef.Set(ctx, map[string]interface{}{})
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
 		}
 	}
 }

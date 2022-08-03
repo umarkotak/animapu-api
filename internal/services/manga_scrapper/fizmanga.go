@@ -310,6 +310,7 @@ func GetFizmangaDetailChapter(ctx context.Context, queryParams models.QueryParam
 		Source:        "fizmanga",
 		Number:        chapterNumber,
 		ChapterImages: []models.ChapterImage{},
+		SourceLink:    fmt.Sprintf("https://fizmanga.com/manga/%v/%v", queryParams.SourceID, queryParams.ChapterID),
 	}
 
 	idx := int64(1)

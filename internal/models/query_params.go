@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type (
 	QueryParams struct {
@@ -24,4 +27,19 @@ func (qp *QueryParams) ToKey(page string) string {
 		qp.Title,
 		page,
 	)
+}
+
+func (qp *QueryParams) ToFbKey(page string) string {
+	tempKey := fmt.Sprintf(
+		"%v:%v:%v:%v:%v:%v:%v",
+		qp.Source,
+		qp.SourceID,
+		qp.SecondarySourceID,
+		qp.Page,
+		qp.ChapterID,
+		qp.Title,
+		page,
+	)
+	tempKey = strings.ReplaceAll(tempKey, ".", "dot")
+	return tempKey
 }

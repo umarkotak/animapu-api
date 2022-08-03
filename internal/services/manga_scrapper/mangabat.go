@@ -270,6 +270,7 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 			continue
 		}
 		if len(chapter.ChapterImages) > 0 {
+			chapter.SourceLink = targetLink
 			break
 		}
 	}

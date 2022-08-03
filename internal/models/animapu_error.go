@@ -19,6 +19,7 @@ var (
 	ErrInvalidTargetURL          = errors.New("invalid target url")
 	ErrCacheNotFound             = errors.New("cache not found")
 	ErrNotFound                  = errors.New("not found")
+	ErrUnauthorized              = errors.New("unauthorized")
 )
 
 var (
@@ -52,6 +53,11 @@ var (
 			StatusCode: 400,
 			ErrorCode:  "Invalid target url",
 			Message:    "Target URL anda salah.",
+		},
+		ErrUnauthorized: {
+			StatusCode: 401,
+			ErrorCode:  "Unauthorized",
+			Message:    "Tidak ada akses.",
 		},
 	}
 )

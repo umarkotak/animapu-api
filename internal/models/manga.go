@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type (
 	Manga struct {
@@ -21,6 +24,8 @@ type (
 		Chapters            []Chapter    `json:"chapters"`
 		CoverImages         []CoverImage `json:"cover_image"`
 		PopularityPoint     int64        `json:"popularity_point"`
+		LastChapterRead     float64      `json:"last_chapter_read"`
+		LastLink            string       `json:"last_link"`
 	}
 
 	CoverImage struct {
@@ -33,6 +38,12 @@ func (m *Manga) GetUniqueKey() string {
 	return fmt.Sprintf(
 		"%v:%v:%v:%v", m.Source, m.SourceID, m.SecondarySource, m.SecondarySourceID,
 	)
+}
+
+func (m *Manga) GetFbUniqueKey() string {
+	return strings.ReplaceAll(fmt.Sprintf(
+		"%v:%v:%v:%v", m.Source, m.SourceID, m.SecondarySource, m.SecondarySourceID,
+	), ".", "dot")
 }
 
 func (m *Manga) GenerateLatestChapter() {

@@ -252,6 +252,7 @@ func GetKlikmangaDetailChapter(ctx context.Context, queryParams models.QueryPara
 		SourceID:      queryParams.ChapterID,
 		Source:        "klikmanga",
 		ChapterImages: []models.ChapterImage{},
+		SourceLink:    fmt.Sprintf("https://klikmanga.id/manga/%v/%v/?style=list", queryParams.SourceID, queryParams.ChapterID),
 	}
 
 	idx := int64(1)

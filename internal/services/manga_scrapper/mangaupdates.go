@@ -299,6 +299,12 @@ func GetMangaupdatesDetailChapter(ctx context.Context, queryParams models.QueryP
 		ChapterImages:     []models.ChapterImage{},
 	}
 
+	sourceIdCleaned := queryParams.SourceID
+	sourceIdCleanedArr := strings.Split(sourceIdCleaned, "_")
+	if len(sourceIdCleanedArr) > 0 {
+		sourceIdCleaned = sourceIdCleanedArr[0]
+	}
+
 	for i := int64(1); i <= pageCountConfig; i++ {
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: i,
@@ -307,11 +313,12 @@ func GetMangaupdatesDetailChapter(ctx context.Context, queryParams models.QueryP
 				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.png", queryParams.SecondarySourceID, chapterNumber, i),
 				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.jpeg", queryParams.SecondarySourceID, chapterNumber, i),
 				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.webp", queryParams.SecondarySourceID, chapterNumber, i),
+				fmt.Sprintf("https://img.mghubcdn.com/file/imghub/%v/%v/%v.jpg", sourceIdCleaned, chapterNumber, i),
 			},
 		})
 	}
 
-	chapter.SourceLink = "#"
+	chapter.SourceLink = fmt.Sprintf("https://mangahub.io/chapter/%v/%v", queryParams.SecondarySourceID, queryParams.ChapterID)
 
 	return chapter, nil
 }

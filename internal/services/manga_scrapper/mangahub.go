@@ -337,7 +337,7 @@ func GetMangahubDetailChapter(ctx context.Context, queryParams models.QueryParam
 		})
 	}
 
-	chapter.SourceLink = "#"
+	chapter.SourceLink = fmt.Sprintf("https://mangahub.io/chapter/%v/%v", queryParams.SourceID, queryParams.ChapterID)
 
 	return chapter, nil
 }

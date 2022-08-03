@@ -13,6 +13,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
 	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
@@ -51,8 +52,8 @@ func Start() {
 	r.GET("/mangas/popular", manga_controller.GetMangaPopular)
 	r.POST("/mangas/upvote", manga_controller.PostMangaUpvote)
 
-	r.GET("/users/mangas/histories", health_controller.GetHealth)
-	r.POST("/users/mangas/histories", health_controller.GetHealth)
+	r.GET("/users/mangas/histories", user_controller.GetHistories)
+	r.POST("/users/mangas/histories", user_controller.PostHistories)
 
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
 	r.GET("/mangas/webtoons/image_proxy/*url", proxy_controller.WebtoonsImage)
