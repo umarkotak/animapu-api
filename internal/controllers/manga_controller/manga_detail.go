@@ -38,7 +38,7 @@ func GetMangaDetail(c *gin.Context) {
 		var cachedManga interface{}
 		err = json.Unmarshal([]byte(cachedJson), &cachedManga)
 		if err == nil {
-			go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 30*time.Minute)
+			repository.GoCache().Set(queryParams.ToKey("page_detail"), cachedManga, 30*time.Minute)
 
 			render.Response(c.Request.Context(), c, cachedManga, nil, 200)
 			return
@@ -80,9 +80,9 @@ func GetMangaDetail(c *gin.Context) {
 
 	if len(manga.Chapters) > 0 {
 		go cacheManga(context.Background(), queryParams.ToKey("page_detail"), manga)
-
-		go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 30*time.Minute)
 	}
+
+	repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 30*time.Minute)
 
 	render.Response(c.Request.Context(), c, manga, nil, 200)
 }
