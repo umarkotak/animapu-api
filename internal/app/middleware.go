@@ -30,7 +30,9 @@ func CORSMiddleware() gin.HandlerFunc {
 
 func LogRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		logrus.Info(c.Request.URL.Path)
+		if c.Request.Method != "OPTIONS" {
+			logrus.Infof("%v %v", c.Request.Method, c.Request.URL.Path)
+		}
 		c.Next()
 	}
 }
