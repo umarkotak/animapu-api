@@ -28,6 +28,7 @@ func GetMangabatLatestManga(ctx context.Context, queryParams models.QueryParams)
 		sourceID := strings.Replace(e.ChildAttr("div > h3 > a", "href"), "https://read.mangabat.com/", "", -1)
 		sourceID = strings.Replace(sourceID, "https://m.mangabat.com/", "", -1)
 		sourceID = strings.Replace(sourceID, "https://readmangabat.com/", "", -1)
+		sourceID = strings.Replace(sourceID, "https://h.mangabat.com/", "", -1)
 
 		imageURL := e.ChildAttr("a > img", "src")
 
@@ -114,6 +115,7 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 		chapterLink := e.ChildAttr("a", "href")
 		chapterLink = strings.Replace(chapterLink, "https://read.mangabat.com/", "", -1)
 		chapterLink = strings.Replace(chapterLink, "https://m.mangabat.com/", "", -1)
+		chapterLink = strings.Replace(chapterLink, "https://h.mangabat.com/", "", -1)
 
 		splittedLink := strings.Split(chapterLink, "-")
 		chapterNumber, _ := strconv.ParseFloat(splittedLink[len(splittedLink)-1], 64)
@@ -139,6 +141,10 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 
 	if manga.Title == "" {
 		err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v", queryParams.SourceID))
+	}
+
+	if manga.Title == "" {
+		err = c.Visit(fmt.Sprintf("https://h.mangabat.com/%v", queryParams.SourceID))
 	}
 
 	if err != nil {
@@ -245,7 +251,9 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
 		fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
 		fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
+		fmt.Sprintf("https://h.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID),
 	}
+
 	for _, targetLink := range targets {
 		err = c.Request(
 			"GET",
