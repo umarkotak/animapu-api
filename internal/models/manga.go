@@ -24,6 +24,8 @@ type (
 		Chapters            []Chapter    `json:"chapters"`
 		CoverImages         []CoverImage `json:"cover_image"`
 		PopularityPoint     int64        `json:"popularity_point"`
+		ReadCount           int64        `json:"read_count"`
+		Star                bool         `json:"star"`
 		LastChapterRead     float64      `json:"last_chapter_read"`
 		LastLink            string       `json:"last_link"`
 	}
