@@ -13,6 +13,8 @@ import (
 )
 
 func GetMangaLatest(c *gin.Context) {
+	logrus.WithContext(c.Request.Context()).Error(models.ErrMangaSourceNotFound)
+
 	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
 	queryParams := models.QueryParams{
 		Source: c.Param("manga_source"),
