@@ -1,0 +1,22 @@
+[Unit]
+Description=Animapu App Service
+After=network.target
+
+[Service]
+Type=forking
+
+User=ubuntu
+Group=ubuntu
+
+ExecStart=/home/ubuntu/app/main
+WorkingDirectory=/home/ubuntu/app
+
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+
+SyslogIdentifier=animapu-app-service
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
