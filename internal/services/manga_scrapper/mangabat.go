@@ -228,23 +228,10 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
-				fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
+				fmt.Sprintf("%v/image_proxy?referer=%v&target=%v", config.Get().AnimapuOnlineHost, "https://m.mangabat.com/", e.Attr("src")),
 			},
 		})
 	})
-
-	// err := c.Visit(fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-	// chapter.SourceLink = fmt.Sprintf("https://m.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
-
-	// if len(chapter.ChapterImages) <= 0 {
-	// 	err = c.Visit(fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-	// 	chapter.SourceLink = fmt.Sprintf("https://read.mangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
-	// }
-
-	// if len(chapter.ChapterImages) <= 0 {
-	// 	err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID))
-	// 	chapter.SourceLink = fmt.Sprintf("https://readmangabat.com/%v-%v", queryParams.SourceID, queryParams.ChapterID)
-	// }
 
 	var err error
 	targets := []string{

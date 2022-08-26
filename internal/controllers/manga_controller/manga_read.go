@@ -1,13 +1,9 @@
 package manga_controller
 
 import (
-	"encoding/json"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
@@ -24,12 +20,12 @@ func ReadManga(c *gin.Context) {
 		ChapterID:         c.Param("chapter_id"),
 	}
 
-	_, chapterJsonByte, err := repository.FbGet(ctx, queryParams.ToFbKey("page_read"))
-	if err == nil {
-		json.Unmarshal(chapterJsonByte, &chapter)
-		render.Response(ctx, c, chapter, nil, 200)
-		return
-	}
+	// _, chapterJsonByte, err := repository.FbGet(ctx, queryParams.ToFbKey("page_read"))
+	// if err == nil {
+	// 	json.Unmarshal(chapterJsonByte, &chapter)
+	// 	render.Response(ctx, c, chapter, nil, 200)
+	// 	return
+	// }
 
 	switch queryParams.Source {
 	case "mangaupdates":
@@ -64,12 +60,12 @@ func ReadManga(c *gin.Context) {
 		return
 	}
 
-	if err == nil && len(chapter.ChapterImages) > 5 {
-		err = repository.FbSet(ctx, queryParams.ToFbKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-		}
-	}
+	// if err == nil && len(chapter.ChapterImages) > 5 {
+	// 	err = repository.FbSet(ctx, queryParams.ToFbKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
+	// 	if err != nil {
+	// 		logrus.WithContext(ctx).Error(err)
+	// 	}
+	// }
 
 	render.Response(ctx, c, chapter, nil, 200)
 }
