@@ -165,9 +165,10 @@ func GetMangabatByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 
 	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-list-story > div", func(e *colly.HTMLElement) {
 		detailUrl := e.ChildAttr("a.item-img", "href")
-		detailUrl = strings.Replace(detailUrl, "https://read.mangabat.com/", "", -1)
-		sourceID := strings.Replace(detailUrl, "https://m.mangabat.com/", "", -1)
+		sourceID := strings.Replace(detailUrl, "https://read.mangabat.com/", "", -1)
+		sourceID = strings.Replace(sourceID, "https://m.mangabat.com/", "", -1)
 		sourceID = strings.Replace(sourceID, "https://readmangabat.com/", "", -1)
+		sourceID = strings.Replace(sourceID, "https://h.mangabat.com/", "", -1)
 
 		title := e.ChildText("div > h3 > a")
 
