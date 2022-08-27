@@ -43,9 +43,13 @@ func Initialize() {
 
 	cacheObj := cache.New(5*time.Minute, 10*time.Minute)
 
+	animapuOnlineHost := "https://animapu-api.herokuapp.com"
+	if os.Getenv("ANIMAPU_ONLINE_HOST") != "" {
+		animapuOnlineHost = os.Getenv("ANIMAPU_ONLINE_HOST")
+	}
+
 	config = Config{
-		AnimapuOnlineHost: "https://animapu-api.herokuapp.com",
-		// AnimapuOnlineHost:           "https://animapu.site",
+		AnimapuOnlineHost:           animapuOnlineHost,
 		CacheObj:                    cacheObj,
 		AnimapuLocalHost:            "http://localhost:6001",
 		AnimapuGoogleServiceAccount: os.Getenv("ANIMAPU_GOOGLE_SERVICE_ACCOUNT"),
