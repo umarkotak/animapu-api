@@ -318,7 +318,8 @@ func GetFizmangaDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: idx,
 			ImageUrls: []string{
-				fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("data-lazy-src")),
+				e.Attr("data-lazy-src"),
+				fmt.Sprintf("%v/mangas/fizmanga/image_proxy/%v", config.Get().AnimapuLocalHost, e.Attr("data-lazy-src")),
 			},
 		})
 		idx += 1

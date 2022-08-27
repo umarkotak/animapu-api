@@ -13,8 +13,6 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-// This is only a template file to be easily copy-pasted
-
 func GetWebtoonsidLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
@@ -27,7 +25,7 @@ func GetWebtoonsidLatestManga(ctx context.Context, queryParams models.QueryParam
 		sourceID = strings.Replace(sourceID, "/", "Z2F", -1)
 		sourceID = strings.Replace(sourceID, "?", "Z3F", -1)
 
-		mangas = append(mangas, models.Manga{
+		manga := models.Manga{
 			ID:                  sourceID,
 			Source:              "webtoonsid",
 			SourceID:            sourceID,
@@ -49,7 +47,12 @@ func GetWebtoonsidLatestManga(ctx context.Context, queryParams models.QueryParam
 					},
 				},
 			},
-		})
+		}
+
+		if manga.Title == "" {
+			return
+		}
+		mangas = append(mangas, manga)
 	})
 
 	err := c.Visit(fmt.Sprintf("https://www.webtoons.com/id/dailySchedule"))

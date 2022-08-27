@@ -6,6 +6,7 @@ type MangaSource struct {
 	Title    string `json:"title"`
 	WebLink  string `json:"web_link"`
 	Active   bool   `json:"active"`
+	Status   string `json:"status"`
 }
 
 const (
@@ -28,27 +29,31 @@ var (
 			Title:    "Manga Bat",
 			WebLink:  "https://m.mangabat.com/m",
 			Active:   true,
+			Status:   "stable",
 		},
 		{
 			ID:       "fizmanga",
 			Language: "en",
 			Title:    "Fizmanga",
 			WebLink:  "https://fizmanga.com/",
-			Active:   true,
+			Active:   false,
+			Status:   "not-stable",
 		},
 		{
 			ID:       "mangaupdates",
 			Language: "en",
 			Title:    "Manga Updates",
 			WebLink:  "https://www.mangaupdates.com/",
-			Active:   true,
+			Active:   false,
+			Status:   "not-stable",
 		},
 		{
 			ID:       "mangahub",
 			Language: "en",
 			Title:    "Manga Hub",
 			WebLink:  "https://www.mangahub.io/",
-			Active:   true,
+			Active:   false,
+			Status:   "not-stable",
 		},
 		{
 			ID:       "klikmanga",
@@ -56,6 +61,7 @@ var (
 			Title:    "Klik Manga",
 			WebLink:  "https://klikmanga.id/",
 			Active:   true,
+			Status:   "stable",
 		},
 		{
 			ID:       "webtoonsid",
@@ -63,6 +69,7 @@ var (
 			Title:    "WebToon ID",
 			WebLink:  "https://www.webtoons.com/id/",
 			Active:   true,
+			Status:   "stable",
 		},
 		{
 			ID:       "mangadex",
@@ -70,6 +77,7 @@ var (
 			Title:    "Manga Dex",
 			WebLink:  "https://mangadex.org/",
 			Active:   false,
+			Status:   "unavailable",
 		},
 		{
 			ID:       "maidmy",
@@ -77,6 +85,7 @@ var (
 			Title:    "Maid My",
 			WebLink:  "https://www.maid.my.id/",
 			Active:   false,
+			Status:   "unavailable",
 		},
 		{
 			ID:       "mangaread",
@@ -84,6 +93,7 @@ var (
 			Title:    "Manga Read",
 			WebLink:  "https://www.mangaread.org/",
 			Active:   false,
+			Status:   "unavailable",
 		},
 	}
 )
