@@ -48,8 +48,8 @@ func (w *Webtoonsid) GetHome(ctx context.Context, queryParams models.QueryParams
 				{
 					Index: 1,
 					ImageUrls: []string{
-						fmt.Sprintf("http://localhost:6001/mangas/webtoons/image_proxy/%v", e.ChildAttr("img", "src")),
 						fmt.Sprintf("https://animapu-api.herokuapp.com/mangas/webtoons/image_proxy/%v", e.ChildAttr("img", "src")),
+						fmt.Sprintf("http://localhost:6001/mangas/webtoons/image_proxy/%v", e.ChildAttr("img", "src")),
 					},
 				},
 			},
