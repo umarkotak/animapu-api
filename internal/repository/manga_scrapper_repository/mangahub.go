@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -14,7 +14,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
-func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Mangahub struct{}
+
+func NewMangahub() Mangahub {
+	return Mangahub{}
+}
+
+func (m *Mangahub) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
 	fbMangaHubHome, err := repository.FbGetHomeByMangaSource(ctx, models.SOURCE_MANGAHUB)
@@ -23,23 +29,23 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 		time.Now().UTC().Before(fbMangaHubHome.ExpiredAt) &&
 		len(cachedMangas) > 0 {
 
-		return MangasPaginate(cachedMangas, queryParams.Page, 30), nil
+		return mangasPaginate(cachedMangas, queryParams.Page, 30), nil
 	}
 
 	scrapeNinjaResponse, err := repository.QuickScrape(ctx, "https://mangahub.io")
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return MangasPaginate(cachedMangas, queryParams.Page, 30), nil
+		return mangasPaginate(cachedMangas, queryParams.Page, 30), nil
 	}
 	if scrapeNinjaResponse.Info.StatusCode != 200 {
 		logrus.WithContext(ctx).Error(fmt.Errorf("Scrape ninja non 200"))
-		return MangasPaginate(cachedMangas, queryParams.Page, 30), nil
+		return mangasPaginate(cachedMangas, queryParams.Page, 30), nil
 	}
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(scrapeNinjaResponse.Body))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return MangasPaginate(cachedMangas, queryParams.Page, 30), nil
+		return mangasPaginate(cachedMangas, queryParams.Page, 30), nil
 	}
 
 	var prevMangaCh, currentMangaCh float64
@@ -103,10 +109,10 @@ func GetMangahubLatestManga(ctx context.Context, queryParams models.QueryParams)
 		}
 	}()
 
-	return MangasPaginate(mangas, queryParams.Page, 30), nil
+	return mangasPaginate(mangas, queryParams.Page, 30), nil
 }
 
-func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (m *Mangahub) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	manga := models.Manga{
 		ID:          queryParams.SourceID,
 		Source:      models.SOURCE_MANGAHUB,
@@ -229,7 +235,7 @@ func GetMangahubDetailManga(ctx context.Context, queryParams models.QueryParams)
 	return manga, nil
 }
 
-func GetMangahubByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (m *Mangahub) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	query := strings.Replace(queryParams.Title, " ", "%20", -1)
 	scrapeNinjaResponse, err := repository.QuickScrape(ctx, fmt.Sprintf("https://mangahub.io/search?q=%v", query))
 	if err != nil {
@@ -303,7 +309,7 @@ func GetMangahubByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 	return mangas, nil
 }
 
-func GetMangahubDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (m *Mangahub) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	pageCountConfig := int64(100)
 
 	chapterNumber, _ := strconv.ParseFloat(utils.RemoveNonNumeric(queryParams.ChapterID), 64)
@@ -340,16 +346,4 @@ func GetMangahubDetailChapter(ctx context.Context, queryParams models.QueryParam
 	chapter.SourceLink = fmt.Sprintf("https://mangahub.io/chapter/%v/%v", queryParams.SourceID, queryParams.ChapterID)
 
 	return chapter, nil
-}
-
-func MangasPaginate(mangas []models.Manga, page, perpage int64) []models.Manga {
-	startIndex := (page - 1) * perpage
-	endIndex := startIndex + perpage
-	if startIndex >= int64(len(mangas)) {
-		return []models.Manga{}
-	}
-	if endIndex >= int64(len(mangas)) {
-		endIndex = int64(len(mangas) - 1)
-	}
-	return mangas[startIndex:endIndex]
 }

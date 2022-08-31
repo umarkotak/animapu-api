@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -14,7 +14,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func GetKlikmangaLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Klikmanga struct{}
+
+func NewKlikmanga() Klikmanga {
+	return Klikmanga{}
+}
+
+func (k *Klikmanga) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -95,7 +101,7 @@ func GetKlikmangaLatestManga(ctx context.Context, queryParams models.QueryParams
 	return mangas, nil
 }
 
-func GetKlikmangaDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (k *Klikmanga) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -161,7 +167,7 @@ func GetKlikmangaDetailManga(ctx context.Context, queryParams models.QueryParams
 	return manga, nil
 }
 
-func GetKlikmangaByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (k *Klikmanga) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -243,7 +249,7 @@ func GetKlikmangaByQuery(ctx context.Context, queryParams models.QueryParams) ([
 	return mangas, nil
 }
 
-func GetKlikmangaDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (k *Klikmanga) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 

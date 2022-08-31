@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -16,7 +16,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
-func GetFizmangaLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Fizmanga struct{}
+
+func NewFizmanga() Fizmanga {
+	return Fizmanga{}
+}
+
+func (f *Fizmanga) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	var err error
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
@@ -119,7 +125,7 @@ func GetFizmangaLatestManga(ctx context.Context, queryParams models.QueryParams)
 	return mangas, nil
 }
 
-func GetFizmangaDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (f *Fizmanga) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -210,7 +216,7 @@ func GetFizmangaDetailManga(ctx context.Context, queryParams models.QueryParams)
 	return manga, nil
 }
 
-func GetFizmangaByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (f *Fizmanga) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 	var err error
@@ -297,7 +303,7 @@ func GetFizmangaByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 	return mangas, nil
 }
 
-func GetFizmangaDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (f *Fizmanga) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 

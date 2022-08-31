@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -13,7 +13,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func GetWebtoonsidLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Webtoonsid struct{}
+
+func NewWebtoonsid() Webtoonsid {
+	return Webtoonsid{}
+}
+
+func (w *Webtoonsid) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -64,7 +70,7 @@ func GetWebtoonsidLatestManga(ctx context.Context, queryParams models.QueryParam
 	return mangas, nil
 }
 
-func GetWebtoonsidDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (w *Webtoonsid) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -149,7 +155,7 @@ func GetWebtoonsidDetailManga(ctx context.Context, queryParams models.QueryParam
 	return manga, nil
 }
 
-func GetWebtoonsidByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (w *Webtoonsid) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -164,7 +170,7 @@ func GetWebtoonsidByQuery(ctx context.Context, queryParams models.QueryParams) (
 	return mangas, nil
 }
 
-func GetWebtoonsidDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (w *Webtoonsid) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 

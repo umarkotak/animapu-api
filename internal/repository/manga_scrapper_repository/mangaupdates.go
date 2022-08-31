@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -13,8 +13,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-// Used at home page
-func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Mangaupdates struct{}
+
+func NewMangaupdates() Mangaupdates {
+	return Mangaupdates{}
+}
+
+func (m *Mangaupdates) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
 	if queryParams.Page <= 0 {
@@ -89,8 +94,7 @@ func GetMangaupdatesLatestManga(ctx context.Context, queryParams models.QueryPar
 	return mangas, nil
 }
 
-// Used at manga detail page
-func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (m *Mangaupdates) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	manga := models.Manga{
 		ID:                queryParams.SourceID,
 		Source:            "mangaupdates",
@@ -222,8 +226,7 @@ func GetMangaupdatesDetailManga(ctx context.Context, queryParams models.QueryPar
 	return manga, nil
 }
 
-// Used at search manga page
-func GetMangaupdatesByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (m *Mangaupdates) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
 	c := colly.NewCollector()
@@ -281,8 +284,7 @@ func GetMangaupdatesByQuery(ctx context.Context, queryParams models.QueryParams)
 	return mangas, nil
 }
 
-// Used at reading manga chapter
-func GetMangaupdatesDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (m *Mangaupdates) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	pageCountConfig := int64(150)
 
 	chapterNumber, _ := strconv.ParseFloat(queryParams.ChapterID, 64)
@@ -321,23 +323,4 @@ func GetMangaupdatesDetailChapter(ctx context.Context, queryParams models.QueryP
 	chapter.SourceLink = fmt.Sprintf("https://mangahub.io/chapter/%v/%v", queryParams.SecondarySourceID, queryParams.ChapterID)
 
 	return chapter, nil
-}
-
-func convertTitleToMangahubTitle(initialTitle string) string {
-	result := strings.ToLower(initialTitle)
-	result = strings.Replace(result, "%", "", -1)
-	result = strings.Replace(result, "'", "-", -1)
-	result = strings.Replace(result, "!", "", -1)
-	result = strings.Replace(result, "?", "", -1)
-	result = strings.Replace(result, ".", "", -1)
-	result = strings.Replace(result, "&", "", -1)
-	result = strings.Replace(result, ":", "", -1)
-	result = strings.Replace(result, ",", "", -1)
-	result = strings.Replace(result, "(", "", -1)
-	result = strings.Replace(result, ")", "", -1)
-	result = strings.Replace(result, "-", "", -1)
-	result = strings.Replace(result, "\"", "", -1)
-	result = strings.Replace(result, "  ", "-", -1)
-	result = strings.Replace(result, " ", "-", -1)
-	return result
 }

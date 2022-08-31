@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -10,11 +10,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-// ANIMAPU LITE API TEMPLATE GUIDELINE
-// When adding new manga source, please follow this guideline in order to comply
-// with the Front End Apps requirements.
-// You can copy paste this template to a new file then modify it.
-func GetMangasourceLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Template struct{}
+
+func NewTemplate() Template {
+	return Template{}
+}
+
+func (t *Template) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -54,7 +56,7 @@ func GetMangasourceLatestManga(ctx context.Context, queryParams models.QueryPara
 	return mangas, nil
 }
 
-func GetMangasourceDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (t *Template) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -82,7 +84,7 @@ func GetMangasourceDetailManga(ctx context.Context, queryParams models.QueryPara
 	return manga, nil
 }
 
-func GetMangasourceByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (t *Template) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -122,7 +124,7 @@ func GetMangasourceByQuery(ctx context.Context, queryParams models.QueryParams) 
 	return mangas, nil
 }
 
-func GetMangasourceDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (t *Template) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 

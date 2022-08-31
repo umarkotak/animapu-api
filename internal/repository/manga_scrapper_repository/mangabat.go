@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_repository
 
 import (
 	"context"
@@ -14,7 +14,13 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func GetMangabatLatestManga(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+type Mangabat struct{}
+
+func NewMangabat() Mangabat {
+	return Mangabat{}
+}
+
+func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
 	if queryParams.Page <= 0 {
@@ -81,7 +87,7 @@ func GetMangabatLatestManga(ctx context.Context, queryParams models.QueryParams)
 	return mangas, nil
 }
 
-func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	manga := models.Manga{
 		Source:      "mangabat",
 		SourceID:    queryParams.SourceID,
@@ -157,7 +163,7 @@ func GetMangabatDetailManga(ctx context.Context, queryParams models.QueryParams)
 	return manga, nil
 }
 
-func GetMangabatByQuery(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	mangas := []models.Manga{}
 
 	c := colly.NewCollector()
@@ -211,7 +217,7 @@ func GetMangabatByQuery(ctx context.Context, queryParams models.QueryParams) ([]
 	return mangas, nil
 }
 
-func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
 
 	chapterNumberSplitted := strings.Split(queryParams.ChapterID, "-")
@@ -229,7 +235,9 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
+				e.Attr("src"),
 				fmt.Sprintf("%v/image_proxy?referer=%v&target=%v", config.Get().AnimapuOnlineHost, "https://m.mangabat.com/", e.Attr("src")),
+				fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
 			},
 		})
 	})
@@ -263,6 +271,7 @@ func GetMangabatDetailChapter(ctx context.Context, queryParams models.QueryParam
 			},
 		)
 		if err != nil {
+			logrus.WithContext(ctx).Error(err)
 			continue
 		}
 		if len(chapter.ChapterImages) > 0 {
