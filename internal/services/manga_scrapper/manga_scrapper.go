@@ -141,6 +141,12 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 	case "mangabat":
 		mangabat := manga_scrapper_repository.NewMangabat()
 		return &mangabat, nil
+	case "klikmanga":
+		mangabat := manga_scrapper_repository.NewKlikmanga()
+		return &mangabat, nil
+	case "webtoonsid":
+		mangabat := manga_scrapper_repository.NewWebtoonsid()
+		return &mangabat, nil
 	}
 
 	return mangaScrapper, models.ErrMangaSourceNotFound
