@@ -11,6 +11,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
 type Webtoonsid struct{}
@@ -96,7 +97,7 @@ func (w *Webtoonsid) GetDetail(ctx context.Context, queryParams models.QueryPara
 		}
 	})
 
-	c.OnHTML("#content > div.cont_box > div.detail_header.type_white > div.info > h1", func(e *colly.HTMLElement) {
+	c.OnHTML("#content > div.cont_box > div.detail_header > div.info > h1.subj", func(e *colly.HTMLElement) {
 		manga.Title = e.Text
 	})
 
@@ -112,11 +113,13 @@ func (w *Webtoonsid) GetDetail(ctx context.Context, queryParams models.QueryPara
 		numberString = reg.ReplaceAllString(numberString, "")
 		number, _ := strconv.ParseFloat(numberString, 64)
 
+		title := strings.Replace(e.ChildText("span.subj"), "UP", "", -1)
+
 		manga.Chapters = append(manga.Chapters, models.Chapter{
 			ID:       chapterID,
 			Source:   "webtoonsid",
 			SourceID: queryParams.SourceID,
-			Title:    strings.Replace(e.ChildText("span.subj"), "UP", "", -1),
+			Title:    title,
 			Index:    idx,
 			Number:   number,
 		})
@@ -197,11 +200,7 @@ func (w *Webtoonsid) GetChapter(ctx context.Context, queryParams models.QueryPar
 	})
 
 	c.OnHTML("div.paginate.v2 > span.tx", func(e *colly.HTMLElement) {
-		numberString := e.Text
-		reg, _ := regexp.Compile("[^0-9]+")
-		numberString = reg.ReplaceAllString(numberString, "")
-		number, _ := strconv.ParseFloat(numberString, 64)
-		chapter.Number = number
+		chapter.Number, _ = strconv.ParseFloat(utils.RemoveNonNumeric(e.Text), 64)
 	})
 
 	formattedID := queryParams.ChapterID

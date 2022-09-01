@@ -12,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
 type Klikmanga struct{}
@@ -253,10 +254,13 @@ func (k *Klikmanga) GetChapter(ctx context.Context, queryParams models.QueryPara
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
+	chapterNumber, _ := strconv.ParseFloat(utils.RemoveNonNumeric(queryParams.ChapterID), 64)
+
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.ChapterID,
 		Source:        "klikmanga",
+		Number:        chapterNumber,
 		ChapterImages: []models.ChapterImage{},
 		SourceLink:    fmt.Sprintf("https://klikmanga.id/manga/%v/%v/?style=list", queryParams.SourceID, queryParams.ChapterID),
 	}

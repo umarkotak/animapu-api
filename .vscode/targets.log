@@ -10,7 +10,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Wed Aug 17 14:13:36 2022
+# Make data base, printed on Wed Aug 31 18:53:30 2022
 
 # Variables
 
@@ -20,6 +20,7 @@ make: *** No rule to make target `all'.  Stop.
 ?F = $(notdir $?)
 # environment
 ELECTRON_NO_ATTACH_CONSOLE = 1
+ 
 # environment
 LC_CTYPE = UTF-8
 # automatic
@@ -83,7 +84,7 @@ VSCODE_CODE_CACHE_PATH = /Users/umar.ramadhana/Library/Application Support/Code/
 # environment
 LOGNAME = umar.ramadhana
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
 ZSH = /Users/umar.ramadhana/.oh-my-zsh
 # environment
@@ -109,7 +110,7 @@ USER = umar.ramadhana
 # default
 MAKECMDGOALS := all
 # environment
-TERM_SESSION_ID = w0t4p1:91CF9C16-1C31-4A22-AB20-18F82CF6DD62
+TERM_SESSION_ID = w0t10p0:802C0426-C3BF-4EEC-9DE1-7C3D8E823AC4
 # environment
 LESS = -R
 # automatic
@@ -137,7 +138,7 @@ MFLAGS = -Rrqp
 # environment
 TERM_PROGRAM_VERSION = 3.4.16
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.17936077.17936083.F1C16F5A-138F-4DD0-B08A-63F3D08E624F
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.17936077.17936083.DDE24AE3-1085-438B-B581-92C5DBC37BC3
 # environment
 LC_TERMINAL_VERSION = 3.4.16
 # automatic
@@ -145,7 +146,7 @@ LC_TERMINAL_VERSION = 3.4.16
 # automatic
 +F = $(notdir $+)
 # environment
-ITERM_SESSION_ID = w0t4p1:91CF9C16-1C31-4A22-AB20-18F82CF6DD62
+ITERM_SESSION_ID = w0t10p0:802C0426-C3BF-4EEC-9DE1-7C3D8E823AC4
 # environment
 COLORFGBG = 7;0
 # environment
@@ -157,6 +158,7 @@ MAKEFILES :=
 # environment
 RBENV_SHELL = zsh
 # automatic
+ 
 <F = $(notdir $<)
 # environment
 ITERM_PROFILE = Default
@@ -189,15 +191,27 @@ VSCODE_PID = 48472
 
 # Directories
 
-# . (device 16777220, inode 1865003): 13 files, no impossibilities.
+# . (device 16777220, inode 1865003): 15 files, no impossibilities.
 
-# 13 files, no impossibilities in 1 directories.
+# 15 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
 # No implicit rules.
 
 # Files
+
+deploy_aws:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 14):
+	GOOS=linux GOARCH=amd64 go build cmd/web/main.go
+	scp -i "~/.ssh/default.pem" .env ubuntu@ec2-13-214-123-225.ap-southeast-1.compute.amazonaws.com:/home/ubuntu/app
+	ssh -i "~/.ssh/default.pem" ubuntu@ec2-13-214-123-225.ap-southeast-1.compute.amazonaws.com "sudo systemctl stop animapu-api"
+	scp -i "~/.ssh/default.pem" main ubuntu@ec2-13-214-123-225.ap-southeast-1.compute.amazonaws.com:/home/ubuntu/app
+	ssh -i "~/.ssh/default.pem" ubuntu@ec2-13-214-123-225.ap-southeast-1.compute.amazonaws.com "sudo systemctl start animapu-api"
+	
 
 # Not a target:
 all:
@@ -208,6 +222,22 @@ all:
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
+run_build_ubuntu:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 8):
+	./main
+	
+
+build_ubuntu:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 5):
+	GOOS=linux GOARCH=amd64 go build cmd/web/main.go
+	
+
 # Not a target:
 .SUFFIXES:
 #  Implicit rule search has not been done.
@@ -217,7 +247,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-24 08:41:29
+#  Last modified 2022-08-27 17:36:47
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -237,8 +267,16 @@ run:
 	go run cmd/web/main.go
 	
 
+connect:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 11):
+	ssh -i "~/.ssh/default.pem" ubuntu@ec2-13-214-123-225.ap-southeast-1.compute.amazonaws.com
+	
+
 # files hash-table stats:
-# Load=5/1024=0%, Rehash=0, Collisions=0/17=0%
+# Load=9/1024=1%, Rehash=0, Collisions=0/21=0%
 # VPATH Search Paths
 
 # No `vpath' search paths.
@@ -250,6 +288,6 @@ run:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Wed Aug 17 14:13:36 2022
+# Finished Make data base on Wed Aug 31 18:53:30 2022
 
  
