@@ -75,16 +75,16 @@ func GetUserReadHistories(ctx context.Context, user models.User) ([]models.Manga
 		return mangaHistories, mangaHistoriesMap, err
 	}
 
-	readHistoriesMapRef := oneUser.Child("read_histories_map")
-	if readHistoriesMapRef == nil {
-		return mangaHistories, mangaHistoriesMap, nil
-	}
+	// readHistoriesMapRef := oneUser.Child("read_histories_map")
+	// if readHistoriesMapRef == nil {
+	// 	return mangaHistories, mangaHistoriesMap, nil
+	// }
 
-	err = readHistoriesMapRef.Get(ctx, &mangaHistoriesMap)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return mangaHistories, mangaHistoriesMap, err
-	}
+	// err = readHistoriesMapRef.Get(ctx, &mangaHistoriesMap)
+	// if err != nil {
+	// 	logrus.WithContext(ctx).Error(err)
+	// 	return mangaHistories, mangaHistoriesMap, err
+	// }
 
 	return mangaHistories, mangaHistoriesMap, nil
 }

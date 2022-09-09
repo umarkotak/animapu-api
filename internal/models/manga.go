@@ -28,6 +28,7 @@ type (
 		Star                bool         `json:"star"`
 		LastChapterRead     float64      `json:"last_chapter_read"`
 		LastLink            string       `json:"last_link"`
+		Weight              int64        `json:"weight"`
 	}
 
 	CoverImage struct {

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"sort"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -158,14 +157,15 @@ func FbGetPopularManga(ctx context.Context) ([]models.Manga, error) {
 	}
 
 	for _, oneManga := range mangaMap {
-		if oneManga.PopularityPoint > 0 || oneManga.ReadCount > 10 {
+		if oneManga.PopularityPoint > 0 || oneManga.ReadCount > 15 {
+			oneManga.Weight = (3 * oneManga.PopularityPoint) + (1 * oneManga.ReadCount)
 			mangas = append(mangas, oneManga)
 		}
 	}
 
-	sort.Slice(mangas, func(i, j int) bool {
-		return mangas[i].PopularityPoint > mangas[j].PopularityPoint
-	})
+	// sort.Slice(mangas, func(i, j int) bool {
+	// 	return mangas[i].PopularityPoint > mangas[j].PopularityPoint
+	// })
 
 	return mangas, nil
 }
