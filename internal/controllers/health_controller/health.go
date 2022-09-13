@@ -11,7 +11,8 @@ func GetHealth(c *gin.Context) {
 		c.Request.Context(),
 		c,
 		map[string]string{
-			"health": "ok",
+			"version": "1.0.0",
+			"health":  "ok",
 		},
 		nil,
 		200,
