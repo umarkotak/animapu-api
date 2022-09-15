@@ -28,6 +28,11 @@ func Initialize() {
 			return "", fmt.Sprintf("[%v:%v]:", path.Base(frame.File), frame.Line)
 		},
 	})
+	f, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE, 0755)
+	if err != nil {
+		logrus.Error(err)
+	}
+	logrus.SetOutput(f)
 
 	config.Initialize()
 	repository.Initialize()

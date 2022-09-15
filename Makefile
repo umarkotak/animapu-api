@@ -1,6 +1,9 @@
 run:
 	go run cmd/web/main.go
 
+buildrun:
+	go build -o local cmd/web/main.go && ./local
+
 build_ubuntu:
 	GOOS=linux GOARCH=amd64 go build cmd/web/main.go
 
