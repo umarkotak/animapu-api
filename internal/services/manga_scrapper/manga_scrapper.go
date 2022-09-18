@@ -9,6 +9,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/mangamee_port"
 )
 
 func GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
@@ -138,14 +139,17 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 	var mangaScrapper models.MangaScrapper
 
 	switch mangaSource {
-	case "mangabat":
+	case models.SOURCE_MANGABAT:
 		mangabat := manga_scrapper_repository.NewMangabat()
 		return &mangabat, nil
-	case "klikmanga":
+	case models.SOURCE_KLIKMANGA:
 		mangabat := manga_scrapper_repository.NewKlikmanga()
 		return &mangabat, nil
-	case "webtoonsid":
+	case models.SOURCE_WEBTOONSID:
 		mangabat := manga_scrapper_repository.NewWebtoonsid()
+		return &mangabat, nil
+	case models.SOURCE_MANGAREAD:
+		mangabat := mangamee_port.NewMangaread()
 		return &mangabat, nil
 	}
 

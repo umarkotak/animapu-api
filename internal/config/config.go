@@ -19,6 +19,7 @@ type (
 		AnimapuFirebaseUrl          string
 		ScrapeNinjaConfig           ScrapeNinjaConfig
 		RedisConfig                 RedisConfig
+		MangameeApiHost             string
 	}
 	ScrapeNinjaConfig struct {
 		Host         string
@@ -54,6 +55,7 @@ func Initialize() {
 		AnimapuLocalHost:            "http://localhost:6001",
 		AnimapuGoogleServiceAccount: os.Getenv("ANIMAPU_GOOGLE_SERVICE_ACCOUNT"),
 		AnimapuFirebaseUrl:          os.Getenv("ANIMAPU_FIREBASE_URL"),
+		MangameeApiHost:             os.Getenv("MANGAMEE_API_HOST"),
 
 		ScrapeNinjaConfig: ScrapeNinjaConfig{
 			Host:         "https://scrapeninja.p.rapidapi.com",

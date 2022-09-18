@@ -18,13 +18,13 @@ const (
 	SOURCE_FIZMANGA     = "fizmanga"
 	SOURCE_MANGADEX     = "mangadex"
 	SOURCE_MAIDMY       = "maidmy"
-	SOURCE_MANGAREADORG = "mangareadorg"
+	SOURCE_MANGAREAD    = "mangaread"
 )
 
 var (
 	MangaSources = []MangaSource{
 		{
-			ID:       "mangabat",
+			ID:       SOURCE_MANGABAT,
 			Language: "en",
 			Title:    "Manga Bat",
 			WebLink:  "https://m.mangabat.com/m",
@@ -32,7 +32,7 @@ var (
 			Status:   "stable",
 		},
 		{
-			ID:       "fizmanga",
+			ID:       SOURCE_FIZMANGA,
 			Language: "en",
 			Title:    "Fizmanga",
 			WebLink:  "https://fizmanga.com/",
@@ -40,7 +40,7 @@ var (
 			Status:   "not-stable",
 		},
 		{
-			ID:       "mangaupdates",
+			ID:       SOURCE_MANGAUPDATES,
 			Language: "en",
 			Title:    "Manga Updates",
 			WebLink:  "https://www.mangaupdates.com/",
@@ -48,7 +48,7 @@ var (
 			Status:   "not-stable",
 		},
 		{
-			ID:       "mangahub",
+			ID:       SOURCE_MANGAHUB,
 			Language: "en",
 			Title:    "Manga Hub",
 			WebLink:  "https://www.mangahub.io/",
@@ -56,7 +56,7 @@ var (
 			Status:   "not-stable",
 		},
 		{
-			ID:       "klikmanga",
+			ID:       SOURCE_KLIKMANGA,
 			Language: "id",
 			Title:    "Klik Manga",
 			WebLink:  "https://klikmanga.id/",
@@ -64,7 +64,7 @@ var (
 			Status:   "stable",
 		},
 		{
-			ID:       "webtoonsid",
+			ID:       SOURCE_WEBTOONSID,
 			Language: "id",
 			Title:    "WebToon ID",
 			WebLink:  "https://www.webtoons.com/id/",
@@ -72,7 +72,7 @@ var (
 			Status:   "stable",
 		},
 		{
-			ID:       "mangadex",
+			ID:       SOURCE_MANGADEX,
 			Language: "mix",
 			Title:    "Manga Dex",
 			WebLink:  "https://mangadex.org/",
@@ -80,7 +80,7 @@ var (
 			Status:   "unavailable",
 		},
 		{
-			ID:       "maidmy",
+			ID:       SOURCE_MAIDMY,
 			Language: "id",
 			Title:    "Maid My",
 			WebLink:  "https://www.maid.my.id/",
@@ -88,12 +88,12 @@ var (
 			Status:   "unavailable",
 		},
 		{
-			ID:       "mangaread",
+			ID:       SOURCE_MANGAREAD,
 			Language: "en",
 			Title:    "Manga Read",
 			WebLink:  "https://www.mangaread.org/",
-			Active:   false,
-			Status:   "unavailable",
+			Active:   true,
+			Status:   "stable - from mangamee",
 		},
 	}
 )

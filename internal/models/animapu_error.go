@@ -20,6 +20,7 @@ var (
 	ErrCacheNotFound             = errors.New("cache not found")
 	ErrNotFound                  = errors.New("not found")
 	ErrUnauthorized              = errors.New("unauthorized")
+	ErrMangamee                  = errors.New("mangamee error")
 )
 
 var (
@@ -58,6 +59,11 @@ var (
 			StatusCode: 401,
 			ErrorCode:  "Unauthorized",
 			Message:    "Tidak ada akses.",
+		},
+		ErrMangamee: {
+			StatusCode: 422,
+			ErrorCode:  "mangamee_error",
+			Message:    "Terjadi kesalahan di server mangamee",
 		},
 	}
 )

@@ -146,3 +146,6 @@ history
   139  kill 5449
   140  caddy run
   141  history
+
+
+  sudo nohup ./main &

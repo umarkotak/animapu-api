@@ -1,6 +1,9 @@
 package utils
 
-import "regexp"
+import (
+	"regexp"
+	"strconv"
+)
 
 var (
 	reg1, _ = regexp.Compile("[^0-9.]+")
@@ -22,4 +25,14 @@ func StringContains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func StringMustInt64(s string) int64 {
+	i, _ := strconv.ParseInt(s, 10, 64)
+	return i
+}
+
+func StringMustFloat64(s string) float64 {
+	i, _ := strconv.ParseFloat(s, 10)
+	return i
 }
