@@ -19,6 +19,7 @@ const (
 	SOURCE_MANGADEX     = "mangadex"
 	SOURCE_MAIDMY       = "maidmy"
 	SOURCE_MANGAREAD    = "mangaread"
+	SOURCE_MANGATOWN    = "mangatown"
 )
 
 var (
@@ -92,6 +93,14 @@ var (
 			Language: "en",
 			Title:    "Manga Read",
 			WebLink:  "https://www.mangaread.org/",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_MANGATOWN,
+			Language: "en",
+			Title:    "Manga Town",
+			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
 			Active:   true,
 			Status:   "stable - from mangamee",
 		},

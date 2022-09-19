@@ -151,6 +151,9 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 	case models.SOURCE_MANGAREAD:
 		mangabat := mangamee_port.NewMangaread()
 		return &mangabat, nil
+	case models.SOURCE_MANGATOWN:
+		mangabat := mangamee_port.NewMangatown()
+		return &mangabat, nil
 	}
 
 	return mangaScrapper, models.ErrMangaSourceNotFound

@@ -2,11 +2,7 @@ package mangamee_port
 
 import (
 	"context"
-	"fmt"
-	"time"
 
-	"github.com/gocolly/colly"
-	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -25,41 +21,7 @@ func (t *Mangaread) GetDetail(ctx context.Context, queryParams models.QueryParam
 }
 
 func (t *Mangaread) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
-
 	mangas := []models.Manga{}
-
-	mangas = append(mangas, models.Manga{
-		ID:                  "",
-		SourceID:            "",
-		Source:              "source",
-		SecondarySourceID:   "",
-		SecondarySource:     "secondary_source",
-		Title:               "Untitled",
-		Description:         "Description unavailable",
-		Genres:              []string{},
-		Status:              "Ongoing",
-		Rating:              "10",
-		LatestChapterID:     "chapter_id",
-		LatestChapterNumber: 0,
-		LatestChapterTitle:  "Chapter 0",
-		Chapters:            []models.Chapter{},
-		CoverImages: []models.CoverImage{
-			{
-				Index: 1,
-				ImageUrls: []string{
-					fmt.Sprintf("https://animapu-lite.vercel.app/images/manga/%v", "image_id"),
-				},
-			},
-		},
-	})
-
-	err := c.Visit(fmt.Sprintf("https://animapu-lite.vercel.app/search/%v", queryParams.Page))
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return mangas, err
-	}
 
 	return mangas, nil
 }
