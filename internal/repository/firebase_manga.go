@@ -159,6 +159,7 @@ func FbGetPopularManga(ctx context.Context) ([]models.Manga, error) {
 	for _, oneManga := range mangaMap {
 		if oneManga.PopularityPoint > 0 || oneManga.ReadCount > 15 {
 			oneManga.Weight = (3 * oneManga.PopularityPoint) + (1 * oneManga.ReadCount)
+			oneManga.LastChapterRead = 0
 			mangas = append(mangas, oneManga)
 		}
 	}

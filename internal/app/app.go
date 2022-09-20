@@ -60,6 +60,11 @@ func Start() {
 	r.GET("/users/mangas/histories", user_controller.GetHistories)
 	r.POST("/users/mangas/histories", user_controller.PostHistories)
 
+	r.POST("/users/mangas/libraries", user_controller.PostLibrary)
+	r.POST("/users/mangas/libraries/:source/:source_id/remove", user_controller.DeleteLibrary)
+	r.GET("/users/mangas/libraries", user_controller.GetLibraries)
+	r.POST("/users/mangas/libraries/sync", user_controller.SyncLibraries)
+
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
 	r.GET("/mangas/webtoons/image_proxy/*url", proxy_controller.WebtoonsImage)
 	r.GET("/mangas/fizmanga/image_proxy/*url", proxy_controller.FizmangaImage)

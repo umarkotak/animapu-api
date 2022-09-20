@@ -66,6 +66,31 @@ func PostLibrary(c *gin.Context) {
 	)
 }
 
+func DeleteLibrary(c *gin.Context) {
+	user, err := request.ReqToUser(c.Request)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Error(err)
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	if user.Uid == "" {
+		err = models.ErrUnauthorized
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	// TODO: Implement logic
+
+	render.Response(
+		c.Request.Context(), c,
+		map[string]string{
+			"library_deleted": "success",
+		},
+		nil, 200,
+	)
+}
+
 func SyncLibraries(c *gin.Context) {
 	var syncLibrariesParams SyncLibrariesParams
 	c.BindJSON(&syncLibrariesParams)
