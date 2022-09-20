@@ -1,4 +1,4 @@
-package user_history
+package user_history_service
 
 import (
 	"context"

@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper"
+	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
@@ -17,7 +17,7 @@ func GetMangaLatest(c *gin.Context) {
 		Page:   page,
 	}
 
-	mangas, err := manga_scrapper.GetHome(c.Request.Context(), queryParams)
+	mangas, err := manga_scrapper_service.GetHome(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
@@ -34,7 +34,7 @@ func GetMangaDetail(c *gin.Context) {
 		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
 	}
 
-	manga, err := manga_scrapper.GetDetail(c.Request.Context(), queryParams)
+	manga, err := manga_scrapper_service.GetDetail(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
@@ -54,7 +54,7 @@ func ReadManga(c *gin.Context) {
 		ChapterID:         c.Param("chapter_id"),
 	}
 
-	chapter, err := manga_scrapper.GetChapter(ctx, queryParams)
+	chapter, err := manga_scrapper_service.GetChapter(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, false)
@@ -72,7 +72,7 @@ func SearchManga(c *gin.Context) {
 		Title:  c.Request.URL.Query().Get("title"),
 	}
 
-	mangas, err := manga_scrapper.GetSearch(c.Request.Context(), queryParams)
+	mangas, err := manga_scrapper_service.GetSearch(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)

@@ -4,19 +4,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/services/user_history_service"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/request"
 )
 
 type (
-	PostHistoriesParams struct {
-		Manga           models.Manga   `json:"manga"`
-		LastReadChapter models.Chapter `json:"last_read_chapter"`
+	SyncLibrariesParams struct {
+		Mangas []models.Manga `json:"mangas"`
+	}
+
+	PostLibraryParams struct {
+		Manga models.Manga `json:"manga"`
 	}
 )
 
-func GetHistories(c *gin.Context) {
+func GetLibraries(c *gin.Context) {
 	user, err := request.ReqToUser(c.Request)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
@@ -30,26 +32,43 @@ func GetHistories(c *gin.Context) {
 		return
 	}
 
-	mangaHistories, mangaHistoriesMap, err := user_history_service.GetReadHistories(c.Request.Context(), user)
+	// TODO: Implement logic
+	mangas := []models.Manga{}
+
+	render.Response(c.Request.Context(), c, mangas, nil, 200)
+}
+
+func PostLibrary(c *gin.Context) {
+	var postLibraryParams PostLibraryParams
+	c.BindJSON(&postLibraryParams)
+
+	user, err := request.ReqToUser(c.Request)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
 
+	if user.Uid == "" {
+		err = models.ErrUnauthorized
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	// TODO: Implement logic
+
 	render.Response(
 		c.Request.Context(), c,
-		map[string]interface{}{
-			"manga_histories":     mangaHistories,
-			"manga_histories_map": mangaHistoriesMap,
+		map[string]string{
+			"library_saved": "success",
 		},
 		nil, 200,
 	)
 }
 
-func PostHistories(c *gin.Context) {
-	var postHistoriesParams PostHistoriesParams
-	c.BindJSON(&postHistoriesParams)
+func SyncLibraries(c *gin.Context) {
+	var syncLibrariesParams SyncLibrariesParams
+	c.BindJSON(&syncLibrariesParams)
 
 	user, err := request.ReqToUser(c.Request)
 	if err != nil {
@@ -64,7 +83,8 @@ func PostHistories(c *gin.Context) {
 		return
 	}
 
-	manga, err := user_history_service.RecordHistory(c.Request.Context(), user, postHistoriesParams.Manga, postHistoriesParams.LastReadChapter)
+	// TODO: Implement sync library services
+	// err = user_library_service.Sync(c.Request.Context(), user, syncLibrariesParams.Mangas)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
@@ -74,11 +94,7 @@ func PostHistories(c *gin.Context) {
 	render.Response(
 		c.Request.Context(), c,
 		map[string]string{
-			"id":                  manga.ID,
-			"source":              manga.Source,
-			"source_id":           manga.SourceID,
-			"secondary_source":    manga.SecondarySource,
-			"secondary_source_id": manga.SecondarySourceID,
+			"synced": "success",
 		},
 		nil, 200,
 	)

@@ -1,4 +1,4 @@
-package manga_scrapper
+package manga_scrapper_service
 
 import (
 	"context"
@@ -140,20 +140,23 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 
 	switch mangaSource {
 	case models.SOURCE_MANGABAT:
-		mangabat := manga_scrapper_repository.NewMangabat()
-		return &mangabat, nil
+		mangaScrapper := manga_scrapper_repository.NewMangabat()
+		return &mangaScrapper, nil
 	case models.SOURCE_KLIKMANGA:
-		mangabat := manga_scrapper_repository.NewKlikmanga()
-		return &mangabat, nil
+		mangaScrapper := manga_scrapper_repository.NewKlikmanga()
+		return &mangaScrapper, nil
 	case models.SOURCE_WEBTOONSID:
-		mangabat := manga_scrapper_repository.NewWebtoonsid()
-		return &mangabat, nil
+		mangaScrapper := manga_scrapper_repository.NewWebtoonsid()
+		return &mangaScrapper, nil
 	case models.SOURCE_MANGAREAD:
-		mangabat := mangamee_port.NewMangaread()
-		return &mangabat, nil
+		mangaScrapper := mangamee_port.NewMangaread()
+		return &mangaScrapper, nil
 	case models.SOURCE_MANGATOWN:
-		mangabat := mangamee_port.NewMangatown()
-		return &mangabat, nil
+		mangaScrapper := mangamee_port.NewMangatown()
+		return &mangaScrapper, nil
+	case models.SOURCE_MAIDMY:
+		mangaScrapper := mangamee_port.NewMaidmy()
+		return &mangaScrapper, nil
 	}
 
 	return mangaScrapper, models.ErrMangaSourceNotFound
