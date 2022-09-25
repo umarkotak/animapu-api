@@ -21,9 +21,7 @@ func (t *Mangaread) GetDetail(ctx context.Context, queryParams models.QueryParam
 }
 
 func (t *Mangaread) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	mangas := []models.Manga{}
-
-	return mangas, nil
+	return getSearch(ctx, models.SOURCE_MANGAREAD, 1, queryParams)
 }
 
 func (t *Mangaread) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {

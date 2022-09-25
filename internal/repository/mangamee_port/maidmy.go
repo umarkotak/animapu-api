@@ -21,9 +21,7 @@ func (t Maidmy) GetDetail(ctx context.Context, queryParams models.QueryParams) (
 }
 
 func (t Maidmy) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	mangas := []models.Manga{}
-
-	return mangas, nil
+	return getSearch(ctx, models.SOURCE_MAIDMY, 4, queryParams)
 }
 
 func (t Maidmy) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {

@@ -13,6 +13,7 @@ const (
 	SOURCE_MANGAHUB     = "mangahub"
 	SOURCE_MANGAUPDATES = "mangaupdates"
 	SOURCE_MANGABAT     = "mangabat"
+	SOURCE_M_MANGABAT   = "m_mangabat"
 	SOURCE_KLIKMANGA    = "klikmanga"
 	SOURCE_WEBTOONSID   = "webtoonsid"
 	SOURCE_FIZMANGA     = "fizmanga"
@@ -85,8 +86,8 @@ var (
 			Language: "id",
 			Title:    "Maid My",
 			WebLink:  "https://www.maid.my.id/",
-			Active:   false,
-			Status:   "unavailable",
+			Active:   true,
+			Status:   "stable - from mangamee",
 		},
 		{
 			ID:       SOURCE_MANGAREAD,
@@ -101,6 +102,14 @@ var (
 			Language: "en",
 			Title:    "Manga Town",
 			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_M_MANGABAT,
+			Language: "en",
+			Title:    "Mangabat",
+			WebLink:  "https://m.mangabat.com/m",
 			Active:   true,
 			Status:   "stable - from mangamee",
 		},

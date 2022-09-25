@@ -16,43 +16,37 @@ import (
 
 type (
 	MangameeHomeResponse struct {
-		Code    int64              `json:"code"`
-		Message string             `json:"message"`
-		Data    []MangameeHomeData `json:"data"`
-	}
-	MangameeHomeData struct {
-		Id          string   `json:"Id"`
-		Cover       string   `json:"Cover"`
-		Title       string   `json:"Title"`
-		LastChapter string   `json:"LastChapter"`
-		LastRead    string   `json:"LastRead"`
-		Status      string   `json:"Status"`
-		Summary     string   `json:"Summary"`
-		Chapters    []string `json:"Chapters"`
-		Images      []string `json:"Images"`
+		Code    int64           `json:"code"`
+		Message string          `json:"message"`
+		Data    []MangameeManga `json:"data"`
 	}
 	MangameeDetailResponse struct {
-		Code    int64              `json:"code"`
-		Message string             `json:"message"`
-		Data    MangameeDetailData `json:"data"`
+		Code    int64         `json:"code"`
+		Message string        `json:"message"`
+		Data    MangameeManga `json:"data"`
 	}
-	MangameeDetailData struct {
-		Id          string                  `json:"Id"`
-		Cover       string                  `json:"Cover"`
-		Title       string                  `json:"Title"`
-		LastChapter string                  `json:"LastChapter"`
-		LastRead    string                  `json:"LastRead"`
-		Status      string                  `json:"Status"`
-		Summary     string                  `json:"Summary"`
-		Chapters    []MangameeDetailChapter `json:"Chapters"`
-		Images      []MangameeDetailImage   `json:"Images"`
+
+	MangameeManga struct {
+		Id          string            `json:"id"`
+		Cover       string            `json:"cover"`
+		Title       string            `json:"title"`
+		LastChapter string            `json:"last_chapter"`
+		LastRead    string            `json:"last_read"`
+		Status      string            `json:"status"`
+		Summary     string            `json:"summary"`
+		Chapters    []MangameeChapter `json:"chapters"`
+		DataImages  MangameeDataImage `json:"data_images"`
 	}
-	MangameeDetailChapter struct {
-		Id   string `json:"Id"`
-		Name string `json:"Name"`
+	MangameeDataImage struct {
+		ChapterName string          `json:"chapter_name"`
+		Images      []MangameeImage `json:"images"`
 	}
-	MangameeDetailImage struct {
-		Image string `json:"Image"`
+	MangameeChapter struct {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+	MangameeImage struct {
+		Image string `json:"image"`
 	}
 )
 
@@ -74,7 +68,9 @@ func getHome(ctx context.Context, animapuSource string, mangameeSource, page int
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee
-		logrus.WithContext(ctx).Error(err)
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"response_body": string(body),
+		}).Error(err)
 		return []models.Manga{}, err
 	}
 
@@ -129,7 +125,9 @@ func getDetail(ctx context.Context, animapuSource string, mangameeSource int64, 
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee
-		logrus.WithContext(ctx).Error(err)
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"response_body": string(body),
+		}).Error(err)
 		return models.Manga{}, err
 	}
 
@@ -170,7 +168,62 @@ func getDetail(ctx context.Context, animapuSource string, mangameeSource int64, 
 }
 
 func getSearch(ctx context.Context, animapuSource string, mangameeSource int64, queryParams models.QueryParams) ([]models.Manga, error) {
-	return []models.Manga{}, nil
+	url := fmt.Sprintf(
+		"%v/manga/search/%v?title=%v",
+		config.Get().MangameeApiHost, mangameeSource, strings.Replace(queryParams.Title, " ", "%20", -1),
+	)
+
+	req, _ := http.NewRequest(
+		"GET", url, strings.NewReader("{}"),
+	)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, err
+	}
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	if res.StatusCode != 200 {
+		err = models.ErrMangamee
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"response_body": string(body),
+		}).Error(err)
+		return []models.Manga{}, err
+	}
+
+	var mangameeSearchResponse MangameeHomeResponse
+	json.Unmarshal(body, &mangameeSearchResponse)
+
+	mangas := []models.Manga{}
+
+	for _, mangameeData := range mangameeSearchResponse.Data {
+		chapterNumberString := utils.RemoveNonNumeric(mangameeData.LastChapter)
+
+		mangas = append(mangas, models.Manga{
+			ID:                  mangameeData.Id,
+			SourceID:            mangameeData.Id,
+			Source:              animapuSource,
+			Title:               mangameeData.Title,
+			Status:              "Ongoing",
+			Rating:              "0",
+			LatestChapterID:     "chapter_id",
+			LatestChapterNumber: utils.StringMustFloat64(chapterNumberString),
+			LatestChapterTitle:  mangameeData.LastChapter,
+			Chapters:            []models.Chapter{},
+			CoverImages: []models.CoverImage{
+				{
+					Index: 1,
+					ImageUrls: []string{
+						fmt.Sprintf(mangameeData.Cover),
+					},
+				},
+			},
+		})
+	}
+
+	return mangas, nil
 }
 
 func getChapter(ctx context.Context, animapuSource string, mangameeSource int64, queryParams models.QueryParams) (models.Chapter, error) {
@@ -190,7 +243,9 @@ func getChapter(ctx context.Context, animapuSource string, mangameeSource int64,
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee
-		logrus.WithContext(ctx).Error(err)
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"response_body": string(body),
+		}).Error(err)
 		return models.Chapter{}, err
 	}
 
@@ -207,10 +262,10 @@ func getChapter(ctx context.Context, animapuSource string, mangameeSource int64,
 	}
 
 	idx := int64(1)
-	for _, mangameeImage := range mangameeDetailResponse.Data.Images {
+	for _, image := range mangameeDetailResponse.Data.DataImages.Images {
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index:     idx,
-			ImageUrls: []string{mangameeImage.Image},
+			ImageUrls: []string{image.Image},
 		})
 		idx += 1
 	}

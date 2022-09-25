@@ -108,6 +108,16 @@ func SyncLibraries(c *gin.Context) {
 		return
 	}
 
+	if len(syncLibrariesParams.Mangas) == 0 {
+		render.Response(
+			c.Request.Context(), c,
+			map[string]string{
+				"synced": "success",
+			},
+			nil, 200,
+		)
+	}
+
 	// TODO: Implement sync library services
 	// err = user_library_service.Sync(c.Request.Context(), user, syncLibrariesParams.Mangas)
 	if err != nil {
