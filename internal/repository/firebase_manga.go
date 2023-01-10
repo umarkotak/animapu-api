@@ -124,7 +124,6 @@ func FbUpvoteManga(ctx context.Context, manga models.Manga) (models.Manga, error
 	var err error
 	if onePopularRef == nil {
 		manga.PopularityPoint = 1
-		manga.ReadCount = 1
 		err = onePopularRef.Set(ctx, manga)
 	} else {
 		err = onePopularRef.Get(ctx, &manga)
@@ -132,10 +131,31 @@ func FbUpvoteManga(ctx context.Context, manga models.Manga) (models.Manga, error
 			logrus.WithContext(ctx).Error(err)
 			return manga, err
 		}
-		if manga.Star {
-			manga.PopularityPoint += 1
+		manga.PopularityPoint += 1
+		err = onePopularRef.Set(ctx, manga)
+	}
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return manga, err
+	}
+
+	return manga, nil
+}
+
+func FbAddFollowManga(ctx context.Context, manga models.Manga) (models.Manga, error) {
+	onePopularRef := popularMangaRef.Child(manga.GetUniqueKey())
+
+	var err error
+	if onePopularRef == nil {
+		manga.FollowCount = 1
+		err = onePopularRef.Set(ctx, manga)
+	} else {
+		err = onePopularRef.Get(ctx, &manga)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return manga, err
 		}
-		manga.ReadCount += 1
+		manga.FollowCount += 1
 		err = onePopularRef.Set(ctx, manga)
 	}
 	if err != nil {
@@ -157,8 +177,8 @@ func FbGetPopularManga(ctx context.Context) ([]models.Manga, error) {
 	}
 
 	for _, oneManga := range mangaMap {
-		if oneManga.PopularityPoint > 0 || oneManga.ReadCount > 15 {
-			oneManga.Weight = (3 * oneManga.PopularityPoint) + (1 * oneManga.ReadCount)
+		if oneManga.PopularityPoint > 0 || oneManga.ReadCount > 15 || oneManga.FollowCount > 0 {
+			oneManga.Weight = (3 * oneManga.PopularityPoint) + (1 * oneManga.ReadCount) + (2 * oneManga.FollowCount)
 			oneManga.LastChapterRead = 0
 			mangas = append(mangas, oneManga)
 		}

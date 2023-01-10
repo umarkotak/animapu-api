@@ -29,6 +29,7 @@ type (
 		LastChapterRead     float64      `json:"last_chapter_read"`
 		LastLink            string       `json:"last_link"`
 		Weight              int64        `json:"weight"`
+		FollowCount         int64        `json:"follow_count"`
 	}
 
 	CoverImage struct {

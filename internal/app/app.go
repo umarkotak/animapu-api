@@ -43,6 +43,7 @@ func Start() {
 	r.Use(RequestID())
 	r.Use(CORSMiddleware())
 	r.Use(LogRequest())
+	r.Use(LogVisitor())
 
 	r.GET("/health", health_controller.GetHealth)
 	r.GET("/logs", health_controller.GetLogs)
@@ -56,6 +57,7 @@ func Start() {
 
 	r.GET("/mangas/popular", manga_controller.GetMangaPopular)
 	r.POST("/mangas/upvote", manga_controller.PostMangaUpvote)
+	r.POST("/mangas/follow", manga_controller.PostMangaFollower)
 
 	r.GET("/users/mangas/histories", user_controller.GetHistories)
 	r.POST("/users/mangas/histories", user_controller.PostHistories)

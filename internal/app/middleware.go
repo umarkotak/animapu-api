@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
@@ -32,6 +33,15 @@ func LogRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Method != "OPTIONS" {
 			logrus.Infof("%v %v", c.Request.Method, c.Request.URL.Path)
+		}
+		c.Next()
+	}
+}
+
+func LogVisitor() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.Request.Method != "OPTIONS" && c.Request.Header.Get("X-Visitor-Id") != "" {
+			go repository.LogVisitor(c)
 		}
 		c.Next()
 	}
