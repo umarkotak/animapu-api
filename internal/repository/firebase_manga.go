@@ -123,7 +123,11 @@ func FbUpvoteManga(ctx context.Context, manga models.Manga) (models.Manga, error
 
 	var err error
 	if onePopularRef == nil {
-		manga.PopularityPoint = 1
+		if manga.Star {
+			manga.PopularityPoint = 1
+		} else {
+			manga.ReadCount = 1
+		}
 		err = onePopularRef.Set(ctx, manga)
 	} else {
 		err = onePopularRef.Get(ctx, &manga)
@@ -131,7 +135,11 @@ func FbUpvoteManga(ctx context.Context, manga models.Manga) (models.Manga, error
 			logrus.WithContext(ctx).Error(err)
 			return manga, err
 		}
-		manga.PopularityPoint += 1
+		if manga.Star {
+			manga.PopularityPoint += 1
+		} else {
+			manga.ReadCount += 1
+		}
 		err = onePopularRef.Set(ctx, manga)
 	}
 	if err != nil {
