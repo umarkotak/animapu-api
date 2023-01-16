@@ -47,6 +47,7 @@ func Start() {
 
 	r.GET("/health", health_controller.GetHealth)
 	r.GET("/logs", health_controller.GetLogs)
+	r.GET("/visitor_logs", health_controller.GetVisitorLogs)
 
 	r.GET("/mangas/sources", setting_controller.GetAvailableSource)
 

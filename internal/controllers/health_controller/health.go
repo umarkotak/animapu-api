@@ -2,6 +2,7 @@ package health_controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
@@ -24,6 +25,16 @@ func GetLogs(c *gin.Context) {
 		c.Request.Context(),
 		c,
 		logger.GlobalLog,
+		nil,
+		200,
+	)
+}
+
+func GetVisitorLogs(c *gin.Context) {
+	render.Response(
+		c.Request.Context(),
+		c,
+		repository.GetLogVisitor(),
 		nil,
 		200,
 	)

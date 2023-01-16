@@ -30,3 +30,4 @@ aws_stop_nohup:
 	ssh -i "~/.ssh/default.pem" ubuntu@ec2-13-214-123-225.ap-southeast-1.compute.amazonaws.com
 	# cd ~/app
 	# sudo nohup ./main &
+	# rm -rf nohup.out
