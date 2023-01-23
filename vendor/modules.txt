@@ -47,12 +47,18 @@ github.com/antchfx/xmlquery
 # github.com/antchfx/xpath v1.2.0
 ## explicit; go 1.14
 github.com/antchfx/xpath
+# github.com/beevik/etree v1.1.0
+## explicit
+github.com/beevik/etree
 # github.com/cespare/xxhash/v2 v2.1.2
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
 # github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f
 ## explicit
 github.com/dgryski/go-rendezvous
+# github.com/elgs/gostrgen v0.0.0-20161222160715-9d61ae07eeae
+## explicit
+github.com/elgs/gostrgen
 # github.com/gin-contrib/sse v0.1.0
 ## explicit; go 1.12
 github.com/gin-contrib/sse
@@ -98,6 +104,9 @@ github.com/gobwas/glob/util/strings
 github.com/gocolly/colly
 github.com/gocolly/colly/debug
 github.com/gocolly/colly/storage
+# github.com/gofrs/uuid v3.2.0+incompatible
+## explicit
+github.com/gofrs/uuid
 # github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e
 ## explicit
 github.com/golang/groupcache/lru
@@ -130,6 +139,9 @@ github.com/joho/godotenv
 # github.com/json-iterator/go v1.1.9
 ## explicit; go 1.12
 github.com/json-iterator/go
+# github.com/juju/errors v0.0.0-20220331221717-b38fca44723b
+## explicit; go 1.17
+github.com/juju/errors
 # github.com/kennygrant/sanitize v1.2.4
 ## explicit
 github.com/kennygrant/sanitize
@@ -148,6 +160,11 @@ github.com/modern-go/reflect2
 # github.com/patrickmn/go-cache v2.1.0+incompatible
 ## explicit
 github.com/patrickmn/go-cache
+# github.com/rs/zerolog v1.26.1
+## explicit; go 1.15
+github.com/rs/zerolog
+github.com/rs/zerolog/internal/cbor
+github.com/rs/zerolog/internal/json
 # github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca
 ## explicit
 github.com/saintfish/chardet
@@ -160,6 +177,18 @@ github.com/temoto/robotstxt
 # github.com/ugorji/go/codec v1.1.7
 ## explicit
 github.com/ugorji/go/codec
+# github.com/use-go/onvif v0.0.9
+## explicit; go 1.15
+github.com/use-go/onvif
+github.com/use-go/onvif/device
+github.com/use-go/onvif/gosoap
+github.com/use-go/onvif/networking
+github.com/use-go/onvif/sdk
+github.com/use-go/onvif/sdk/device
+github.com/use-go/onvif/ws-discovery
+github.com/use-go/onvif/xsd
+github.com/use-go/onvif/xsd/iso8601
+github.com/use-go/onvif/xsd/onvif
 # go.opencensus.io v0.23.0
 ## explicit; go 1.13
 go.opencensus.io
@@ -179,11 +208,12 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-## explicit; go 1.11
+# golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e
+## explicit; go 1.17
 golang.org/x/crypto/sha3
 # golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
 ## explicit; go 1.17
+golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/html
@@ -193,7 +223,10 @@ golang.org/x/net/http/httpguts
 golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
+golang.org/x/net/internal/iana
+golang.org/x/net/internal/socket
 golang.org/x/net/internal/timeseries
+golang.org/x/net/ipv4
 golang.org/x/net/trace
 # golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a
 ## explicit; go 1.11
