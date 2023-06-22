@@ -125,12 +125,12 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Cha
 		return chapter, err
 	}
 
-	if err == nil && len(chapter.ChapterImages) > 5 {
-		err = repository.FbSet(ctx, queryParams.ToFbKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-		}
-	}
+	// if err == nil && len(chapter.ChapterImages) > 5 {
+	// 	err = repository.FbSet(ctx, queryParams.ToFbKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
+	// 	if err != nil {
+	// 		logrus.WithContext(ctx).Error(err)
+	// 	}
+	// }
 
 	return chapter, nil
 }
