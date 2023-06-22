@@ -1,6 +1,7 @@
 package manga_controller
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,13 +18,14 @@ func GetMangaLatest(c *gin.Context) {
 		Page:   page,
 	}
 
-	mangas, err := manga_scrapper_service.GetHome(c.Request.Context(), queryParams)
+	mangas, meta, err := manga_scrapper_service.GetHome(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
 
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(c.Request.Context(), c, mangas, nil, 200)
 }
 
@@ -34,13 +36,14 @@ func GetMangaDetail(c *gin.Context) {
 		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
 	}
 
-	manga, err := manga_scrapper_service.GetDetail(c.Request.Context(), queryParams)
+	manga, meta, err := manga_scrapper_service.GetDetail(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
 
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(c.Request.Context(), c, manga, nil, 200)
 }
 
@@ -54,13 +57,14 @@ func ReadManga(c *gin.Context) {
 		ChapterID:         c.Param("chapter_id"),
 	}
 
-	chapter, err := manga_scrapper_service.GetChapter(ctx, queryParams)
+	chapter, meta, err := manga_scrapper_service.GetChapter(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, false)
 		return
 	}
 
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(ctx, c, chapter, nil, 200)
 }
 
@@ -72,12 +76,13 @@ func SearchManga(c *gin.Context) {
 		Title:  c.Request.URL.Query().Get("title"),
 	}
 
-	mangas, err := manga_scrapper_service.GetSearch(c.Request.Context(), queryParams)
+	mangas, meta, err := manga_scrapper_service.GetSearch(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
 
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(c.Request.Context(), c, mangas, nil, 200)
 }
