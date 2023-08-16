@@ -4,3 +4,4 @@ bin/
 main
 app.log
 local
+.vscode

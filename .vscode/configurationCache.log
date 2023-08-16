@@ -1,1 +1,0 @@
-{"buildTargets":["aws_stop_nohup","build_ubuntu","buildrun","connect","deploy_aws","make","run","run_build_ubuntu"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
