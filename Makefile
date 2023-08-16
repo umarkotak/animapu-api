@@ -31,3 +31,13 @@ aws_stop_nohup:
 	# cd ~/app
 	# sudo nohup ./main &
 	# rm -rf nohup.out
+
+connect_idcloud:
+	ssh umarkotak@103.187.146.246
+
+deploy_idcloud:
+	GOOS=linux GOARCH=amd64 go build cmd/web/main.go
+	scp .env umarkotak@103.187.146.246:/home/umarkotak/app
+	ssh umarkotak@103.187.146.246 "sudo systemctl stop animapu-api"
+	scp main umarkotak@103.187.146.246:/home/umarkotak/app
+	ssh umarkotak@103.187.146.246

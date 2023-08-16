@@ -62,7 +62,7 @@ var (
 			Language: "id",
 			Title:    "Klik Manga",
 			WebLink:  "https://klikmanga.id/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
@@ -70,7 +70,7 @@ var (
 			Language: "id",
 			Title:    "WebToon ID",
 			WebLink:  "https://www.webtoons.com/id/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
@@ -86,7 +86,7 @@ var (
 			Language: "id",
 			Title:    "Maid My",
 			WebLink:  "https://www.maid.my.id/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 		{
@@ -94,7 +94,7 @@ var (
 			Language: "en",
 			Title:    "Manga Read",
 			WebLink:  "https://www.mangaread.org/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 		{
@@ -102,7 +102,7 @@ var (
 			Language: "en",
 			Title:    "Manga Town",
 			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 		{
@@ -110,7 +110,7 @@ var (
 			Language: "en",
 			Title:    "Mangabat",
 			WebLink:  "https://m.mangabat.com/m",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 	}
