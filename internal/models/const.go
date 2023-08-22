@@ -10,18 +10,16 @@ type MangaSource struct {
 }
 
 const (
-	SOURCE_MANGAHUB     = "mangahub"
-	SOURCE_MANGAUPDATES = "mangaupdates"
-	SOURCE_MANGABAT     = "mangabat"
-	SOURCE_ASURA_NACM   = "asura_nacm"
-	SOURCE_M_MANGABAT   = "m_mangabat"
-	SOURCE_KLIKMANGA    = "klikmanga"
-	SOURCE_WEBTOONSID   = "webtoonsid"
-	SOURCE_FIZMANGA     = "fizmanga"
-	SOURCE_MANGADEX     = "mangadex"
-	SOURCE_MAIDMY       = "maidmy"
-	SOURCE_MANGAREAD    = "mangaread"
-	SOURCE_MANGATOWN    = "mangatown"
+	SOURCE_MANGAHUB   = "mangahub"
+	SOURCE_MANGABAT   = "mangabat"
+	SOURCE_ASURA_NACM = "asura_nacm"
+	SOURCE_M_MANGABAT = "m_mangabat"
+	SOURCE_KLIKMANGA  = "klikmanga"
+	SOURCE_WEBTOONSID = "webtoonsid"
+	SOURCE_MANGADEX   = "mangadex"
+	SOURCE_MAIDMY     = "maidmy"
+	SOURCE_MANGAREAD  = "mangaread"
+	SOURCE_MANGATOWN  = "mangatown"
 )
 
 var (
@@ -41,22 +39,6 @@ var (
 			WebLink:  "https://asura.nacm.xyz",
 			Active:   true,
 			Status:   "stable",
-		},
-		{
-			ID:       SOURCE_FIZMANGA,
-			Language: "en",
-			Title:    "Fizmanga",
-			WebLink:  "https://fizmanga.com/",
-			Active:   false,
-			Status:   "not-stable",
-		},
-		{
-			ID:       SOURCE_MANGAUPDATES,
-			Language: "en",
-			Title:    "Manga Updates",
-			WebLink:  "https://www.mangaupdates.com/",
-			Active:   false,
-			Status:   "not-stable",
 		},
 		{
 			ID:       SOURCE_MANGAHUB,

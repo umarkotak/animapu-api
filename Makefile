@@ -38,6 +38,6 @@ connect_idcloud:
 deploy_idcloud:
 	GOOS=linux GOARCH=amd64 go build cmd/web/main.go
 	scp .env umarkotak@103.187.146.246:/home/umarkotak/app
-	ssh umarkotak@103.187.146.246 "sudo systemctl stop animapu-api"
+	ssh umarkotak@103.187.146.246 "sudo pkill main"
 	scp main umarkotak@103.187.146.246:/home/umarkotak/app
 	ssh umarkotak@103.187.146.246

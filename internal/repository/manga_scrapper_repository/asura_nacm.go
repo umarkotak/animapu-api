@@ -130,34 +130,48 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 	mangas := []models.Manga{}
 
-	mangas = append(mangas, models.Manga{
-		ID:                  "",
-		SourceID:            "",
-		Source:              "source",
-		SecondarySourceID:   "",
-		SecondarySource:     "secondary_source",
-		Title:               "Untitled",
-		Description:         "Description unavailable",
-		Genres:              []string{},
-		Status:              "Ongoing",
-		Rating:              "10",
-		LatestChapterID:     "chapter_id",
-		LatestChapterNumber: 0,
-		LatestChapterTitle:  "Chapter 0",
-		Chapters:            []models.Chapter{},
-		CoverImages: []models.CoverImage{
-			{
-				Index: 1,
-				ImageUrls: []string{
-					fmt.Sprintf("https://animapu-lite.vercel.app/images/manga/%v", "image_id"),
+	c.OnHTML("#content > div.wrapper > div.postbody > div.bixbox > div.listupd > div.bs", func(e *colly.HTMLElement) {
+		latestChapterTitle := e.ChildText("div.bsx > a > div.bigor > div.adds > div.epxs")
+		latestChapterTitle = utils.RemoveNonNumeric(latestChapterTitle)
+		latestChapter, _ := strconv.ParseFloat(latestChapterTitle, 64)
+
+		mangaLink := e.ChildAttr("div.bsx > a", "href")
+
+		mangaID := strings.ReplaceAll(mangaLink, "https://asura.nacm.xyz/manga/", "")
+		mangaID = strings.ReplaceAll(mangaID, "/", "")
+
+		mangas = append(mangas, models.Manga{
+			ID:                  mangaID,
+			SourceID:            mangaID,
+			Source:              "asura_nacm",
+			Title:               e.ChildText("div.bsx > a > div.bigor > div.tt"),
+			Genres:              []string{},
+			LatestChapterID:     "",
+			LatestChapterNumber: latestChapter,
+			LatestChapterTitle:  latestChapterTitle,
+			Chapters:            []models.Chapter{},
+			CoverImages: []models.CoverImage{
+				{
+					Index: 1,
+					ImageUrls: []string{
+						e.ChildAttr("div.bsx > a > div.limit > img.ts-post-image", "src"),
+					},
 				},
 			},
-		},
+		})
 	})
 
-	err := c.Visit(fmt.Sprintf("https://animapu-lite.vercel.app/search/%v", queryParams.Page))
+	var err error
+
+	pageCount := 3
+	for i := 1; i <= pageCount; i++ {
+		query := strings.Replace(queryParams.Title, " ", "+", -1)
+		err = c.Visit(fmt.Sprintf("https://asura.nacm.xyz/page/%v/?s=%v", i, query))
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+		}
+	}
 	if err != nil {
-		logrus.WithContext(ctx).Error(err)
 		return mangas, err
 	}
 
@@ -168,11 +182,21 @@ func (t *AsuraNacm) GetChapter(ctx context.Context, queryParams models.QueryPara
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
+	chapterNumber := float64(0)
+
+	splitted := strings.Split(queryParams.ChapterID, "chapter-")
+	if len(splitted) > 0 {
+		newSplitted := strings.Split(splitted[len(splitted)-1], "-")
+		if len(newSplitted) > 0 {
+			chapterNumber = utils.ForceSanitizeStringToFloat(newSplitted[0])
+		}
+	}
+
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        "asura_nacm",
-		Number:        0,
+		Number:        chapterNumber,
 		ChapterImages: []models.ChapterImage{},
 	}
 
