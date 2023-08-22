@@ -36,3 +36,9 @@ func StringMustFloat64(s string) float64 {
 	i, _ := strconv.ParseFloat(s, 10)
 	return i
 }
+
+func ForceSanitizeStringToFloat(s string) float64 {
+	s = RemoveNonNumeric(s)
+	i, _ := strconv.ParseFloat(s, 10)
+	return i
+}

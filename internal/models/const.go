@@ -13,6 +13,7 @@ const (
 	SOURCE_MANGAHUB     = "mangahub"
 	SOURCE_MANGAUPDATES = "mangaupdates"
 	SOURCE_MANGABAT     = "mangabat"
+	SOURCE_ASURA_NACM   = "asura_nacm"
 	SOURCE_M_MANGABAT   = "m_mangabat"
 	SOURCE_KLIKMANGA    = "klikmanga"
 	SOURCE_WEBTOONSID   = "webtoonsid"
@@ -30,6 +31,14 @@ var (
 			Language: "en",
 			Title:    "Manga Bat",
 			WebLink:  "https://m.mangabat.com/m",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_ASURA_NACM,
+			Language: "en",
+			Title:    "Asura Nacm",
+			WebLink:  "https://asura.nacm.xyz",
 			Active:   true,
 			Status:   "stable",
 		},

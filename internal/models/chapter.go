@@ -15,7 +15,8 @@ type (
 	}
 
 	ChapterImage struct {
-		Index     int64    `json:"index"`
-		ImageUrls []string `json:"image_urls"`
+		SimpleRender bool     `json:"simple_render"`
+		Index        int64    `json:"index"`
+		ImageUrls    []string `json:"image_urls"`
 	}
 )
