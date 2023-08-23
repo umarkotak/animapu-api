@@ -2,6 +2,7 @@ package disqus_repository
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"time"
 
@@ -10,7 +11,9 @@ import (
 )
 
 type (
-	GetDiscussionParams struct{}
+	GetDiscussionParams struct {
+		DisqusID string
+	}
 
 	GetDiscussionResponse struct {
 		RawJson string `json:"raw_json"`
@@ -18,6 +21,11 @@ type (
 )
 
 func GetDiscussion(ctx context.Context, params GetDiscussionParams) (GetDiscussionResponse, error) {
+	if params.DisqusID == "" {
+		err := fmt.Errorf("empty disqus id")
+		return GetDiscussionResponse{}, err
+	}
+
 	c := colly.NewCollector()
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -42,15 +50,16 @@ func GetDiscussion(ctx context.Context, params GetDiscussionParams) (GetDiscussi
 	urlParams := url.Values{}
 	urlParams.Add("base", "default")
 	urlParams.Add("f", "asurascans-com-1")
-	urlParams.Add("t_i", QueryMustUnescape("242992%20https%3A%2F%2Fasura.nacm.xyz%2F%3Fp%3D242992"))
-	urlParams.Add("t_u", QueryMustUnescape("https%3A%2F%2Fasura.nacm.xyz%2F2678590577-academys-undercover-professor-chapter-55-framework%2F"))
-	urlParams.Add("t_e", QueryMustUnescape("Academy%E2%80%99s%20Undercover%20Professor%20Chapter%2055%20%26%238211%3B%20Framework"))
-	urlParams.Add("t_d", QueryMustUnescape("Academy%E2%80%99s%20Undercover%20Professor%20Chapter%2055%20%E2%80%93%20Framework"))
-	urlParams.Add("t_t", QueryMustUnescape("Academy%E2%80%99s%20Undercover%20Professor%20Chapter%2055%20%26%238211%3B%20Framework"))
+	urlParams.Add("t_i", QueryMustUnescape(params.DisqusID))
+	// urlParams.Add("t_i", QueryMustUnescape("242992%20https%3A%2F%2Fasura.nacm.xyz%2F%3Fp%3D242992"))
+	// urlParams.Add("t_u", QueryMustUnescape("https%3A%2F%2Fasura.nacm.xyz%2F2678590577-academys-undercover-professor-chapter-55-framework%2F"))
+	// urlParams.Add("t_e", QueryMustUnescape("Academy%E2%80%99s%20Undercover%20Professor%20Chapter%2055%20%26%238211%3B%20Framework"))
+	// urlParams.Add("t_d", QueryMustUnescape("Academy%E2%80%99s%20Undercover%20Professor%20Chapter%2055%20%E2%80%93%20Framework"))
+	// urlParams.Add("t_t", QueryMustUnescape("Academy%E2%80%99s%20Undercover%20Professor%20Chapter%2055%20%26%238211%3B%20Framework"))
 	urlParams.Add("s_o", "default")
 	baseUrl.RawQuery = urlParams.Encode()
 
-	logrus.Infof("CALLING DISQUS API: %+v", baseUrl.String())
+	// logrus.Infof("CALLING DISQUS API: %+v", baseUrl.String())
 	err = c.Visit(baseUrl.String())
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)

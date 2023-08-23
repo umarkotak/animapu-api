@@ -3,6 +3,8 @@ package manga_scrapper_repository
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -207,6 +209,28 @@ func (t *AsuraNacm) GetChapter(ctx context.Context, queryParams models.QueryPara
 				e.ChildAttr("img", "src"),
 			},
 		})
+	})
+
+	// Sample target: https://www.asurascans.com/?p=225072
+	c.OnHTML("#comments > script", func(e *colly.HTMLElement) {
+		pattern := `https:\/\/www\.asurascans\.com\/\?p=\d+`
+		re := regexp.MustCompile(pattern)
+
+		matches := re.FindAllString(e.Text, -1)
+
+		asuraDisqusID := ""
+
+		for _, match := range matches {
+			asuraDisqusID = match
+			break
+		}
+
+		asuraDisqusUrl, _ := url.Parse(asuraDisqusID)
+
+		oneAsuraDisqusID := asuraDisqusUrl.Query().Get("p")
+
+		// Disqus format: 242992 https://asura.nacm.xyz/?p=242992
+		chapter.GenericDiscussion.DisqusID = fmt.Sprintf("%v %v", oneAsuraDisqusID, asuraDisqusID)
 	})
 
 	err := c.Visit(fmt.Sprintf("https://asura.nacm.xyz/%v", queryParams.ChapterID))

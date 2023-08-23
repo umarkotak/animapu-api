@@ -36,7 +36,7 @@ type (
 
 var config Config
 
-func Initialize() {
+func Initialize() error {
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Errorf("Error load env", err)
@@ -70,6 +70,12 @@ func Initialize() {
 			Password: os.Getenv("REDIS_PASSWORD"),
 		},
 	}
+
+	if config.AnimapuFirebaseUrl == "" {
+		panic("firebase url unset!")
+	}
+
+	return nil
 }
 
 func Get() Config {

@@ -10,7 +10,12 @@ import (
 )
 
 func GetMangaCommentsDisqus(c *gin.Context) {
-	disqusResp, err := disqus_repository.GetDiscussion(c.Request.Context(), disqus_repository.GetDiscussionParams{})
+	disqusResp, err := disqus_repository.GetDiscussion(
+		c.Request.Context(),
+		disqus_repository.GetDiscussionParams{
+			DisqusID: c.Query("disqus_id"),
+		},
+	)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
