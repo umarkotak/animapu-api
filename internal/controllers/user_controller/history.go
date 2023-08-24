@@ -64,6 +64,9 @@ func PostHistories(c *gin.Context) {
 		return
 	}
 
+	postHistoriesParams.Manga.Chapters = []models.Chapter{}
+	postHistoriesParams.Manga.Description = ""
+
 	manga, err := user_history_service.RecordHistory(c.Request.Context(), user, postHistoriesParams.Manga, postHistoriesParams.LastReadChapter)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)

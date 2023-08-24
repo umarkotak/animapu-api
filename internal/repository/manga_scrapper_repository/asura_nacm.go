@@ -83,7 +83,17 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 		Chapters:    []models.Chapter{},
 	}
 
-	c.OnHTML("article.hentry > div.bixbox.animefull > div.bigcontent.nobigcover > div.infox > h1", func(e *colly.HTMLElement) {
+	c.OnHTML("div.bixbox.animefull > div.bigcontent.nobigcover > div.infox > h1", func(e *colly.HTMLElement) {
+		if e.Text == "" {
+			return
+		}
+		manga.Title = e.Text
+	})
+
+	c.OnHTML("div.bixbox.animefull > div.bigcontent > div.infox > h1", func(e *colly.HTMLElement) {
+		if e.Text == "" {
+			return
+		}
 		manga.Title = e.Text
 	})
 
@@ -91,7 +101,19 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 		manga.Description = e.Text
 	})
 
-	c.OnHTML("article.hentry > div.bixbox.animefull > div.bigcontent.nobigcover > div.thumbook > div.thumb > img", func(e *colly.HTMLElement) {
+	c.OnHTML("div.bixbox.animefull > div.bigcontent.nobigcover > div.thumbook > div.thumb > img", func(e *colly.HTMLElement) {
+		if e.Attr("src") == "" {
+			return
+		}
+		manga.CoverImages = []models.CoverImage{{ImageUrls: []string{
+			e.Attr("src"),
+		}}}
+	})
+
+	c.OnHTML("div.bixbox.animefull > div.bigcontent > div.thumbook > div.thumb > img", func(e *colly.HTMLElement) {
+		if e.Attr("src") == "" {
+			return
+		}
 		manga.CoverImages = []models.CoverImage{{ImageUrls: []string{
 			e.Attr("src"),
 		}}}
