@@ -145,6 +145,8 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 		return manga, err
 	}
 
+	manga.GenerateLatestChapter()
+
 	return manga, nil
 }
 
