@@ -40,6 +40,7 @@ func RecordUserReadHistory(ctx context.Context, user models.User, manga models.M
 	tempReadHistories := []models.Manga{}
 	for _, historyManga := range user.ReadHistories {
 		if historyManga.GetFbUniqueKey() != manga.GetFbUniqueKey() {
+			historyManga.Chapters = []models.Chapter{}
 			tempReadHistories = append(tempReadHistories, historyManga)
 		}
 	}
