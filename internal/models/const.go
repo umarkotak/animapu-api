@@ -12,15 +12,17 @@ type MangaSource struct {
 const (
 	SOURCE_MANGABAT   = "mangabat"
 	SOURCE_ASURA_NACM = "asura_nacm"
+
+	// powered by mangamee
 	SOURCE_M_MANGABAT = "m_mangabat"
+	SOURCE_MAIDMY     = "maidmy"
+	SOURCE_MANGAREAD  = "mangaread"
+	SOURCE_MANGATOWN  = "mangatown"
 
 	SOURCE_MANGAHUB   = "mangahub"
 	SOURCE_KLIKMANGA  = "klikmanga"
 	SOURCE_WEBTOONSID = "webtoonsid"
 	SOURCE_MANGADEX   = "mangadex"
-	SOURCE_MAIDMY     = "maidmy"
-	SOURCE_MANGAREAD  = "mangaread"
-	SOURCE_MANGATOWN  = "mangatown"
 )
 
 var (
