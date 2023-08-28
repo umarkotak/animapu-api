@@ -13,17 +13,17 @@ func NewMangabat() Mangabat {
 }
 
 func (t Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	return getHome(ctx, models.SOURCE_MANGABAT, 3, queryParams.Page)
+	return getHome(ctx, models.SOURCE_M_MANGABAT, "mangabat", queryParams.Page)
 }
 
 func (t Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
-	return getDetail(ctx, models.SOURCE_MANGABAT, 3, queryParams)
+	return getDetail(ctx, models.SOURCE_M_MANGABAT, "mangabat", queryParams)
 }
 
 func (t Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	return getSearch(ctx, models.SOURCE_MANGABAT, 3, queryParams)
+	return getSearch(ctx, models.SOURCE_M_MANGABAT, "mangabat", queryParams)
 }
 
 func (t Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
-	return getChapter(ctx, models.SOURCE_MANGABAT, 3, queryParams)
+	return getChapter(ctx, models.SOURCE_M_MANGABAT, "mangabat", queryParams)
 }

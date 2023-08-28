@@ -27,33 +27,36 @@ type (
 	}
 
 	MangameeManga struct {
-		Id          string            `json:"id"`
-		Cover       string            `json:"cover"`
-		Title       string            `json:"title"`
-		LastChapter string            `json:"last_chapter"`
-		LastRead    string            `json:"last_read"`
-		Status      string            `json:"status"`
-		Summary     string            `json:"summary"`
-		Chapters    []MangameeChapter `json:"chapters"`
-		DataImages  MangameeDataImage `json:"data_images"`
+		Id             string            `json:"id"`
+		Cover          string            `json:"cover"`
+		Title          string            `json:"title"`
+		LastChapter    string            `json:"last_chapter"`
+		LastRead       string            `json:"last_read"`
+		Status         string            `json:"status"`
+		Summary        string            `json:"summary"`
+		Chapters       []MangameeChapter `json:"chapters"`
+		DataImages     MangameeDataImage `json:"data_images"`
+		ChapterName    string            `json:"chapter_name"`
+		Images         []MangameeImage   `json:"images"`
+		OriginalServer string            `json:"original_server"`
 	}
 	MangameeDataImage struct {
 		ChapterName string          `json:"chapter_name"`
 		Images      []MangameeImage `json:"images"`
 	}
 	MangameeChapter struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		ChapterName string `json:"chapter_name"`
 	}
 	MangameeImage struct {
 		Image string `json:"image"`
 	}
 )
 
-func getHome(ctx context.Context, animapuSource string, mangameeSource, page int64) ([]models.Manga, error) {
-	url := fmt.Sprintf("%v/manga/index/%v/%v", config.Get().MangameeApiHost, mangameeSource, page)
+func getHome(ctx context.Context, animapuSource string, mangameeSource string, page int64) ([]models.Manga, error) {
+	url := fmt.Sprintf("%v/api/manga/index?source=%v&page=%v", config.Get().MangameeApiHost, mangameeSource, page)
 
-	// payload, _ := json.Marshal(params)
 	req, _ := http.NewRequest(
 		"GET", url, strings.NewReader("{}"),
 	)
@@ -108,8 +111,8 @@ func getHome(ctx context.Context, animapuSource string, mangameeSource, page int
 	return mangas, nil
 }
 
-func getDetail(ctx context.Context, animapuSource string, mangameeSource int64, queryParams models.QueryParams) (models.Manga, error) {
-	url := fmt.Sprintf("%v/manga/detail/%v/%v", config.Get().MangameeApiHost, mangameeSource, queryParams.SourceID)
+func getDetail(ctx context.Context, animapuSource string, mangameeSource string, queryParams models.QueryParams) (models.Manga, error) {
+	url := fmt.Sprintf("%v/api/manga/detail?source=%v&mangaid=%v", config.Get().MangameeApiHost, mangameeSource, queryParams.SourceID)
 
 	req, _ := http.NewRequest(
 		"GET", url, strings.NewReader("{}"),
@@ -157,7 +160,7 @@ func getDetail(ctx context.Context, animapuSource string, mangameeSource int64, 
 			ID:       mangameeChapter.Id,
 			Source:   animapuSource,
 			SourceID: mangameeChapter.Id,
-			Title:    mangameeChapter.Id,
+			Title:    mangameeChapter.Name,
 			Index:    idx,
 			Number:   utils.StringMustFloat64(utils.RemoveNonNumeric(mangameeChapter.Name)),
 		})
@@ -167,9 +170,9 @@ func getDetail(ctx context.Context, animapuSource string, mangameeSource int64, 
 	return manga, nil
 }
 
-func getSearch(ctx context.Context, animapuSource string, mangameeSource int64, queryParams models.QueryParams) ([]models.Manga, error) {
+func getSearch(ctx context.Context, animapuSource string, mangameeSource string, queryParams models.QueryParams) ([]models.Manga, error) {
 	url := fmt.Sprintf(
-		"%v/manga/search/%v?title=%v",
+		"%v/api/manga/search?source=%v&title=%v",
 		config.Get().MangameeApiHost, mangameeSource, strings.Replace(queryParams.Title, " ", "%20", -1),
 	)
 
@@ -226,8 +229,8 @@ func getSearch(ctx context.Context, animapuSource string, mangameeSource int64, 
 	return mangas, nil
 }
 
-func getChapter(ctx context.Context, animapuSource string, mangameeSource int64, queryParams models.QueryParams) (models.Chapter, error) {
-	url := fmt.Sprintf("%v/manga/read/%v/%v/%v", config.Get().MangameeApiHost, mangameeSource, queryParams.SourceID, queryParams.ChapterID)
+func getChapter(ctx context.Context, animapuSource string, mangameeSource string, queryParams models.QueryParams) (models.Chapter, error) {
+	url := fmt.Sprintf("%v/api/manga/image?source=%v&mangaid=%v&chapterid=%v", config.Get().MangameeApiHost, mangameeSource, queryParams.SourceID, queryParams.ChapterID)
 
 	req, _ := http.NewRequest(
 		"GET", url, strings.NewReader("{}"),
@@ -256,13 +259,13 @@ func getChapter(ctx context.Context, animapuSource string, mangameeSource int64,
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        animapuSource,
-		Number:        utils.StringMustFloat64(utils.RemoveNonNumeric(queryParams.ChapterID)),
+		Number:        utils.StringMustFloat64(utils.RemoveNonNumeric(mangameeDetailResponse.Data.ChapterName)),
 		ChapterImages: []models.ChapterImage{},
-		SourceLink:    fmt.Sprintf("https://mangamee.space/r/%v/%v/%v", mangameeSource, queryParams.SourceID, queryParams.ChapterID),
+		SourceLink:    mangameeDetailResponse.Data.OriginalServer,
 	}
 
 	idx := int64(1)
-	for _, image := range mangameeDetailResponse.Data.DataImages.Images {
+	for _, image := range mangameeDetailResponse.Data.Images {
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index:     idx,
 			ImageUrls: []string{image.Image},

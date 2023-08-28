@@ -156,11 +156,9 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 	case models.SOURCE_ASURA_NACM:
 		mangaScrapper := manga_scrapper_repository.NewAsuraNacm()
 		return &mangaScrapper, nil
-	case models.SOURCE_KLIKMANGA:
-		mangaScrapper := manga_scrapper_repository.NewKlikmanga()
-		return &mangaScrapper, nil
-	case models.SOURCE_WEBTOONSID:
-		mangaScrapper := manga_scrapper_repository.NewWebtoonsid()
+
+	case models.SOURCE_M_MANGABAT:
+		mangaScrapper := mangamee_port.NewMangabat()
 		return &mangaScrapper, nil
 	case models.SOURCE_MANGAREAD:
 		mangaScrapper := mangamee_port.NewMangaread()
@@ -170,6 +168,13 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 		return &mangaScrapper, nil
 	case models.SOURCE_MAIDMY:
 		mangaScrapper := mangamee_port.NewMaidmy()
+		return &mangaScrapper, nil
+
+	case models.SOURCE_KLIKMANGA:
+		mangaScrapper := manga_scrapper_repository.NewKlikmanga()
+		return &mangaScrapper, nil
+	case models.SOURCE_WEBTOONSID:
+		mangaScrapper := manga_scrapper_repository.NewWebtoonsid()
 		return &mangaScrapper, nil
 	}
 

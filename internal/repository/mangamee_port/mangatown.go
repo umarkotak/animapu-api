@@ -13,17 +13,17 @@ func NewMangatown() Mangatown {
 }
 
 func (t Mangatown) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	return getHome(ctx, models.SOURCE_MANGATOWN, 2, queryParams.Page)
+	return getHome(ctx, models.SOURCE_MANGATOWN, "mangatown", queryParams.Page)
 }
 
 func (t Mangatown) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
-	return getDetail(ctx, models.SOURCE_MANGATOWN, 2, queryParams)
+	return getDetail(ctx, models.SOURCE_MANGATOWN, "mangatown", queryParams)
 }
 
 func (t Mangatown) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	return getSearch(ctx, models.SOURCE_MANGATOWN, 2, queryParams)
+	return getSearch(ctx, models.SOURCE_MANGATOWN, "mangatown", queryParams)
 }
 
 func (t Mangatown) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
-	return getChapter(ctx, models.SOURCE_MANGATOWN, 2, queryParams)
+	return getChapter(ctx, models.SOURCE_MANGATOWN, "mangatown", queryParams)
 }

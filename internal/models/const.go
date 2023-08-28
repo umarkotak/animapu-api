@@ -10,10 +10,11 @@ type MangaSource struct {
 }
 
 const (
-	SOURCE_MANGAHUB   = "mangahub"
 	SOURCE_MANGABAT   = "mangabat"
 	SOURCE_ASURA_NACM = "asura_nacm"
 	SOURCE_M_MANGABAT = "m_mangabat"
+
+	SOURCE_MANGAHUB   = "mangahub"
 	SOURCE_KLIKMANGA  = "klikmanga"
 	SOURCE_WEBTOONSID = "webtoonsid"
 	SOURCE_MANGADEX   = "mangadex"
@@ -40,6 +41,40 @@ var (
 			Active:   true,
 			Status:   "stable",
 		},
+
+		{
+			ID:       SOURCE_M_MANGABAT,
+			Language: "en",
+			Title:    "Mangabat",
+			WebLink:  "https://m.mangabat.com/m",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_MAIDMY,
+			Language: "id",
+			Title:    "Maid My",
+			WebLink:  "https://www.maid.my.id/",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_MANGAREAD,
+			Language: "en",
+			Title:    "Manga Read",
+			WebLink:  "https://www.mangaread.org/",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_MANGATOWN,
+			Language: "en",
+			Title:    "Manga Town",
+			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+
 		{
 			ID:       SOURCE_MANGAHUB,
 			Language: "en",
@@ -71,38 +106,6 @@ var (
 			WebLink:  "https://mangadex.org/",
 			Active:   false,
 			Status:   "unavailable",
-		},
-		{
-			ID:       SOURCE_MAIDMY,
-			Language: "id",
-			Title:    "Maid My",
-			WebLink:  "https://www.maid.my.id/",
-			Active:   false,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MANGAREAD,
-			Language: "en",
-			Title:    "Manga Read",
-			WebLink:  "https://www.mangaread.org/",
-			Active:   false,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MANGATOWN,
-			Language: "en",
-			Title:    "Manga Town",
-			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
-			Active:   false,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_M_MANGABAT,
-			Language: "en",
-			Title:    "Mangabat",
-			WebLink:  "https://m.mangabat.com/m",
-			Active:   false,
-			Status:   "stable - from mangamee",
 		},
 	}
 )

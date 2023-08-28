@@ -13,17 +13,17 @@ func NewMangaread() Mangaread {
 }
 
 func (t *Mangaread) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	return getHome(ctx, models.SOURCE_MANGAREAD, 1, queryParams.Page)
+	return getHome(ctx, models.SOURCE_MANGAREAD, "mangaread", queryParams.Page)
 }
 
 func (t *Mangaread) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
-	return getDetail(ctx, models.SOURCE_MANGAREAD, 1, queryParams)
+	return getDetail(ctx, models.SOURCE_MANGAREAD, "mangaread", queryParams)
 }
 
 func (t *Mangaread) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	return getSearch(ctx, models.SOURCE_MANGAREAD, 1, queryParams)
+	return getSearch(ctx, models.SOURCE_MANGAREAD, "mangaread", queryParams)
 }
 
 func (t *Mangaread) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
-	return getChapter(ctx, models.SOURCE_MANGAREAD, 1, queryParams)
+	return getChapter(ctx, models.SOURCE_MANGAREAD, "mangaread", queryParams)
 }
