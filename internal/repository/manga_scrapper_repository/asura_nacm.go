@@ -34,7 +34,8 @@ func (t *AsuraNacm) GetHome(ctx context.Context, queryParams models.QueryParams)
 
 		mangaLink := e.ChildAttr("div.bsx > a", "href")
 
-		mangaID := strings.ReplaceAll(mangaLink, "https://asura.nacm.xyz/manga/", "")
+		splitted := strings.Split(mangaLink, "/manga/")
+		mangaID := splitted[1]
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
 		mangas = append(mangas, models.Manga{
