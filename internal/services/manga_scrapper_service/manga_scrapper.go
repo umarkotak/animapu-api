@@ -112,16 +112,16 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Cha
 	// 	}
 	// }
 
-	cachedChapter, found := repository.GoCache().Get(queryParams.ToKey("page_read"))
-	if found {
-		cachedChapterByte, err := json.Marshal(cachedChapter)
-		if err == nil {
-			err = json.Unmarshal(cachedChapterByte, &chapter)
-			if err == nil {
-				return chapter, models.Meta{FromCache: true}, nil
-			}
-		}
-	}
+	// cachedChapter, found := repository.GoCache().Get(queryParams.ToKey("page_read"))
+	// if found {
+	// 	cachedChapterByte, err := json.Marshal(cachedChapter)
+	// 	if err == nil {
+	// 		err = json.Unmarshal(cachedChapterByte, &chapter)
+	// 		if err == nil {
+	// 			return chapter, models.Meta{FromCache: true}, nil
+	// 		}
+	// 	}
+	// }
 
 	mangaScrapper, err := mangaScrapperGenerator(queryParams.Source)
 	if err != nil {
