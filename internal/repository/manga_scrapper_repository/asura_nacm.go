@@ -15,10 +15,14 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
-type AsuraNacm struct{}
+type AsuraNacm struct {
+	Host string
+}
 
 func NewAsuraNacm() AsuraNacm {
-	return AsuraNacm{}
+	return AsuraNacm{
+		Host: "https://asuracomics.com",
+	}
 }
 
 func (t *AsuraNacm) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
@@ -59,7 +63,7 @@ func (t *AsuraNacm) GetHome(ctx context.Context, queryParams models.QueryParams)
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("https://asura.nacm.xyz/manga/?page=%v&order=update", queryParams.Page))
+	err := c.Visit(fmt.Sprintf("%v/manga/?page=%v&order=update", t.Host, queryParams.Page))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 	}
@@ -123,7 +127,8 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 	c.OnHTML("#chapterlist > ul", func(e *colly.HTMLElement) {
 		e.ForEach("li", func(i int, h *colly.HTMLElement) {
 			chapterLink := h.ChildAttr("div > div > a", "href")
-			chapterID := strings.ReplaceAll(chapterLink, "https://asura.nacm.xyz/", "")
+			chapterUrl, _ := url.Parse(chapterLink)
+			chapterID := chapterUrl.Path
 			chapterID = strings.ReplaceAll(chapterID, "/", "")
 
 			manga.Chapters = append(manga.Chapters, models.Chapter{
@@ -137,7 +142,7 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 		})
 	})
 
-	targetUrl := fmt.Sprintf("https://asura.nacm.xyz/manga/%v", queryParams.SourceID)
+	targetUrl := fmt.Sprintf("%v/manga/%v", t.Host, queryParams.SourceID)
 	err := c.Visit(targetUrl)
 	if err != nil {
 		logrus.WithContext(ctx).WithFields(logrus.Fields{
@@ -164,7 +169,7 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 		mangaLink := e.ChildAttr("div.bsx > a", "href")
 
-		mangaID := strings.ReplaceAll(mangaLink, "https://asura.nacm.xyz/manga/", "")
+		mangaID := strings.ReplaceAll(mangaLink, fmt.Sprintf("%v/", t.Host), "")
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
 		mangas = append(mangas, models.Manga{
@@ -193,7 +198,7 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 	pageCount := 3
 	for i := 1; i <= pageCount; i++ {
 		query := strings.Replace(queryParams.Title, " ", "+", -1)
-		err = c.Visit(fmt.Sprintf("https://asura.nacm.xyz/page/%v/?s=%v", i, query))
+		err = c.Visit(fmt.Sprintf("%v/page/%v/?s=%v", t.Host, i, query))
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 		}
@@ -219,10 +224,13 @@ func (t *AsuraNacm) GetChapter(ctx context.Context, queryParams models.QueryPara
 		}
 	}
 
+	targetLink := fmt.Sprintf("%v/%v", t.Host, queryParams.ChapterID)
+
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        "asura_nacm",
+		SourceLink:    targetLink,
 		Number:        chapterNumber,
 		ChapterImages: []models.ChapterImage{},
 	}
@@ -258,7 +266,7 @@ func (t *AsuraNacm) GetChapter(ctx context.Context, queryParams models.QueryPara
 		chapter.GenericDiscussion.DisqusID = fmt.Sprintf("%v %v", oneAsuraDisqusID, asuraDisqusID)
 	})
 
-	err := c.Visit(fmt.Sprintf("https://asura.nacm.xyz/%v", queryParams.ChapterID))
+	err := c.Visit(targetLink)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return chapter, err
