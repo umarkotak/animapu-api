@@ -12,6 +12,7 @@ type MangaSource struct {
 const (
 	SOURCE_MANGABAT   = "mangabat"
 	SOURCE_ASURA_NACM = "asura_nacm"
+	SOURCE_KOMIKINDO  = "komikindo"
 
 	// powered by mangamee
 	SOURCE_M_MANGABAT = "m_mangabat"
@@ -38,8 +39,16 @@ var (
 		{
 			ID:       SOURCE_ASURA_NACM,
 			Language: "en",
-			Title:    "Asura Nacm",
+			Title:    "Asura",
 			WebLink:  "https://asura.nacm.xyz",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_KOMIKINDO,
+			Language: "id",
+			Title:    "KomikIndo",
+			WebLink:  "https://komikindo.one",
 			Active:   true,
 			Status:   "stable",
 		},
