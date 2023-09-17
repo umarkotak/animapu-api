@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"os"
-	"path"
 	"runtime"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +24,7 @@ func Initialize() {
 	logrus.SetFormatter(&logrus.TextFormatter{
 		CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
 			// frame.File: For exact path
-			return "", fmt.Sprintf("[%v:%v]:", path.Base(frame.File), frame.Line)
+			return "", fmt.Sprintf("[%v:%v]:", frame.File, frame.Line)
 		},
 	})
 	// f, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE, 0755)

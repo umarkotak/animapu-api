@@ -84,7 +84,7 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 		Description: "Description unavailable",
 		Genres:      []string{},
 		Status:      "Ongoing",
-		CoverImages: []models.CoverImage{{ImageUrls: []string{}}},
+		CoverImages: []models.CoverImage{{Index: 0, ImageUrls: []string{""}}},
 		Chapters:    []models.Chapter{},
 	}
 
@@ -169,7 +169,7 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 		mangaLink := e.ChildAttr("div.bsx > a", "href")
 
-		mangaID := strings.ReplaceAll(mangaLink, fmt.Sprintf("%v/", t.Host), "")
+		mangaID := strings.ReplaceAll(mangaLink, fmt.Sprintf("%v/manga", t.Host), "")
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
 		mangas = append(mangas, models.Manga{
@@ -195,7 +195,7 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 	var err error
 
-	pageCount := 3
+	pageCount := 5
 	for i := 1; i <= pageCount; i++ {
 		query := strings.Replace(queryParams.Title, " ", "+", -1)
 		err = c.Visit(fmt.Sprintf("%v/page/%v/?s=%v", t.Host, i, query))
@@ -204,7 +204,7 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 		}
 	}
 	if err != nil {
-		return mangas, err
+		return mangas, nil
 	}
 
 	return mangas, nil
