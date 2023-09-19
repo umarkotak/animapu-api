@@ -172,6 +172,15 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 	case models.SOURCE_MAIDMY:
 		mangaScrapper := mangamee_port.NewMaidmy()
 		return &mangaScrapper, nil
+	case models.SOURCE_ASURA_COMIC:
+		mangaScrapper := mangamee_port.NewAsuraComic()
+		return &mangaScrapper, nil
+	case models.SOURCE_MANGANATO:
+		mangaScrapper := mangamee_port.NewMangaNato()
+		return &mangaScrapper, nil
+	case models.SOURCE_MANGANELO:
+		mangaScrapper := mangamee_port.NewMangaNelo()
+		return &mangaScrapper, nil
 
 	case models.SOURCE_KLIKMANGA:
 		mangaScrapper := manga_scrapper_repository.NewKlikmanga()

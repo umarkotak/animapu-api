@@ -15,10 +15,13 @@ const (
 	SOURCE_KOMIKINDO  = "komikindo"
 
 	// powered by mangamee
-	SOURCE_M_MANGABAT = "m_mangabat"
-	SOURCE_MAIDMY     = "maidmy"
-	SOURCE_MANGAREAD  = "mangaread"
-	SOURCE_MANGATOWN  = "mangatown"
+	SOURCE_M_MANGABAT  = "m_mangabat"
+	SOURCE_MAIDMY      = "maidmy"
+	SOURCE_MANGAREAD   = "mangaread"
+	SOURCE_MANGATOWN   = "mangatown"
+	SOURCE_ASURA_COMIC = "m_asura"
+	SOURCE_MANGANATO   = "manganato"
+	SOURCE_MANGANELO   = "manganelo"
 
 	SOURCE_MANGAHUB   = "mangahub"
 	SOURCE_KLIKMANGA  = "klikmanga"
@@ -82,6 +85,30 @@ var (
 			Language: "en",
 			Title:    "Manga Town",
 			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_ASURA_COMIC,
+			Language: "en",
+			Title:    "Asura",
+			WebLink:  "https://asura.nacm.xyz",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_MANGANATO,
+			Language: "en",
+			Title:    "Manga Nato",
+			WebLink:  "https://manganato.com/index.php",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_MANGANELO,
+			Language: "en",
+			Title:    "Manga Nelo",
+			WebLink:  "https://ww6.manganelo.tv/home",
 			Active:   true,
 			Status:   "stable - from mangamee",
 		},
