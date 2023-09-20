@@ -8,8 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository"
-	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository"
-	"github.com/umarkotak/animapu-api/internal/repository/mangamee_port"
 )
 
 func GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, models.Meta, error) {
@@ -50,16 +48,16 @@ func GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Mang
 	manga := models.Manga{}
 	var err error
 
-	cachedManga, found := repository.GoCache().Get(queryParams.ToKey("page_detail"))
-	if found {
-		cachedMangaByte, err := json.Marshal(cachedManga)
-		if err == nil {
-			err = json.Unmarshal(cachedMangaByte, &manga)
-			if err == nil {
-				return manga, models.Meta{FromCache: true}, nil
-			}
-		}
-	}
+	// cachedManga, found := repository.GoCache().Get(queryParams.ToKey("page_detail"))
+	// if found {
+	// 	cachedMangaByte, err := json.Marshal(cachedManga)
+	// 	if err == nil {
+	// 		err = json.Unmarshal(cachedMangaByte, &manga)
+	// 		if err == nil {
+	// 			return manga, models.Meta{FromCache: true}, nil
+	// 		}
+	// 	}
+	// }
 
 	mangaScrapper, err := mangaScrapperGenerator(queryParams.Source)
 	if err != nil {
@@ -74,7 +72,7 @@ func GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Mang
 	}
 
 	if len(manga.Chapters) > 0 {
-		go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 5*time.Minute)
+		// go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 5*time.Minute)
 		// go cacheManga(context.Background(), queryParams.ToKey("page_detail"), manga)
 	}
 
@@ -144,53 +142,6 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Cha
 	}
 
 	return chapter, models.Meta{}, nil
-}
-
-func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
-	var mangaScrapper models.MangaScrapper
-
-	switch mangaSource {
-	case models.SOURCE_MANGABAT:
-		mangaScrapper := manga_scrapper_repository.NewMangabat()
-		return &mangaScrapper, nil
-	case models.SOURCE_ASURA_NACM:
-		mangaScrapper := manga_scrapper_repository.NewAsuraNacm()
-		return &mangaScrapper, nil
-	case models.SOURCE_KOMIKINDO:
-		mangaScrapper := manga_scrapper_repository.NewKomikindo()
-		return &mangaScrapper, nil
-
-	case models.SOURCE_M_MANGABAT:
-		mangaScrapper := mangamee_port.NewMangabat()
-		return &mangaScrapper, nil
-	case models.SOURCE_MANGAREAD:
-		mangaScrapper := mangamee_port.NewMangaread()
-		return &mangaScrapper, nil
-	case models.SOURCE_MANGATOWN:
-		mangaScrapper := mangamee_port.NewMangatown()
-		return &mangaScrapper, nil
-	case models.SOURCE_MAIDMY:
-		mangaScrapper := mangamee_port.NewMaidmy()
-		return &mangaScrapper, nil
-	case models.SOURCE_ASURA_COMIC:
-		mangaScrapper := mangamee_port.NewAsuraComic()
-		return &mangaScrapper, nil
-	case models.SOURCE_MANGANATO:
-		mangaScrapper := mangamee_port.NewMangaNato()
-		return &mangaScrapper, nil
-	case models.SOURCE_MANGANELO:
-		mangaScrapper := mangamee_port.NewMangaNelo()
-		return &mangaScrapper, nil
-
-	case models.SOURCE_KLIKMANGA:
-		mangaScrapper := manga_scrapper_repository.NewKlikmanga()
-		return &mangaScrapper, nil
-	case models.SOURCE_WEBTOONSID:
-		mangaScrapper := manga_scrapper_repository.NewWebtoonsid()
-		return &mangaScrapper, nil
-	}
-
-	return mangaScrapper, models.ErrMangaSourceNotFound
 }
 
 func cacheManga(ctx context.Context, cacheKey string, manga models.Manga) {

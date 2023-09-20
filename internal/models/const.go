@@ -13,6 +13,7 @@ const (
 	SOURCE_MANGABAT   = "mangabat"
 	SOURCE_ASURA_NACM = "asura_nacm"
 	SOURCE_KOMIKINDO  = "komikindo"
+	SOURCE_MANGASEE   = "mangasee"
 
 	// powered by mangamee
 	SOURCE_M_MANGABAT  = "m_mangabat"
@@ -52,6 +53,14 @@ var (
 			Language: "id",
 			Title:    "KomikIndo",
 			WebLink:  "https://komikindo.one",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_MANGASEE,
+			Language: "en",
+			Title:    "Mangasee",
+			WebLink:  "https://www.mangasee123.com",
 			Active:   true,
 			Status:   "stable",
 		},
