@@ -235,11 +235,11 @@ func (t *AsuraNacm) GetChapter(ctx context.Context, queryParams models.QueryPara
 		ChapterImages: []models.ChapterImage{},
 	}
 
-	c.OnHTML("#readerarea > p", func(e *colly.HTMLElement) {
+	c.OnHTML("#readerarea > p > img", func(e *colly.HTMLElement) {
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
-				e.ChildAttr("img", "src"),
+				e.Attr("src"),
 			},
 		})
 	})
