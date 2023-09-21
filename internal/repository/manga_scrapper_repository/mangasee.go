@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
@@ -69,8 +70,7 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 		json.Unmarshal([]byte(dataJson), &mangaseeMangas)
 
 		for _, oneMangaseeManga := range mangaseeMangas {
-			chNumber := strings.TrimPrefix(oneMangaseeManga.Chapter, "10")
-			chNumber = strings.TrimSuffix(chNumber, "0")
+			chNumber := mangaseeDecodeCh(oneMangaseeManga.Chapter)
 
 			mangas = append(mangas, models.Manga{
 				ID:                  oneMangaseeManga.IndexName,
@@ -141,18 +141,23 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 		json.Unmarshal([]byte(dataJson), &mangaseeChapters)
 
 		for i, oneMangaseeChapter := range mangaseeChapters {
-			chNumberS := strings.TrimPrefix(oneMangaseeChapter.Chapter, "10")
-			chNumberS = strings.TrimSuffix(chNumberS, "0")
+			firstNum := oneMangaseeChapter.Chapter[0:1]
+			lastNum := oneMangaseeChapter.Chapter[len(oneMangaseeChapter.Chapter)-1:]
+			chNumberS := mangaseeDecodeCh(oneMangaseeChapter.Chapter)
+			if lastNum != "0" {
+				chNumberS = fmt.Sprintf("%v.%v", chNumberS, lastNum)
+			}
 
 			chNumer := utils.ForceSanitizeStringToFloat(chNumberS)
 
 			manga.Chapters = append(manga.Chapters, models.Chapter{
-				ID:       fmt.Sprint(chNumer),
-				Source:   sc.Source,
-				SourceID: fmt.Sprint(chNumer),
-				Title:    fmt.Sprintf("%v %v", oneMangaseeChapter.Type, chNumer),
-				Index:    int64(i),
-				Number:   chNumer,
+				ID:                fmt.Sprint(chNumer),
+				Source:            sc.Source,
+				SourceID:          fmt.Sprint(chNumer),
+				SecondarySourceID: fmt.Sprint(firstNum),
+				Title:             fmt.Sprintf("%v %v", oneMangaseeChapter.Type, chNumer),
+				Index:             int64(i),
+				Number:            chNumer,
 			})
 		}
 	})
@@ -221,6 +226,9 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 	c.SetRequestTimeout(60 * time.Second)
 
 	targetLink := fmt.Sprintf("%v/read-online/%v-chapter-%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
+	if queryParams.SecondarySourceID == "2" {
+		targetLink = fmt.Sprintf("%v/read-online/%v-chapter-%v-index-2.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
+	}
 
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
@@ -253,6 +261,10 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 						"https://%v/manga/%v/%04d%v-%03d.png",
 						strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
 					),
+					fmt.Sprintf(
+						"https://%v/manga/%v/Mag-Official/%04d%v-%03d.png",
+						strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
+					),
 				},
 			})
 		}
@@ -265,4 +277,21 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 	}
 
 	return chapter, nil
+}
+
+func mangaseeDecodeCh(s string) string {
+	return trimFirstRune(trimLastChar(s))
+}
+
+func trimFirstRune(s string) string {
+	_, i := utf8.DecodeRuneInString(s)
+	return s[i:]
+}
+
+func trimLastChar(s string) string {
+	r, size := utf8.DecodeLastRuneInString(s)
+	if r == utf8.RuneError && (size == 0 || size == 1) {
+		size = 0
+	}
+	return s[:len(s)-size]
 }

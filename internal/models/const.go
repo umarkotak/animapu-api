@@ -23,6 +23,7 @@ const (
 	SOURCE_ASURA_COMIC = "m_asura"
 	SOURCE_MANGANATO   = "manganato"
 	SOURCE_MANGANELO   = "manganelo"
+	SOURCE_M_MANGASEE  = "m_mangasee"
 
 	SOURCE_MANGAHUB   = "mangahub"
 	SOURCE_KLIKMANGA  = "klikmanga"
@@ -118,6 +119,14 @@ var (
 			Language: "en",
 			Title:    "Manga Nelo",
 			WebLink:  "https://ww6.manganelo.tv/home",
+			Active:   true,
+			Status:   "stable - from mangamee",
+		},
+		{
+			ID:       SOURCE_M_MANGASEE,
+			Language: "en",
+			Title:    "Mangasee",
+			WebLink:  "https://www.mangasee123.com",
 			Active:   true,
 			Status:   "stable - from mangamee",
 		},
