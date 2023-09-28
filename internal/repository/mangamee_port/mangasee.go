@@ -13,7 +13,7 @@ type Mangasee struct {
 
 func NewMangasee() Mangasee {
 	return Mangasee{
-		AnimapuSourceID:  models.SOURCE_ASURA_COMIC,
+		AnimapuSourceID:  models.SOURCE_M_MANGASEE,
 		MangameeSourceID: "mangasee",
 	}
 }

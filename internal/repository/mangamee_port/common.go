@@ -137,6 +137,9 @@ func getDetail(ctx context.Context, animapuSource string, mangameeSource string,
 	var mangameeDetailResponse MangameeDetailResponse
 	json.Unmarshal(body, &mangameeDetailResponse)
 
+	// logrus.Infof("URL: %+v", url)
+	// logrus.Infof("MANGAMEE DETAIL: %+v", mangameeDetailResponse)
+
 	chapterNumber := utils.StringMustFloat64(utils.RemoveNonNumeric(mangameeDetailResponse.Data.Chapters[0].Name))
 
 	manga := models.Manga{
