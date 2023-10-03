@@ -14,6 +14,13 @@ type (
 		ChapterID         string `json:"chapter_id"`
 		Title             string `json:"title"`
 	}
+
+	AnimeQueryParams struct {
+		Source    string `json:"source"`
+		SourceID  string `json:"source_id"`
+		EpisodeID string `json:"episode_id"`
+		Title     string `json:"title"`
+	}
 )
 
 func (qp *QueryParams) ToKey(page string) string {

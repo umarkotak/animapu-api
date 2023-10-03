@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
@@ -74,6 +75,8 @@ func Start() {
 	r.GET("/mangas/klikmanga/image_proxy/*url", proxy_controller.KlikmangaImage)
 	r.GET("/mangas/komikindo/image_proxy/*url", proxy_controller.KomikindoImage)
 	r.GET("/image_proxy", proxy_controller.GenericImage)
+
+	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
 
 	port := os.Getenv("PORT")
 	if port == "" {
