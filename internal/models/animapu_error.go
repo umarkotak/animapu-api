@@ -21,6 +21,9 @@ var (
 	ErrNotFound                  = errors.New("not found")
 	ErrUnauthorized              = errors.New("unauthorized")
 	ErrMangamee                  = errors.New("mangamee error")
+
+	ErrAnimeSourceNotFound          = errors.New("anime source not found")
+	ErrOtakudesuFrameSourceNotFound = errors.New("otakudesu frame source not found")
 )
 
 var (
@@ -64,6 +67,17 @@ var (
 			StatusCode: 422,
 			ErrorCode:  "mangamee_error",
 			Message:    "Terjadi kesalahan di server mangamee",
+		},
+
+		ErrAnimeSourceNotFound: {
+			StatusCode: 404,
+			ErrorCode:  "Anime source not found",
+			Message:    "Sumber anime yang anda cari tidak dapat ditemukan.",
+		},
+		ErrOtakudesuFrameSourceNotFound: {
+			StatusCode: 404,
+			ErrorCode:  "Otakudesu frame source not found",
+			Message:    "Sumber stream otakudesu tidak dapat ditemukan.",
 		},
 	}
 )

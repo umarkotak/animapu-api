@@ -29,6 +29,8 @@ const (
 	SOURCE_KLIKMANGA  = "klikmanga"
 	SOURCE_WEBTOONSID = "webtoonsid"
 	SOURCE_MANGADEX   = "mangadex"
+
+	ANIME_SOURCE_OTAKUDESU = "otakudesu"
 )
 
 var (

@@ -2,6 +2,7 @@ package anime_controller
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -19,13 +20,19 @@ func GetWatch(c *gin.Context) {
 		EpisodeID: c.Param("episode_id"),
 	}
 
-	episode, meta, err := anime_scrapper_service.GetEpisode(ctx, queryParams)
+	episodeWatch, meta, err := anime_scrapper_service.Watch(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, false)
 		return
 	}
 
+	if episodeWatch.RawPageByte != nil {
+		c.Writer.WriteHeader(http.StatusOK)
+		c.Writer.Write(episodeWatch.RawPageByte)
+		return
+	}
+
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
-	render.Response(ctx, c, episode, nil, 200)
+	render.Response(ctx, c, episodeWatch, nil, 200)
 }
