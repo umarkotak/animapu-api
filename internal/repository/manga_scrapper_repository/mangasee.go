@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"regexp"
 	"strings"
 	"time"
@@ -11,33 +13,40 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
+)
+
+type (
+	MangaseeManga struct {
+		SeriesID   string    `json:"SeriesID"`
+		IndexName  string    `json:"IndexName"`
+		SeriesName string    `json:"SeriesName"`
+		ScanStatus string    `json:"ScanStatus"`
+		Chapter    string    `json:"Chapter"`
+		Genres     string    `json:"Genres"`
+		Date       time.Time `json:"Date"`
+		IsEdd      bool      `json:"IsEdd"`
+	}
+
+	MangaseeChapter struct {
+		Chapter     string      `json:"Chapter"`
+		Type        string      `json:"Type"`
+		Date        string      `json:"Date"`
+		ChapterName interface{} `json:"ChapterName"`
+	}
+
+	MangaseeSearchManga struct {
+		IndexName  string   `json:"i"`
+		SeriesName string   `json:"s"`
+		AltNames   []string `json:"a"`
+	}
 )
 
 type Mangasee struct {
 	Host    string
 	Source  string
 	ImgHost string
-}
-
-type MangaseeManga struct {
-	SeriesID   string    `json:"SeriesID"`
-	IndexName  string    `json:"IndexName"`
-	SeriesName string    `json:"SeriesName"`
-	ScanStatus string    `json:"ScanStatus"`
-	Chapter    string    `json:"Chapter"`
-	Genres     string    `json:"Genres"`
-	Date       time.Time `json:"Date"`
-	IsEdd      bool      `json:"IsEdd"`
-}
-
-type MangaseeChapter struct {
-	Chapter     string      `json:"Chapter"`
-	Type        string      `json:"Type"`
-	Date        string      `json:"Date"`
-	ChapterName interface{} `json:"ChapterName"`
 }
 
 func NewMangasee() Mangasee {
@@ -177,23 +186,43 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 }
 
 func (sc *Mangasee) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/_search.php", sc.Host), nil)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, err
+	}
+
+	mangaseeSearchDatas := []MangaseeSearchManga{}
+	err = json.Unmarshal(body, &mangaseeSearchDatas)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return []models.Manga{}, err
+	}
 
 	mangas := []models.Manga{}
-
-	c.OnHTML("#content > div.postbody > section > div.film-list > div.animepost", func(e *colly.HTMLElement) {
-		mangaLink := e.ChildAttr("div.animposx > a", "href")
-
-		splitted := strings.Split(mangaLink, "/komik/")
-		mangaID := splitted[1]
-		mangaID = strings.ReplaceAll(mangaID, "/", "")
+	for _, oneMangaseeSearch := range mangaseeSearchDatas {
+		if !strings.Contains(strings.ToLower(oneMangaseeSearch.SeriesName), strings.ToLower(queryParams.Title)) {
+			continue
+		}
 
 		mangas = append(mangas, models.Manga{
-			ID:                  mangaID,
-			SourceID:            mangaID,
+			ID:                  oneMangaseeSearch.IndexName,
+			SourceID:            oneMangaseeSearch.IndexName,
 			Source:              sc.Source,
-			Title:               e.ChildText("div.animposx > div.bigors > a > div > h4"),
+			Title:               oneMangaseeSearch.SeriesName,
 			Genres:              []string{},
 			LatestChapterID:     "",
 			LatestChapterNumber: 0,
@@ -203,19 +232,11 @@ func (sc *Mangasee) GetSearch(ctx context.Context, queryParams models.QueryParam
 				{
 					Index: 1,
 					ImageUrls: []string{
-						fmt.Sprintf("%v/mangas/komikindo/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a > div > img", "src")),
+						fmt.Sprintf("%v/cover/%v.jpg", sc.ImgHost, oneMangaseeSearch.IndexName),
 					},
 				},
 			},
 		})
-	})
-
-	err := c.Visit(fmt.Sprintf("%v/?s=%v", sc.Host, queryParams.Title))
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-	}
-	if err != nil {
-		return mangas, err
 	}
 
 	return mangas, nil
