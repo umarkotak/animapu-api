@@ -274,7 +274,7 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 			modifier = fmt.Sprintf(".%v", splitted[1])
 		}
 
-		for i := 1; i <= 100; i++ {
+		for i := 1; i <= 150; i++ {
 			chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 				Index: 0,
 				ImageUrls: []string{

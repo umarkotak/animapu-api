@@ -56,7 +56,7 @@ var (
 			Language: "id",
 			Title:    "KomikIndo",
 			WebLink:  "https://komikindo.one",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
