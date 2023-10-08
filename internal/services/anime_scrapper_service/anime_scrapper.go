@@ -1364,6 +1364,42 @@ var (
 	}
 )
 
+func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
+	animes := []models.Anime{}
+
+	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	animes, err = animeScrapper.GetLatest(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	return animes, models.Meta{}, nil
+}
+
+func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, models.Meta, error) {
+	anime := models.Anime{}
+
+	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return anime, models.Meta{}, err
+	}
+
+	anime, err = animeScrapper.GetDetail(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return anime, models.Meta{}, err
+	}
+
+	return anime, models.Meta{}, nil
+}
+
 func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, models.Meta, error) {
 	episodeWatch := models.EpisodeWatch{}
 
@@ -1373,7 +1409,11 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 		return episodeWatch, models.Meta{}, err
 	}
 
-	episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
+	if queryParams.WatchVersion == "2" {
+		episodeWatch, err = animeScrapper.WatchV2(ctx, queryParams)
+	} else {
+		episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, models.Meta{}, err

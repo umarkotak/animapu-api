@@ -76,6 +76,8 @@ func Start() {
 	r.GET("/mangas/komikindo/image_proxy/*url", proxy_controller.KomikindoImage)
 	r.GET("/image_proxy", proxy_controller.GenericImage)
 
+	r.GET("/animes/:anime_source/latest", anime_controller.GetLatest)
+	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
 
 	port := os.Getenv("PORT")

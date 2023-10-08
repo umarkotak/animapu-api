@@ -16,10 +16,12 @@ type (
 	}
 
 	AnimeQueryParams struct {
-		Source    string `json:"source"`
-		SourceID  string `json:"source_id"`
-		EpisodeID string `json:"episode_id"`
-		Title     string `json:"title"`
+		Source       string `json:"source"`
+		SourceID     string `json:"source_id"`
+		Page         int64  `json:"page"`
+		WatchVersion string `json:"watch_version"`
+		EpisodeID    string `json:"episode_id"`
+		Title        string `json:"title"`
 	}
 )
 

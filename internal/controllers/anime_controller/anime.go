@@ -11,13 +11,51 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
+func GetLatest(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	queryParams := models.AnimeQueryParams{
+		Source: c.Param("anime_source"),
+	}
+
+	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.ErrorResponse(ctx, c, err, false)
+		return
+	}
+
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
+	render.Response(ctx, c, animes, nil, 200)
+}
+
+func GetDetail(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	queryParams := models.AnimeQueryParams{
+		Source:   c.Param("anime_source"),
+		SourceID: c.Param("anime_id"),
+	}
+
+	anime, meta, err := anime_scrapper_service.GetDetail(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.ErrorResponse(ctx, c, err, false)
+		return
+	}
+
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
+	render.Response(ctx, c, anime, nil, 200)
+}
+
 func GetWatch(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
-		Source:    c.Param("anime_source"),
-		SourceID:  c.Param("anime_id"),
-		EpisodeID: c.Param("episode_id"),
+		Source:       c.Param("anime_source"),
+		SourceID:     c.Param("anime_id"),
+		EpisodeID:    c.Param("episode_id"),
+		WatchVersion: c.Request.URL.Query().Get("watch_version"),
 	}
 
 	episodeWatch, meta, err := anime_scrapper_service.Watch(ctx, queryParams)
