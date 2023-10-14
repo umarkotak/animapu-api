@@ -169,7 +169,8 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 		mangaLink := e.ChildAttr("div.bsx > a", "href")
 
-		mangaID := strings.ReplaceAll(mangaLink, fmt.Sprintf("%v/manga", t.Host), "")
+		splitted := strings.Split(mangaLink, "/manga/")
+		mangaID := splitted[1]
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
 		mangas = append(mangas, models.Manga{
