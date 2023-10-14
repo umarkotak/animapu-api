@@ -14,4 +14,5 @@ type EpisodeWatch struct {
 	RawStreamUrl string `json:"raw_stream_url"`
 	RawPageByte  []byte `json:"raw_page_byte"`
 	IframeUrl    string `json:"iframe_url"`
+	OriginalUrl  string `json:"original_url"`
 }

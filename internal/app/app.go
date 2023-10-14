@@ -14,6 +14,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
+	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
@@ -36,6 +37,7 @@ func Initialize() {
 
 	config.Initialize()
 	repository.Initialize()
+	local_db.Initialize()
 }
 
 func Start() {
@@ -77,6 +79,7 @@ func Start() {
 	r.GET("/image_proxy", proxy_controller.GenericImage)
 
 	r.GET("/animes/:anime_source/latest", anime_controller.GetLatest)
+	r.GET("/animes/:anime_source/season/:release_year/:release_season", anime_controller.GetPerSeason)
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
 

@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -96,6 +98,27 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 		anime.CoverUrls = append(anime.CoverUrls, e.Attr("src"))
 	})
 
+	c.OnHTML("#venkonten > div.venser > div.fotoanime > div.infozin > div > p > span", func(e *colly.HTMLElement) {
+		if strings.Contains(e.Text, "Tanggal Rilis") {
+			releaseDateRaw := strings.ReplaceAll(e.Text, "Tanggal Rilis: ", "")
+			anime.ReleaseDate = releaseDateRaw
+			splitted := strings.Split(releaseDateRaw, " ")
+			if len(splitted) != 3 {
+				return
+			}
+			anime.ReleaseMonth = splitted[0]
+			anime.ReleaseYear = utils.StringMustInt64(utils.RemoveNonNumeric(splitted[2]))
+		}
+	})
+
+	c.OnHTML("#venkonten > div.venser > div.fotoanime > div.infozin > div > p > span", func(e *colly.HTMLElement) {
+		if strings.Contains(e.Text, "Skor") {
+			scoreRaw := strings.ReplaceAll(e.Text, "Skor: ", "")
+			anime.Score = utils.ForceSanitizeStringToFloat(scoreRaw)
+		}
+	})
+
+	maxNumber := float64(0)
 	c.OnHTML("div.episodelist > ul > li", func(e *colly.HTMLElement) {
 		episodeLink := e.ChildAttr("span > a", "href")
 		splitted := strings.Split(episodeLink, "/episode/")
@@ -104,14 +127,19 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 			id = strings.ReplaceAll(splitted[len(splitted)-1], "/", "")
 		}
 
-		anime.Episodes = append(anime.Episodes, models.Episode{
+		episode := models.Episode{
 			AnimeID:      queryParams.SourceID,
 			Source:       s.Source,
 			ID:           id,
 			Number:       utils.ForceSanitizeStringToFloat(e.ChildText("span > a")),
 			Title:        e.ChildText("span > a"),
 			OriginalLink: episodeLink,
-		})
+		}
+		anime.Episodes = append(anime.Episodes, episode)
+
+		if episode.Number > maxNumber {
+			maxNumber = episode.Number
+		}
 	})
 
 	err := c.Visit(targetUrl)
@@ -122,7 +150,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	c.Wait()
 
 	if len(anime.Episodes) > 0 {
-		anime.LatestEpisode = anime.Episodes[0].Number
+		anime.LatestEpisode = maxNumber
 	}
 
 	for i, j := 0, len(anime.Episodes)-1; i < j; i, j = i+1, j-1 {
@@ -297,9 +325,39 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 	}
 
 	episodeWatch = models.EpisodeWatch{
-		StreamType: "iframe",
-		IframeUrl:  iframeFinalUrl,
+		StreamType:  "iframe",
+		IframeUrl:   iframeFinalUrl,
+		OriginalUrl: targetUrl,
 	}
 
 	return episodeWatch, nil
+}
+
+func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, error) {
+	animePerSeason := models.AnimePerSeason{
+		ReleaseYear: queryParams.ReleaseYear,
+		SeasonName:  queryParams.ReleaseSeason,
+		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
+		Animes:      []models.Anime{},
+	}
+
+	otakudesuDB := local_db.AnimeLinkToDetailMap
+
+	for _, oneAnime := range otakudesuDB {
+		if oneAnime.ReleaseYear != queryParams.ReleaseYear {
+			continue
+		}
+
+		if oneAnime.ReleaseSeason != queryParams.ReleaseSeason {
+			continue
+		}
+
+		animePerSeason.Animes = append(animePerSeason.Animes, oneAnime)
+	}
+
+	sort.Slice(animePerSeason.Animes, func(i, j int) bool {
+		return animePerSeason.Animes[i].Score < animePerSeason.Animes[j].Score
+	})
+
+	return animePerSeason, nil
 }

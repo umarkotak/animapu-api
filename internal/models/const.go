@@ -56,8 +56,8 @@ var (
 			Language: "id",
 			Title:    "KomikIndo",
 			WebLink:  "https://komikindo.one",
-			Active:   false,
-			Status:   "stable",
+			Active:   true,
+			Status:   "un-stable",
 		},
 		{
 			ID:       SOURCE_MANGASEE,
@@ -165,5 +165,43 @@ var (
 			Active:   false,
 			Status:   "unavailable",
 		},
+	}
+)
+
+type Season struct {
+	Index int64  `json:"index"`
+	Name  string `json:"name"`
+}
+
+var (
+	MONTH_TO_SEASON_MAP = map[string]Season{
+		// winter
+		"jan": {1, "winter"},
+		"feb": {1, "winter"},
+		"mar": {1, "winter"},
+		"":    {1, "winter"},
+		"10":  {1, "winter"},
+		// spring
+		"apr": {2, "spring"},
+		"may": {2, "spring"},
+		"jun": {2, "spring"},
+		// summer
+		"jul": {3, "summer"},
+		"aug": {3, "summer"},
+		"agu": {3, "summer"},
+		"sep": {3, "summer"},
+		// fall
+		"oct": {4, "fall"},
+		"okt": {4, "fall"},
+		"nov": {4, "fall"},
+		"des": {4, "fall"},
+		"dec": {4, "fall"},
+	}
+
+	SEASON_TO_SEASON_INDEX = map[string]int64{
+		"winter": 1,
+		"spring": 2,
+		"summer": 3,
+		"fall":   4,
 	}
 )

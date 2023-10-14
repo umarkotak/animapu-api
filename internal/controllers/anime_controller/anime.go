@@ -3,6 +3,7 @@ package anime_controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -19,6 +20,27 @@ func GetLatest(c *gin.Context) {
 	}
 
 	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.ErrorResponse(ctx, c, err, false)
+		return
+	}
+
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
+	render.Response(ctx, c, animes, nil, 200)
+}
+
+func GetPerSeason(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	releaseYear, _ := strconv.ParseInt(c.Param("release_year"), 10, 64)
+	queryParams := models.AnimeQueryParams{
+		Source:        c.Param("anime_source"),
+		ReleaseYear:   releaseYear,
+		ReleaseSeason: c.Param("release_season"),
+	}
+
+	animes, meta, err := anime_scrapper_service.GetPerSeason(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, false)
