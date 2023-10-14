@@ -29,6 +29,12 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 		return animes, models.Meta{}, err
 	}
 
+	// err = ScrapOtakudesuAllAnimes(ctx)
+	// if err != nil {
+	// 	logrus.WithContext(ctx).Error(err)
+	// 	return animes, models.Meta{}, err
+	// }
+
 	return animes, models.Meta{}, nil
 }
 
@@ -110,7 +116,7 @@ func ScrapOtakudesuAllAnimes(ctx context.Context) error {
 	otakudesuDB := local_db.AnimeLinkToDetailMap
 
 	searchMap := map[string]models.Anime{}
-	for _, oneTarget := range targets {
+	for idx, oneTarget := range targets {
 		splitted := strings.Split(oneTarget, "/anime/")
 		id := ""
 		if len(splitted) > 0 {
@@ -143,14 +149,16 @@ func ScrapOtakudesuAllAnimes(ctx context.Context) error {
 		}
 		anime.ReleaseSeason = seasonObj.Name
 		anime.ReleaseSeasonIndex = seasonObj.Index
-		searchMap[id] = anime
 
-		result, _ := json.MarshalIndent(searchMap, " ", "  ")
-		err = os.WriteFile("otakudesu_search_map", result, 0644)
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			continue
-		}
+		logrus.Infof("[%v/%v] Adding: %v", idx, len(targets), anime.Title)
+		searchMap[id] = anime
+	}
+
+	result, _ := json.MarshalIndent(searchMap, " ", "  ")
+	err = os.WriteFile("otakudesu_search_map", result, 0644)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return err
 	}
 
 	return nil
