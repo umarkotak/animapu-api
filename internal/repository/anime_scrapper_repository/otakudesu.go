@@ -225,11 +225,11 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 		}
 	})
 
-	ondesuIdx := ""
+	ondesuIdxs := []string{}
 	c.OnHTML("#embed_holder > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
-			if strings.Contains(h.Text, "ondesuhd") {
-				ondesuIdx = fmt.Sprint(i)
+			if strings.Contains(h.Text, "ondesuhd") || strings.Contains(h.Text, "otakustream") {
+				ondesuIdxs = append(ondesuIdxs, fmt.Sprint(i))
 			}
 		})
 	})
@@ -242,8 +242,8 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 	}
 	c.Wait()
 
-	if ondesuIdx == "" {
-		err = fmt.Errorf("ondesu 720 stream server not found")
+	if len(ondesuIdxs) <= 0 {
+		err = fmt.Errorf("720 stream server not found")
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, err
 	}
@@ -258,7 +258,6 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 	}
 
 	p := shortLinkUrl.Query().Get("p")
-	logrus.Infof("DEBUGGING 1 p: %v", p)
 	if p == "" {
 		err = fmt.Errorf("missing short link p")
 		logrus.WithContext(ctx).Error(err)
@@ -274,59 +273,64 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 	nonceData := map[string]string{}
 	json.Unmarshal(body, &nonceData)
 	nonce := nonceData["data"]
-	logrus.Infof("DEBUGGING 2 nonce: %v", nonce)
 	if nonce == "" {
 		err = fmt.Errorf("missing nonce p")
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, err
 	}
 
-	body, err = s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
-		fmt.Sprintf("id=%v", p),
-		fmt.Sprintf("i=%v", ondesuIdx),
-		"q=720p",
-		fmt.Sprintf("nonce=%v", nonce),
-	})
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-
-	iframeBase64Data := map[string]string{}
-	json.Unmarshal(body, &iframeBase64Data)
-	iframeBase64 := iframeBase64Data["data"]
-	if iframeBase64 == "" {
-		err = fmt.Errorf("missing iframe data")
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-
-	iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-
-	re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
-
-	// Find the matches
-	matches := re.FindStringSubmatch(string(iframeBase64Decoded))
-
 	iframeFinalUrl := ""
-	if len(matches) >= 2 {
-		iframeFinalUrl = matches[1]
-	}
-	if iframeFinalUrl == "" {
-		err = fmt.Errorf("missing final iframe url")
-		logrus.WithContext(ctx).WithFields(logrus.Fields{
-			"iframe_element": string(iframeBase64Decoded),
-		}).Error(err)
-		return episodeWatch, err
+	iframeFinalUrls := []string{}
+	for _, ondesuIdx := range ondesuIdxs {
+		body, err = s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
+			fmt.Sprintf("id=%v", p),
+			fmt.Sprintf("i=%v", ondesuIdx),
+			"q=720p",
+			fmt.Sprintf("nonce=%v", nonce),
+		})
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			continue
+		}
+
+		iframeBase64Data := map[string]string{}
+		json.Unmarshal(body, &iframeBase64Data)
+		iframeBase64 := iframeBase64Data["data"]
+		if iframeBase64 == "" {
+			err = fmt.Errorf("missing iframe data")
+			logrus.WithContext(ctx).Error(err)
+			continue
+		}
+
+		iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			continue
+		}
+
+		re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
+
+		// Find the matches
+		matches := re.FindStringSubmatch(string(iframeBase64Decoded))
+
+		if len(matches) >= 2 {
+			iframeFinalUrl = matches[1]
+		}
+		if iframeFinalUrl == "" {
+			err = fmt.Errorf("missing final iframe url")
+			logrus.WithContext(ctx).WithFields(logrus.Fields{
+				"iframe_element": string(iframeBase64Decoded),
+			}).Error(err)
+			continue
+		}
+
+		iframeFinalUrls = append(iframeFinalUrls, iframeFinalUrl)
 	}
 
 	episodeWatch = models.EpisodeWatch{
 		StreamType:  "iframe",
 		IframeUrl:   iframeFinalUrl,
+		IframeUrls:  iframeFinalUrls,
 		OriginalUrl: targetUrl,
 	}
 

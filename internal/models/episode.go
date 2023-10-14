@@ -10,9 +10,10 @@ type Episode struct {
 }
 
 type EpisodeWatch struct {
-	StreamType   string `json:"stream_type"` // Enum: hls, mp4, iframe
-	RawStreamUrl string `json:"raw_stream_url"`
-	RawPageByte  []byte `json:"raw_page_byte"`
-	IframeUrl    string `json:"iframe_url"`
-	OriginalUrl  string `json:"original_url"`
+	StreamType   string   `json:"stream_type"` // Enum: hls, mp4, iframe
+	RawStreamUrl string   `json:"raw_stream_url"`
+	RawPageByte  []byte   `json:"raw_page_byte"`
+	IframeUrl    string   `json:"iframe_url"`
+	IframeUrls   []string `json:"iframe_urls"`
+	OriginalUrl  string   `json:"original_url"`
 }
