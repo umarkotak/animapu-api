@@ -12,14 +12,16 @@ import (
 
 type (
 	Config struct {
-		CacheObj                    *cache.Cache
-		AnimapuOnlineHost           string
-		AnimapuLocalHost            string
-		AnimapuGoogleServiceAccount string
-		AnimapuFirebaseUrl          string
-		ScrapeNinjaConfig           ScrapeNinjaConfig
-		RedisConfig                 RedisConfig
-		MangameeApiHost             string
+		CacheObj                        *cache.Cache
+		AnimapuOnlineHost               string
+		AnimapuLocalHost                string
+		AnimapuGoogleServiceAccount     string
+		AnimapuFirebaseUrl              string
+		ScrapeNinjaConfig               ScrapeNinjaConfig
+		RedisConfig                     RedisConfig
+		MangameeApiHost                 string
+		SriFirebaseGoogleServiceAccount string
+		SriFirebaseUrl                  string
 	}
 	ScrapeNinjaConfig struct {
 		Host         string
@@ -69,6 +71,9 @@ func Initialize() error {
 			Username: "default",
 			Password: os.Getenv("REDIS_PASSWORD"),
 		},
+
+		SriFirebaseGoogleServiceAccount: os.Getenv("SRI_FIREBASE_GOOGLE_SERVICE_ACCOUNT"),
+		SriFirebaseUrl:                  os.Getenv("SRI_FIREBASE_URL"),
 	}
 
 	if config.AnimapuFirebaseUrl == "" {
