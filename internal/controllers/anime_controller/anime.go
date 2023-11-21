@@ -22,7 +22,7 @@ func GetLatest(c *gin.Context) {
 	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		render.ErrorResponse(ctx, c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
@@ -43,7 +43,7 @@ func GetPerSeason(c *gin.Context) {
 	animes, meta, err := anime_scrapper_service.GetPerSeason(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		render.ErrorResponse(ctx, c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
@@ -62,7 +62,7 @@ func GetDetail(c *gin.Context) {
 	anime, meta, err := anime_scrapper_service.GetDetail(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		render.ErrorResponse(ctx, c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
@@ -83,7 +83,7 @@ func GetWatch(c *gin.Context) {
 	episodeWatch, meta, err := anime_scrapper_service.Watch(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		render.ErrorResponse(ctx, c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 

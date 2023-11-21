@@ -28,7 +28,7 @@ func NewOtakudesu() Otakudesu {
 	return Otakudesu{
 		AnimapuSource:   models.ANIME_SOURCE_OTAKUDESU,
 		Source:          "otakudesu",
-		OtakudesuHost:   "https://otakudesu.wiki",
+		OtakudesuHost:   "https://otakudesu.cam",
 		DesusStreamHost: "https://desustream.me",
 	}
 }
@@ -264,14 +264,15 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 		return episodeWatch, err
 	}
 
-	body, err := s.AdminAjaxCaller("aa1208d27f29ca340c92c66d1926f13f", []string{})
+	nonceBody, err := s.AdminAjaxCaller("aa1208d27f29ca340c92c66d1926f13f", []string{})
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, err
 	}
+	logrus.Infof("NONCE BODY: %+v", string(nonceBody))
 
 	nonceData := map[string]string{}
-	json.Unmarshal(body, &nonceData)
+	json.Unmarshal(nonceBody, &nonceData)
 	nonce := nonceData["data"]
 	if nonce == "" {
 		err = fmt.Errorf("missing nonce p")
@@ -282,7 +283,7 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 	iframeFinalUrl := ""
 	iframeFinalUrls := []string{}
 	for _, ondesuIdx := range ondesuIdxs {
-		body, err = s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
+		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
 			fmt.Sprintf("id=%v", p),
 			fmt.Sprintf("i=%v", ondesuIdx),
 			"q=720p",
@@ -294,7 +295,7 @@ func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryPa
 		}
 
 		iframeBase64Data := map[string]string{}
-		json.Unmarshal(body, &iframeBase64Data)
+		json.Unmarshal(iframeBody, &iframeBase64Data)
 		iframeBase64 := iframeBase64Data["data"]
 		if iframeBase64 == "" {
 			err = fmt.Errorf("missing iframe data")
