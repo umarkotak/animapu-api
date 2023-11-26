@@ -16,8 +16,8 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
 	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/repository"
+	"github.com/umarkotak/animapu-api/internal/singelton"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
-	"github.com/umarkotak/animapu-api/sri"
 )
 
 func Initialize() {
@@ -39,6 +39,7 @@ func Initialize() {
 	config.Initialize()
 	repository.Initialize()
 	local_db.Initialize()
+	singelton.Initialize()
 }
 
 func Start() {
@@ -84,13 +85,13 @@ func Start() {
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
 
-	sriServer, err := sri.New()
-	if err != nil {
-		logrus.Error(err)
-	}
-	if err == nil {
-		r.POST("/server/sri/location/current", sriServer.PostLocationCurrent)
-	}
+	// sriServer, err := sri.New()
+	// if err != nil {
+	// 	logrus.Error(err)
+	// }
+	// if err == nil {
+	// 	r.POST("/server/sri/location/current", sriServer.PostLocationCurrent)
+	// }
 
 	port := os.Getenv("PORT")
 	if port == "" {

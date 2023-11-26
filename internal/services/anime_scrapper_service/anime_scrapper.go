@@ -29,12 +29,6 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 		return animes, models.Meta{}, err
 	}
 
-	// err = ScrapOtakudesuAllAnimes(ctx)
-	// if err != nil {
-	// 	logrus.WithContext(ctx).Error(err)
-	// 	return animes, models.Meta{}, err
-	// }
-
 	return animes, models.Meta{}, nil
 }
 
@@ -83,11 +77,7 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 		return episodeWatch, models.Meta{}, err
 	}
 
-	if queryParams.WatchVersion == "2" {
-		episodeWatch, err = animeScrapper.WatchV2(ctx, queryParams)
-	} else {
-		episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
-	}
+	episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, models.Meta{}, err

@@ -12,6 +12,9 @@ func animeScrapperGenerator(animeSource string) (models.AnimeScrapper, error) {
 	case models.ANIME_SOURCE_OTAKUDESU:
 		animeScrapper := anime_scrapper_repository.NewOtakudesu()
 		return &animeScrapper, nil
+	case models.ANIME_SOURCE_ANIMENSION_LOCAL:
+		animeScrapper := anime_scrapper_repository.NewAnimensionLocal()
+		return &animeScrapper, nil
 	}
 
 	return animeScrapper, models.ErrAnimeSourceNotFound

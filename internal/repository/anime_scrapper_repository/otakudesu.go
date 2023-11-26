@@ -165,59 +165,6 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 
 	c := colly.NewCollector()
 
-	iframeSrc := ""
-	c.OnHTML("#pembed > div > iframe", func(e *colly.HTMLElement) {
-		iframeSrc = e.Attr("src")
-	})
-
-	targetUrl := fmt.Sprintf("%v/episode/%v", s.OtakudesuHost, queryParams.EpisodeID)
-	err := c.Visit(targetUrl)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-	c.Wait()
-
-	if iframeSrc == "" {
-		err = models.ErrOtakudesuFrameSourceNotFound
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-
-	iframeUrl, err := url.Parse(iframeSrc)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-
-	epId := iframeUrl.Query().Get("epId")
-	if epId == "" {
-		epId = iframeUrl.Query().Get("id")
-	}
-
-	if epId == "" {
-		err = fmt.Errorf("frame episode id not detected")
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
-	}
-
-	desusStreamTargetUrlHd := fmt.Sprintf(
-		"%v/beta/stream/hd/?id=%v", s.DesusStreamHost, epId,
-	)
-
-	episodeWatch = models.EpisodeWatch{
-		StreamType: "iframe",
-		IframeUrl:  desusStreamTargetUrlHd,
-	}
-
-	return episodeWatch, nil
-}
-
-func (s *Otakudesu) WatchV2(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
-	episodeWatch := models.EpisodeWatch{}
-
-	c := colly.NewCollector()
-
 	shortLink := ""
 	c.OnHTML("link", func(e *colly.HTMLElement) {
 		if e.Attr("rel") == "shortlink" {

@@ -30,7 +30,8 @@ const (
 	SOURCE_WEBTOONSID = "webtoonsid"
 	SOURCE_MANGADEX   = "mangadex"
 
-	ANIME_SOURCE_OTAKUDESU = "otakudesu"
+	ANIME_SOURCE_OTAKUDESU        = "otakudesu"
+	ANIME_SOURCE_ANIMENSION_LOCAL = "animension_local"
 )
 
 var (

@@ -7,6 +7,25 @@ import (
 	"strings"
 )
 
+// curl 'https://otakudesu.cam/wp-admin/admin-ajax.php' \
+//   -H 'authority: otakudesu.cam' \
+//   -H 'accept: */*' \
+//   -H 'accept-language: en-US,en;q=0.9,id;q=0.8' \
+//   -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
+//   -H 'cookie: _ga=GA1.2.2055059674.1700607496; _gid=GA1.2.1965634549.1700607496; _gat=1; _ga_025LZFQCB2=GS1.2.1700607496.1.1.1700607642.0.0.0' \
+//   -H 'origin: https://otakudesu.cam' \
+//   -H 'referer: https://otakudesu.cam/episode/tkrvgs-s3-episode-3-sub-indo/' \
+//   -H 'sec-ch-ua: "Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"' \
+//   -H 'sec-ch-ua-mobile: ?0' \
+//   -H 'sec-ch-ua-platform: "macOS"' \
+//   -H 'sec-fetch-dest: empty' \
+//   -H 'sec-fetch-mode: cors' \
+//   -H 'sec-fetch-site: same-origin' \
+//   -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36' \
+//   -H 'x-requested-with: XMLHttpRequest' \
+//   --data-raw 'action=aa1208d27f29ca340c92c66d1926f13f' \
+//   --compressed
+
 func (s *Otakudesu) AdminAjaxCaller(action string, additionals []string) ([]byte, error) {
 	url := fmt.Sprintf("%v/wp-admin/admin-ajax.php", s.OtakudesuHost)
 	method := "POST"
