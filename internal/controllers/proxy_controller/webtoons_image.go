@@ -1,7 +1,7 @@
 package proxy_controller
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -48,7 +48,7 @@ func WebtoonsImage(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)

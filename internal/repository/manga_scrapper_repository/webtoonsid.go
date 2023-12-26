@@ -6,10 +6,10 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -22,7 +22,7 @@ func NewWebtoonsid() Webtoonsid {
 
 func (w *Webtoonsid) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -73,7 +73,7 @@ func (w *Webtoonsid) GetHome(ctx context.Context, queryParams models.QueryParams
 
 func (w *Webtoonsid) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	manga := models.Manga{
 		Source:           "webtoonsid",
@@ -160,7 +160,7 @@ func (w *Webtoonsid) GetDetail(ctx context.Context, queryParams models.QueryPara
 
 func (w *Webtoonsid) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -175,7 +175,7 @@ func (w *Webtoonsid) GetSearch(ctx context.Context, queryParams models.QueryPara
 
 func (w *Webtoonsid) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,

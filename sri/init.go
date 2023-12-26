@@ -6,7 +6,7 @@ import (
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/db"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"google.golang.org/api/option"
 )
 

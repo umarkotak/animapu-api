@@ -9,7 +9,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"google.golang.org/api/option"
 )

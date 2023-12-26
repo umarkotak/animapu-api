@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -47,7 +47,7 @@ func QuickScrape(ctx context.Context, targetUrl string) (models.ScrapeNinjaRespo
 	}
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 
 	json.Unmarshal(body, &scrapeNinjaResponse)
 	return scrapeNinjaResponse, nil

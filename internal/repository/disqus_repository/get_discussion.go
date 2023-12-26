@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 )
 
 type (
@@ -27,7 +27,7 @@ func GetDiscussion(ctx context.Context, params GetDiscussionParams) (GetDiscussi
 	}
 
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	rawJson := ""
 	c.OnHTML("#disqus-threadData", func(e *colly.HTMLElement) {

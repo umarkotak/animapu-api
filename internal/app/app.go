@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"

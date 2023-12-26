@@ -3,10 +3,10 @@ package manga_scrapper_repository
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -18,7 +18,7 @@ func NewTemplate() Template {
 
 func (t *Template) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -58,7 +58,7 @@ func (t *Template) GetHome(ctx context.Context, queryParams models.QueryParams) 
 
 func (t *Template) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	manga := models.Manga{
 		ID:                  queryParams.SourceID,
@@ -86,7 +86,7 @@ func (t *Template) GetDetail(ctx context.Context, queryParams models.QueryParams
 
 func (t *Template) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -126,7 +126,7 @@ func (t *Template) GetSearch(ctx context.Context, queryParams models.QueryParams
 
 func (t *Template) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,

@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -27,7 +27,7 @@ func NewAsuraNacm() AsuraNacm {
 
 func (t *AsuraNacm) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -73,7 +73,7 @@ func (t *AsuraNacm) GetHome(ctx context.Context, queryParams models.QueryParams)
 
 func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
 	manga := models.Manga{
@@ -158,7 +158,7 @@ func (t *AsuraNacm) GetDetail(ctx context.Context, queryParams models.QueryParam
 
 func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -213,7 +213,7 @@ func (t *AsuraNacm) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 func (t *AsuraNacm) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	chapterNumber := float64(0)
 

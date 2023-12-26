@@ -13,6 +13,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -59,7 +60,8 @@ func NewMangasee() Mangasee {
 
 func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	// c.SetRequestTimeout(config.Get().CollyTimeout)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -113,7 +115,7 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 
 func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
 	manga := models.Manga{
@@ -244,7 +246,7 @@ func (sc *Mangasee) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	targetLink := fmt.Sprintf("%v/read-online/%v-chapter-%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
 	if queryParams.SecondarySourceID == "2" {

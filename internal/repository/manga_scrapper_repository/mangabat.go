@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -28,7 +27,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 	}
 
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	c.OnHTML("body div.body-site div.container.container-main div.container-main-left div.panel-list-story .list-story-item", func(e *colly.HTMLElement) {
 		sourceID := strings.Replace(e.ChildAttr("div > h3 > a", "href"), "https://read.mangabat.com/", "", -1)
@@ -97,7 +96,7 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 		CoverImages: []models.CoverImage{{ImageUrls: []string{""}}},
 	}
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-right > h1", func(e *colly.HTMLElement) {
 		manga.Title = e.Text
@@ -167,7 +166,7 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 	mangas := []models.Manga{}
 
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-list-story > div", func(e *colly.HTMLElement) {
 		detailUrl := e.ChildAttr("a.item-img", "href")

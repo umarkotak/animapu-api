@@ -2,17 +2,17 @@ package main
 
 import (
 	"context"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 )
 
 func main() {
 	ctx := context.Background()
 
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	c.OnHTML("div", func(e *colly.HTMLElement) {
 		logrus.Infof("%+v", e.Text)

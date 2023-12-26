@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -67,7 +67,7 @@ func getHome(ctx context.Context, animapuSource string, mangameeSource string, p
 	}
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee
@@ -124,7 +124,7 @@ func getDetail(ctx context.Context, animapuSource string, mangameeSource string,
 	}
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee
@@ -189,7 +189,7 @@ func getSearch(ctx context.Context, animapuSource string, mangameeSource string,
 	}
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee
@@ -245,7 +245,7 @@ func getChapter(ctx context.Context, animapuSource string, mangameeSource string
 	}
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 
 	if res.StatusCode != 200 {
 		err = models.ErrMangamee

@@ -6,11 +6,10 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -29,7 +28,7 @@ func NewKomikindo() Komikindo {
 
 func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -75,7 +74,7 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 
 func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
 	manga := models.Manga{
@@ -144,7 +143,7 @@ func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryPara
 
 func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -189,7 +188,7 @@ func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryPara
 
 func (sc *Komikindo) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	chapterNumber := float64(0)
 

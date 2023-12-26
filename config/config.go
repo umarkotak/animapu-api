@@ -22,6 +22,7 @@ type (
 		MangameeApiHost                 string
 		SriFirebaseGoogleServiceAccount string
 		SriFirebaseUrl                  string
+		CollyTimeout                    time.Duration
 	}
 	ScrapeNinjaConfig struct {
 		Host         string
@@ -58,6 +59,7 @@ func Initialize() error {
 		AnimapuGoogleServiceAccount: os.Getenv("ANIMAPU_GOOGLE_SERVICE_ACCOUNT"),
 		AnimapuFirebaseUrl:          os.Getenv("ANIMAPU_FIREBASE_URL"),
 		MangameeApiHost:             os.Getenv("MANGAMEE_API_HOST"),
+		CollyTimeout:                5 * time.Minute,
 
 		ScrapeNinjaConfig: ScrapeNinjaConfig{
 			Host:         "https://scrapeninja.p.rapidapi.com",

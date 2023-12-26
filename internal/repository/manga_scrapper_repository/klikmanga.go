@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/config"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -23,7 +22,7 @@ func NewKlikmanga() Klikmanga {
 
 func (k *Klikmanga) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -104,7 +103,7 @@ func (k *Klikmanga) GetHome(ctx context.Context, queryParams models.QueryParams)
 
 func (k *Klikmanga) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	manga := models.Manga{
 		ID:          queryParams.SourceID,
@@ -170,7 +169,7 @@ func (k *Klikmanga) GetDetail(ctx context.Context, queryParams models.QueryParam
 
 func (k *Klikmanga) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	mangas := []models.Manga{}
 
@@ -252,7 +251,7 @@ func (k *Klikmanga) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 func (k *Klikmanga) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(60 * time.Second)
+	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	chapterNumber, _ := strconv.ParseFloat(utils.RemoveNonNumeric(queryParams.ChapterID), 64)
 
