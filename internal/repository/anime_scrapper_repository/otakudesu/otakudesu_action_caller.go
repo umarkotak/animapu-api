@@ -1,4 +1,4 @@
-package anime_scrapper_repository
+package anime_scrapper_otakudesu
 
 import (
 	"fmt"

@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"runtime"
 
 	"github.com/gin-gonic/gin"
@@ -81,21 +80,10 @@ func Start() {
 	r.GET("/image_proxy", proxy_controller.GenericImage)
 
 	r.GET("/animes/:anime_source/latest", anime_controller.GetLatest)
+	r.GET("/animes/:anime_source/search", anime_controller.GetSearch)
 	r.GET("/animes/:anime_source/season/:release_year/:release_season", anime_controller.GetPerSeason)
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
 
-	// sriServer, err := sri.New()
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-	// if err == nil {
-	// 	r.POST("/server/sri/location/current", sriServer.PostLocationCurrent)
-	// }
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "6001"
-	}
-	r.Run(":" + port)
+	r.Run(":" + config.Get().Port)
 }

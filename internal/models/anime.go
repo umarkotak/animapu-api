@@ -14,6 +14,7 @@ type (
 		Title              string    `json:"title"`
 		LatestEpisode      float64   `json:"latest_episode"`
 		CoverUrls          []string  `json:"cover_urls"`
+		Genres             []string  `json:"genres"`
 		Episodes           []Episode `json:"episodes"`
 		OriginalLink       string    `json:"original_link"`
 		ReleaseMonth       string    `json:"release_month"`

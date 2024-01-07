@@ -7,6 +7,7 @@ type Episode struct {
 	Number       float64 `json:"number"`
 	Title        string  `json:"title"`
 	OriginalLink string  `json:"original_link"`
+	CoverUrl     string  `json:"cover_url"`
 }
 
 type EpisodeWatch struct {

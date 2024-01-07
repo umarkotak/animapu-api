@@ -1,4 +1,4 @@
-package anime_scrapper_repository
+package anime_scrapper_otakudesu
 
 import (
 	"context"
@@ -76,6 +76,10 @@ func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 	return animes, nil
 }
 
+func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
+	return []models.Anime{}, nil
+}
+
 func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
 	targetUrl := fmt.Sprintf("%v/anime/%v", s.OtakudesuHost, queryParams.SourceID)
 	anime := models.Anime{
@@ -91,7 +95,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	c := colly.NewCollector()
 
 	c.OnHTML("#venkonten > div.venser > div.fotoanime > div.infozin > div > p:nth-child(1) > span", func(e *colly.HTMLElement) {
-		anime.Title = e.Text
+		anime.Title = strings.ReplaceAll(e.Text, "Judul: ", "")
 	})
 
 	c.OnHTML("#venkonten > div.venser > div.fotoanime > img", func(e *colly.HTMLElement) {
@@ -312,4 +316,8 @@ func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQu
 	})
 
 	return animePerSeason, nil
+}
+
+func (s *Otakudesu) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
+	return []models.Anime{}, nil
 }

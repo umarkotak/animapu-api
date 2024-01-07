@@ -20,6 +20,10 @@ func (s *Template) GetLatest(ctx context.Context, queryParams models.AnimeQueryP
 	return []models.Anime{}, nil
 }
 
+func (s *Template) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
+	return []models.Anime{}, nil
+}
+
 func (s *Template) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
 	return models.Anime{}, nil
 }
@@ -30,4 +34,8 @@ func (s *Template) Watch(ctx context.Context, queryParams models.AnimeQueryParam
 
 func (s *Template) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, error) {
 	return models.AnimePerSeason{}, nil
+}
+
+func (s *Template) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
+	return []models.Anime{}, nil
 }

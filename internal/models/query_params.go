@@ -24,6 +24,7 @@ type (
 		Title         string `json:"title"`
 		ReleaseYear   int64  `json:"release_year"`
 		ReleaseSeason string `json:"release_season"`
+		FromLocal     string `json:"from_local"`
 	}
 )
 
@@ -53,4 +54,11 @@ func (qp *QueryParams) ToFbKey(page string) string {
 	)
 	tempKey = strings.ReplaceAll(tempKey, ".", "dot")
 	return tempKey
+}
+
+func (qp *AnimeQueryParams) ToKey(page string) string {
+	return fmt.Sprintf(
+		"%v:%v",
+		page, qp,
+	)
 }

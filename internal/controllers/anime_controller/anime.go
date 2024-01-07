@@ -30,6 +30,26 @@ func GetLatest(c *gin.Context) {
 	render.Response(ctx, c, animes, nil, 200)
 }
 
+func GetSearch(c *gin.Context) {
+	// TODO: Implement logic
+
+	ctx := c.Request.Context()
+
+	queryParams := models.AnimeQueryParams{
+		Source: c.Param("anime_source"),
+	}
+
+	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
+	render.Response(ctx, c, animes, nil, 200)
+}
+
 func GetPerSeason(c *gin.Context) {
 	ctx := c.Request.Context()
 

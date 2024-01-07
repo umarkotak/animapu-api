@@ -12,6 +12,7 @@ import (
 
 type (
 	Config struct {
+		Port                            string
 		CacheObj                        *cache.Cache
 		AnimapuOnlineHost               string
 		AnimapuLocalHost                string
@@ -52,7 +53,13 @@ func Initialize() error {
 		animapuOnlineHost = os.Getenv("ANIMAPU_ONLINE_HOST")
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "6001"
+	}
+
 	config = Config{
+		Port:                        port,
 		AnimapuOnlineHost:           animapuOnlineHost,
 		CacheObj:                    cacheObj,
 		AnimapuLocalHost:            "http://localhost:6001",
