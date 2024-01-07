@@ -16,6 +16,9 @@ func animeScrapperGenerator(animeSource string) (models.AnimeScrapper, error) {
 	case models.ANIME_SOURCE_ANIMENSION_LOCAL:
 		animeScrapper := anime_scrapper_animension_local.NewAnimensionLocal()
 		return &animeScrapper, nil
+	case models.ANIME_SOURCE_ANIMENSION:
+		animeScrapper := anime_scrapper_animension_local.NewAnimensionLocal()
+		return &animeScrapper, nil
 	}
 
 	return animeScrapper, models.ErrAnimeSourceNotFound
