@@ -308,6 +308,18 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 		})
 	}
 
+	relations := []models.Anime{}
+	for _, oneRelation := range animeDetail.Relations {
+		relations = append(relations, models.Anime{
+			ID:           oneRelation.AnimeID,
+			Source:       r.AnimensionHost,
+			Title:        oneRelation.Title,
+			CoverUrls:    []string{oneRelation.CoverUrl},
+			OriginalLink: fmt.Sprintf("%s/%v", r.AnimensionHost, oneRelation.AnimeID),
+			Relationship: oneRelation.Relationship,
+		})
+	}
+
 	return models.Anime{
 		ID:                 animeDetail.AnimensionAnimeID,
 		Source:             r.AnimensionHost,
@@ -322,5 +334,6 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 		ReleaseMonth:       "",
 		ReleaseDate:        "",
 		Score:              animeDetail.MalScore,
+		Relations:          relations,
 	}
 }

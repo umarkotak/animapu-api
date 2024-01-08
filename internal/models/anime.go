@@ -23,6 +23,8 @@ type (
 		ReleaseYear        int64     `json:"release_year"`
 		ReleaseDate        string    `json:"release_date"`
 		Score              float64   `json:"score"`
+		Relations          []Anime   `json:"relations"`
+		Relationship       string    `json:"relationship"`
 	}
 
 	AnimeDetail struct {
