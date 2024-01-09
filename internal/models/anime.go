@@ -12,6 +12,7 @@ type (
 		ID                 string    `json:"id"`
 		Source             string    `json:"source"`
 		Title              string    `json:"title"`
+		Description        string    `json:"description"`
 		LatestEpisode      float64   `json:"latest_episode"`
 		CoverUrls          []string  `json:"cover_urls"`
 		Genres             []string  `json:"genres"`

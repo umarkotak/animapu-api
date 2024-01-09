@@ -325,6 +325,8 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 		Source:             r.AnimensionHost,
 		Title:              animeDetail.Title,
 		LatestEpisode:      animeDetail.Episodes[len(animeDetail.Episodes)-1].EpisodeNumber,
+		Description:        animeDetail.Description,
+		Genres:             animeDetail.Genres,
 		CoverUrls:          []string{animeDetail.CoverURL},
 		Episodes:           episodes,
 		OriginalLink:       fmt.Sprintf("%s/%v", r.AnimensionHost, animeDetail.AnimensionAnimeID),

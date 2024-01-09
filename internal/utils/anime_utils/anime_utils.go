@@ -19,3 +19,7 @@ func SeasonToIndex(seasonName string) int {
 	}
 	return 0
 }
+
+func SeasonIndexToSeason(index int) string {
+	return ""
+}

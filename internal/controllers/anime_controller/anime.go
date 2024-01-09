@@ -15,8 +15,10 @@ import (
 func GetLatest(c *gin.Context) {
 	ctx := c.Request.Context()
 
+	page, _ := strconv.ParseInt(c.Query("page"), 10, 64)
 	queryParams := models.AnimeQueryParams{
 		Source: c.Param("anime_source"),
+		Page:   page,
 	}
 
 	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
