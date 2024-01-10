@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/animension_legacy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
@@ -84,6 +85,8 @@ func Start() {
 	r.GET("/animes/:anime_source/season/:release_year/:release_season", anime_controller.GetPerSeason)
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
+
+	r.GET("/animension/quick_scrap/:anime_id", animension_legacy_controller.HandlerAnimensionQuickScrap)
 
 	r.Run(":" + config.Get().Port)
 }

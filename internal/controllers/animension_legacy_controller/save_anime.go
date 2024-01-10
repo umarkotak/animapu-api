@@ -54,7 +54,7 @@ func saveAnime(animeDetail models.AnimeDetail) error {
 }
 
 func fetchAnimeDB() (AnimeDB, error) {
-	animeDbFile, err := os.Open("public/data/anime_index.json")
+	animeDbFile, err := os.Open("internal/local_db/db_animension_anime_index.json")
 	if err != nil {
 		logrus.Error(err)
 		return AnimeDB{}, err
@@ -93,7 +93,7 @@ func writeAnimeDB(animeDB AnimeDB) error {
 		return err
 	}
 
-	err = os.WriteFile("public/data/anime_index.json", resByte, 0644)
+	err = os.WriteFile("internal/local_db/db_animension_anime_index.json", resByte, 0644)
 	if err != nil {
 		logrus.Error(err)
 		return err
