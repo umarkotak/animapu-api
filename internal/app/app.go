@@ -86,7 +86,8 @@ func Start() {
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
 
-	r.GET("/animension/quick_scrap/:anime_id", animension_legacy_controller.HandlerAnimensionQuickScrap)
+	r.POST("/animension/quick_scrap/:anime_id", animension_legacy_controller.HandlerAnimensionQuickScrap)
+	r.POST("/animension/sync_season", animension_legacy_controller.HandlerSyncSeason)
 
 	r.Run(":" + config.Get().Port)
 }

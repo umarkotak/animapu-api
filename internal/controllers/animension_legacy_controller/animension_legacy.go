@@ -34,3 +34,9 @@ func HandlerAnimensionQuickScrap(c *gin.Context) {
 
 	c.JSON(200, gin.H{"message": "ok", "data": animeDetail})
 }
+
+func HandlerSyncSeason(c *gin.Context) {
+	syncSeason()
+
+	c.JSON(200, gin.H{"message": "ok", "data": "ok"})
+}
