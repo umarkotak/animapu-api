@@ -15,6 +15,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/anime_utils"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
@@ -287,7 +288,33 @@ func (r *AnimensionLocal) Watch(ctx context.Context, queryParams models.AnimeQue
 }
 
 func (r *AnimensionLocal) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, error) {
-	return models.AnimePerSeason{}, nil
+	animes := []models.Anime{}
+	animesSummary := []models.AnimeSummary{}
+
+	for _, oneSeason := range local_db.AnimensionSeasonShorted {
+		if oneSeason.Year == int(queryParams.ReleaseYear) && oneSeason.SeasonName == queryParams.ReleaseSeason {
+			animesSummary = oneSeason.AnimeData
+			break
+		}
+	}
+
+	for _, oneAnime := range animesSummary {
+		animes = append(animes, models.Anime{
+			ID:            fmt.Sprintf("%v", oneAnime.AnimensionAnimeID),
+			Source:        r.Source,
+			Title:         oneAnime.Title,
+			LatestEpisode: oneAnime.LastEpisode,
+			CoverUrls:     []string{oneAnime.CoverURL},
+			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
+		})
+	}
+
+	return models.AnimePerSeason{
+		ReleaseYear: queryParams.ReleaseYear,
+		SeasonName:  queryParams.ReleaseSeason,
+		SeasonIndex: int64(anime_utils.SeasonToIndex(queryParams.ReleaseSeason)),
+		Animes:      animes,
+	}, nil
 }
 
 func (r *AnimensionLocal) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
