@@ -106,6 +106,7 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 	})
 
 	err := c.Visit(fmt.Sprintf("%v", sc.Host))
+	c.Wait()
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 	}
@@ -175,6 +176,7 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 
 	targetUrl := fmt.Sprintf("%v/manga/%v", sc.Host, queryParams.SourceID)
 	err := c.Visit(targetUrl)
+	c.Wait()
 	if err != nil {
 		logrus.WithContext(ctx).WithFields(logrus.Fields{
 			"target_url": targetUrl,
@@ -294,6 +296,7 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 	})
 
 	err := c.Visit(targetLink)
+	c.Wait()
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return chapter, err
