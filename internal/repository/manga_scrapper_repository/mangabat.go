@@ -13,10 +13,14 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-type Mangabat struct{}
+type Mangabat struct {
+	Host string
+}
 
 func NewMangabat() Mangabat {
-	return Mangabat{}
+	return Mangabat{
+		Host: "https://h.mangabat.com",
+	}
 }
 
 func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
@@ -77,11 +81,12 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/manga-list-all/%v", queryParams.Page))
+	err := c.Visit(fmt.Sprintf("%s/manga-list-all/%v", m.Host, queryParams.Page))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
 	}
+	c.Wait()
 
 	return mangas, nil
 }
@@ -139,17 +144,21 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 	})
 
 	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/%v", queryParams.SourceID))
+	c.Wait()
 
 	if manga.Title == "" {
 		err = c.Visit(fmt.Sprintf("https://read.mangabat.com/%v", queryParams.SourceID))
+		c.Wait()
 	}
 
 	if manga.Title == "" {
 		err = c.Visit(fmt.Sprintf("https://readmangabat.com/%v", queryParams.SourceID))
+		c.Wait()
 	}
 
 	if manga.Title == "" {
-		err = c.Visit(fmt.Sprintf("https://h.mangabat.com/%v", queryParams.SourceID))
+		err = c.Visit(fmt.Sprintf("%s/%v", m.Host, queryParams.SourceID))
+		c.Wait()
 	}
 
 	if err != nil {
@@ -207,7 +216,8 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 	})
 
 	query := strings.Replace(queryParams.Title, " ", "_", -1)
-	err := c.Visit(fmt.Sprintf("https://m.mangabat.com/search/manga/%v", query))
+	err := c.Visit(fmt.Sprintf("%s/search/manga/%v", m.Host, query))
+	c.Wait()
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
