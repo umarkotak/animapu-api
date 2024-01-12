@@ -126,3 +126,54 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 
 	return episodeWatch, models.Meta{}, nil
 }
+
+func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
+	animes := []models.Anime{}
+
+	cachedAnimes, found := repository.GoCache().Get(queryParams.ToKey("GetSearch"))
+	if found {
+		cachedAnimesByte, err := json.Marshal(cachedAnimes)
+		if err == nil {
+			err = json.Unmarshal(cachedAnimesByte, &animes)
+			if err == nil {
+				return animes, models.Meta{FromCache: true}, nil
+			}
+		}
+	}
+
+	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	animes, err = animeScrapper.GetSearch(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	if len(animes) > 0 {
+		repository.GoCache().Set(queryParams.ToKey("GetSearch"), animes, 24*time.Hour)
+	}
+
+	return animes, models.Meta{}, nil
+}
+
+func GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
+	animes := []models.Anime{}
+
+	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	animes, err = animeScrapper.GetRandom(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	return animes, models.Meta{}, nil
+}

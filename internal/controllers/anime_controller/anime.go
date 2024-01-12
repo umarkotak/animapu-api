@@ -33,15 +33,14 @@ func GetLatest(c *gin.Context) {
 }
 
 func GetSearch(c *gin.Context) {
-	// TODO: Implement logic
-
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
 		Source: c.Param("anime_source"),
+		Title:  c.Query("title"),
 	}
 
-	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
+	animes, meta, err := anime_scrapper_service.GetSearch(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, true)
@@ -117,4 +116,22 @@ func GetWatch(c *gin.Context) {
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(ctx, c, episodeWatch, nil, 200)
+}
+
+func GetRandom(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	queryParams := models.AnimeQueryParams{
+		Source: c.Param("anime_source"),
+	}
+
+	animes, meta, err := anime_scrapper_service.GetRandom(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+
+	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
+	render.Response(ctx, c, animes, nil, 200)
 }

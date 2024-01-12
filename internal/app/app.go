@@ -82,6 +82,7 @@ func Start() {
 
 	r.GET("/animes/:anime_source/latest", anime_controller.GetLatest)
 	r.GET("/animes/:anime_source/search", anime_controller.GetSearch)
+	r.GET("/animes/:anime_source/random", anime_controller.GetRandom)
 	r.GET("/animes/:anime_source/season/:release_year/:release_season", anime_controller.GetPerSeason)
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)

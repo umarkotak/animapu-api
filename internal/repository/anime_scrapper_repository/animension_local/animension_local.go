@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"regexp"
 	"sort"
@@ -124,7 +125,23 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 }
 
 func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	return []models.Anime{}, nil
+	q := strings.ToLower(queryParams.Title)
+	animes := []models.Anime{}
+
+	for _, oneAnime := range local_db.AnimensionAnimeIndex {
+		if strings.Contains(strings.ToLower(oneAnime.Title), q) || strings.Contains(strings.ToLower(oneAnime.AltTitle), q) {
+			animes = append(animes, models.Anime{
+				ID:            fmt.Sprintf("%v", oneAnime.AnimensionAnimeID),
+				Source:        r.Source,
+				Title:         fmt.Sprint(oneAnime.Title),
+				LatestEpisode: oneAnime.Episodes[len(oneAnime.Episodes)-1].EpisodeNumber,
+				CoverUrls:     []string{oneAnime.CoverURL},
+				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
+			})
+		}
+	}
+
+	return animes, nil
 }
 
 func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
@@ -318,7 +335,21 @@ func (r *AnimensionLocal) GetPerSeason(ctx context.Context, queryParams models.A
 }
 
 func (r *AnimensionLocal) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	return []models.Anime{}, nil
+	animes := []models.Anime{}
+
+	randomAnimes := getRandomElements(local_db.AnimensionAnimeIndex, 40)
+	for _, oneAnime := range randomAnimes {
+		animes = append(animes, models.Anime{
+			ID:            fmt.Sprintf("%v", oneAnime.AnimensionAnimeID),
+			Source:        r.Source,
+			Title:         fmt.Sprint(oneAnime.Title),
+			LatestEpisode: oneAnime.Episodes[len(oneAnime.Episodes)-1].EpisodeNumber,
+			CoverUrls:     []string{oneAnime.CoverURL},
+			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
+		})
+	}
+
+	return animes, nil
 }
 
 func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) models.Anime {
@@ -365,4 +396,22 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 		Score:              animeDetail.MalScore,
 		Relations:          relations,
 	}
+}
+
+func getRandomElements(arr []models.AnimeDetail, count int) []models.AnimeDetail {
+	// Check if the count is greater than the array length
+	if count > len(arr) {
+		count = len(arr)
+	}
+
+	// Shuffle the array using Fisher-Yates algorithm
+	shuffled := make([]models.AnimeDetail, len(arr))
+	copy(shuffled, arr)
+	for i := len(shuffled) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	}
+
+	// Return the first 'count' elements
+	return shuffled[:count]
 }
