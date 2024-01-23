@@ -124,7 +124,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 	return animes, nil
 }
 
-func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
+func (r *AnimensionLocal) GetSearchLegacy(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
 	q := strings.ToLower(queryParams.Title)
 	animes := []models.Anime{}
 
@@ -139,6 +139,76 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
 			})
 		}
+	}
+
+	return animes, nil
+}
+
+func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
+	animes := []models.Anime{}
+
+	url := fmt.Sprintf("%v/public-api/search.php?search_text=%v&sort=popular-week&page=1", r.AnimensionHost, queryParams.Title)
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+	req.Header.Add("authority", strings.ReplaceAll(r.AnimensionHost, "https://", ""))
+	req.Header.Add("accept", "*/*")
+	req.Header.Add("accept-language", "en-US,en;q=0.9,id;q=0.8")
+	req.Header.Add("origin", r.AnimensionHost)
+	req.Header.Add("sec-ch-ua", "\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"")
+	req.Header.Add("sec-ch-ua-mobile", "?0")
+	req.Header.Add("sec-ch-ua-platform", "\"macOS\"")
+	req.Header.Add("sec-fetch-dest", "empty")
+	req.Header.Add("sec-fetch-mode", "cors")
+	req.Header.Add("sec-fetch-site", "same-origin")
+	req.Header.Add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+	defer resp.Body.Close()
+
+	// [
+	// 	[
+	// 		"Solo Leveling",
+	// 		3028690795,
+	// 		"https:\/\/s4.anilist.co\/file\/anilistcdn\/media\/anime\/cover\/medium\/bx151807-m1gX3iwfIsLu.png",
+	// 		0,
+	// 	]
+	// ]
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+
+	res := [][]interface{}{}
+	d := json.NewDecoder(strings.NewReader(string(body)))
+	d.UseNumber()
+	err = d.Decode(&res)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+
+	for _, oneAnimeRes := range res {
+		animes = append(animes, models.Anime{
+			ID:            fmt.Sprintf("%v", oneAnimeRes[1]),
+			Source:        r.Source,
+			Title:         fmt.Sprint(oneAnimeRes[0]),
+			LatestEpisode: 0,
+			CoverUrls:     []string{fmt.Sprint(oneAnimeRes[2])},
+			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, fmt.Sprintf("%v", oneAnimeRes[1])),
+		})
 	}
 
 	return animes, nil
