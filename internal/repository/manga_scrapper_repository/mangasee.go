@@ -117,6 +117,7 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 	c.Wait()
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
+		return mangas, err
 	}
 
 	return mangas, nil
