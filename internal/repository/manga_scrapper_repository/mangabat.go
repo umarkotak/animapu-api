@@ -3,9 +3,11 @@ package manga_scrapper_repository
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
@@ -32,6 +34,14 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
+	t := &http.Transport{
+		Dial: (&net.Dialer{
+			Timeout:   60 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).Dial,
+		TLSHandshakeTimeout: 60 * time.Second,
+	}
+	c.WithTransport(t)
 
 	c.OnHTML("body div.body-site div.container.container-main div.container-main-left div.panel-list-story .list-story-item", func(e *colly.HTMLElement) {
 		sourceID := strings.Replace(e.ChildAttr("div > h3 > a", "href"), "https://read.mangabat.com/", "", -1)
