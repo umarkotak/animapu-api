@@ -248,7 +248,7 @@ func (sc *Mangasee) GetSearch(ctx context.Context, queryParams models.QueryParam
 
 func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
-	c.SetRequestTimeout(config.Get().CollyTimeout)
+	c.SetRequestTimeout(10 * time.Minute)
 
 	targetLink := fmt.Sprintf("%v/read-online/%v-chapter-%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
 	if queryParams.SecondarySourceID == "2" {
@@ -295,11 +295,15 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 		}
 	})
 
-	err := c.Visit(targetLink)
-	c.Wait()
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return chapter, err
+	for i := 0; i < 5; i++ {
+		err := c.Visit(targetLink)
+		c.Wait()
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		break
 	}
 
 	return chapter, nil

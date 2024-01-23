@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -16,6 +17,8 @@ type (
 		ErrorMessage string      `json:"error_message"`
 		UtcTime      time.Time   `json:"utc_time"`
 		Data         interface{} `json:"data"`
+		File         string      `json:"file"`
+		Layer        string      `json:"layer"`
 	}
 )
 
@@ -47,6 +50,8 @@ func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
 		UtcTime:      time.Now().UTC(),
 		ErrorMessage: entry.Message,
 		Data:         entry.Data,
+		File:         entry.Caller.File,
+		Layer:        ah.fileToLayer(strings.ToLower(entry.Caller.File)),
 	})
 
 	return nil
@@ -54,4 +59,16 @@ func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
 
 func (ah *AnimapuHook) Levels() []logrus.Level {
 	return logrus.AllLevels
+}
+
+func (ah *AnimapuHook) fileToLayer(callerFile string) string {
+	switch {
+	case strings.Contains(callerFile, "controllers"):
+		return "controllers"
+	case strings.Contains(callerFile, "services"):
+		return "services"
+	case strings.Contains(callerFile, "repository"):
+		return "repository"
+	}
+	return "other"
 }
