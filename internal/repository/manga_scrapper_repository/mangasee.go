@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"regexp"
 	"strings"
@@ -63,14 +62,14 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 	c := colly.NewCollector()
 	// c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.SetRequestTimeout(config.Get().CollyTimeout)
-	t := &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout:   60 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 60 * time.Second,
-	}
-	c.WithTransport(t)
+	// t := &http.Transport{
+	// 	Dial: (&net.Dialer{
+	// 		Timeout:   60 * time.Second,
+	// 		KeepAlive: 30 * time.Second,
+	// 	}).Dial,
+	// 	TLSHandshakeTimeout: 60 * time.Second,
+	// }
+	// c.WithTransport(t)
 
 	mangas := []models.Manga{}
 
@@ -258,14 +257,14 @@ func (sc *Mangasee) GetSearch(ctx context.Context, queryParams models.QueryParam
 func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(10 * time.Minute)
-	t := &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout:   60 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 60 * time.Second,
-	}
-	c.WithTransport(t)
+	// t := &http.Transport{
+	// 	Dial: (&net.Dialer{
+	// 		Timeout:   60 * time.Second,
+	// 		KeepAlive: 30 * time.Second,
+	// 	}).Dial,
+	// 	TLSHandshakeTimeout: 60 * time.Second,
+	// }
+	// c.WithTransport(t)
 
 	targetLink := fmt.Sprintf("%v/read-online/%v-chapter-%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
 	if queryParams.SecondarySourceID == "2" {
