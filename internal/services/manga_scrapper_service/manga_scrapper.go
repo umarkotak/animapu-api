@@ -41,6 +41,10 @@ func GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Mang
 		}
 		break
 	}
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return mangas, models.Meta{}, err
+	}
 
 	if len(mangas) > 0 {
 		go repository.GoCache().Set(queryParams.ToKey("page_latest"), mangas, 30*time.Minute)
@@ -152,7 +156,15 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Cha
 		return chapter, models.Meta{}, err
 	}
 
-	chapter, err = mangaScrapper.GetChapter(ctx, queryParams)
+	iterator := 5
+	for i := 0; i <= iterator; i++ {
+		chapter, err = mangaScrapper.GetChapter(ctx, queryParams)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			time.Sleep(200 * time.Millisecond)
+			continue
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return chapter, models.Meta{}, err
