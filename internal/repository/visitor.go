@@ -12,7 +12,9 @@ type VisitorLog struct {
 	QuickUserLog map[string][]string
 }
 
-var visitorLog = VisitorLog{}
+var visitorLog = VisitorLog{
+	QuickUserLog: map[string][]string{},
+}
 
 func LogVisitor(c *gin.Context) {
 	visitorLog.mu.Lock()
