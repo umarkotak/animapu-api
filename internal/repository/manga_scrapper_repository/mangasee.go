@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -295,25 +296,60 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 			modifier = fmt.Sprintf(".%v", splitted[1])
 		}
 
-		for i := 1; i <= 150; i++ {
+		currChString := ""
+		splittedCurrCh := strings.Split(e.Text, "vm.CurChapter = ")
+		if len(splittedCurrCh) >= 2 {
+			splittedCurrCh = strings.Split(splittedCurrCh[1], ";")
+			if len(splittedCurrCh) > 0 {
+				currChString = splittedCurrCh[0]
+			}
+		}
+		type MangaseeChapter struct {
+			Chapter     string  `json:"Chapter"`
+			Type        string  `json:"Type"`
+			Page        string  `json:"Page"`
+			Directory   string  `json:"Directory"`
+			Date        string  `json:"Date"`
+			ChapterName *string `json:"ChapterName"`
+		}
+		mangaseeChapter := MangaseeChapter{}
+		json.Unmarshal([]byte(currChString), &mangaseeChapter)
+		pageInt, _ := strconv.ParseInt(mangaseeChapter.Page, 10, 54)
+		if pageInt == 0 {
+			pageInt = 150
+		}
+
+		dir := ""
+		if mangaseeChapter.Directory != "" {
+			dir = fmt.Sprintf("%s/", dir)
+		}
+
+		// https://{{vm.CurPathName}}/manga/Dandadan/{{vm.CurChapter.Directory == '' ? '' : vm.CurChapter.Directory+'/'}}{{vm.ChapterImage(vm.CurChapter.Chapter)}}-{{vm.PageImage(Page)}}.png
+
+		for i := 1; i <= int(pageInt); i++ {
 			chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 				Index: 0,
 				ImageUrls: []string{
 					fmt.Sprintf(
-						"https://%v/manga/%v/%04d%v-%03d.png",
-						strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
+						"https://%v/manga/%v/%v%04d%v-%03d.png",
+						strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, dir, chInt, modifier, i,
 					),
-					fmt.Sprintf(
-						"https://%v/manga/%v/Mag-Official/%04d%v-%03d.png",
-						strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
-					),
+					// fmt.Sprintf(
+					// 	"https://%v/manga/%v/%04d%v-%03d.png",
+					// 	strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
+					// ),
+					// fmt.Sprintf(
+					// 	"https://%v/manga/%v/Mag-Official/%04d%v-%03d.png",
+					// 	strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
+					// ),
 				},
 			})
 		}
 	})
 
+	var err error
 	for i := 0; i < 5; i++ {
-		err := c.Visit(targetLink)
+		err = c.Visit(targetLink)
 		c.Wait()
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
@@ -321,6 +357,9 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 			continue
 		}
 		break
+	}
+	if err != nil {
+		return chapter, err
 	}
 
 	return chapter, nil
