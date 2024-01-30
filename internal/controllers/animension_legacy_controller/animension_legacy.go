@@ -1,9 +1,12 @@
 package animension_legacy_controller
 
 import (
+	"fmt"
 	"regexp"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -18,21 +21,31 @@ var (
 )
 
 func HandlerAnimensionQuickScrap(c *gin.Context) {
-	animeDetail, err := quickScrapAnimeDetail(c.Request.Context(), ReqBody{
-		AnimeID: c.Param("anime_id"),
-	})
-	if err != nil {
-		c.JSON(422, gin.H{"message": err.Error()})
-		return
+	reqBody := struct {
+		AnimeIDs []int64 `json:"anime_ids"`
+	}{}
+	c.BindJSON(&reqBody)
+
+	for _, oneAnimeID := range reqBody.AnimeIDs {
+		animeDetail, err := quickScrapAnimeDetail(c.Request.Context(), ReqBody{
+			AnimeID: fmt.Sprint(oneAnimeID),
+		})
+		if err != nil {
+			c.JSON(422, gin.H{"message": err.Error()})
+			return
+		}
+
+		err = saveAnime(animeDetail)
+		if err != nil {
+			c.JSON(422, gin.H{"message": err.Error()})
+			return
+		}
+
+		logrus.WithContext(c).Infof("%v DONE", oneAnimeID)
+		time.Sleep(2 * time.Second)
 	}
 
-	err = saveAnime(animeDetail)
-	if err != nil {
-		c.JSON(422, gin.H{"message": err.Error()})
-		return
-	}
-
-	c.JSON(200, gin.H{"message": "ok", "data": animeDetail})
+	c.JSON(200, gin.H{"message": "ok", "data": reqBody.AnimeIDs})
 }
 
 func HandlerSyncSeason(c *gin.Context) {
