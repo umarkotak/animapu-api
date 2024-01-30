@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -133,7 +134,6 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 		}
 	})
 
-	maxNumber := float64(0)
 	c.OnHTML("div.episodelist > ul > li", func(e *colly.HTMLElement) {
 		episodeLink := e.ChildAttr("span > a", "href")
 		splitted := strings.Split(episodeLink, "/episode/")
@@ -142,19 +142,20 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 			id = strings.ReplaceAll(splitted[len(splitted)-1], "/", "")
 		}
 
+		epNo := utils.ForceSanitizeStringToFloat(e.ChildText("span > a"))
+		if epNo > 1500 {
+			return
+		}
+
 		episode := models.Episode{
 			AnimeID:      queryParams.SourceID,
 			Source:       s.Source,
 			ID:           id,
-			Number:       utils.ForceSanitizeStringToFloat(e.ChildText("span > a")),
+			Number:       epNo,
 			Title:        e.ChildText("span > a"),
 			OriginalLink: episodeLink,
 		}
 		anime.Episodes = append(anime.Episodes, episode)
-
-		if episode.Number > maxNumber {
-			maxNumber = episode.Number
-		}
 	})
 
 	err := c.Visit(targetUrl)
@@ -164,13 +165,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	}
 	c.Wait()
 
-	if len(anime.Episodes) > 0 {
-		anime.LatestEpisode = maxNumber
-	}
-
-	for i, j := 0, len(anime.Episodes)-1; i < j; i, j = i+1, j-1 {
-		anime.Episodes[i], anime.Episodes[j] = anime.Episodes[j], anime.Episodes[i]
-	}
+	slices.Reverse(anime.Episodes)
 
 	return anime, nil
 }
@@ -187,14 +182,41 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 	})
 
-	ondesuIdxs := []string{}
+	baypassedStreams := []string{
+		// "ondesuhd",
+		// "otakustream",
+		// "odstream",
+		"pdrain",
+	}
+	streams := map[string][]map[string]string{
+		"360p": {},
+		"480p": {},
+		"720p": {},
+	}
 	c.OnHTML("#embed_holder > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
-			if strings.Contains(h.Text, "ondesuhd") || strings.Contains(h.Text, "otakustream") {
-				ondesuIdxs = append(ondesuIdxs, fmt.Sprint(i))
+			for _, oneBaypassedStream := range baypassedStreams {
+				if strings.Contains(h.Text, oneBaypassedStream) {
+					streams["720p"] = append(streams["720p"], map[string]string{
+						"name": h.Text,
+						"idx":  fmt.Sprint(i),
+					})
+				}
 			}
 		})
 	})
+	// c.OnHTML("#embed_holder > div.mirrorstream > ul.m360p", func(e *colly.HTMLElement) {
+	// 	e.ForEach("a", func(i int, h *colly.HTMLElement) {
+	// 		for _, oneBaypassedStream := range baypassedStreams {
+	// 			if strings.Contains(h.Text, oneBaypassedStream) {
+	// 				streams["720p"] = append(streams["720p"], map[string]string{
+	// 					"name": h.Text,
+	// 					"idx":  fmt.Sprint(i),
+	// 				})
+	// 			}
+	// 		}
+	// 	})
+	// })
 
 	targetUrl := fmt.Sprintf("%v/episode/%v", s.OtakudesuHost, queryParams.EpisodeID)
 	err := c.Visit(targetUrl)
@@ -204,7 +226,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 	c.Wait()
 
-	if len(ondesuIdxs) <= 0 {
+	if len(streams["720p"]) <= 0 {
 		err = fmt.Errorf("720 stream server not found")
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, err
@@ -244,10 +266,10 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 
 	iframeFinalUrl := ""
 	iframeFinalUrls := []string{}
-	for _, ondesuIdx := range ondesuIdxs {
+	for _, ondesuIdx := range streams["720p"] {
 		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
 			fmt.Sprintf("id=%v", p),
-			fmt.Sprintf("i=%v", ondesuIdx),
+			fmt.Sprintf("i=%v", ondesuIdx["idx"]),
 			"q=720p",
 			fmt.Sprintf("nonce=%v", nonce),
 		})
@@ -272,9 +294,11 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 
 		re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
+		re2 := regexp.MustCompile(`src="(https:\/\/www\.pixeldrain\.com[^"]+)"`)
 
 		// Find the matches
 		matches := re.FindStringSubmatch(string(iframeBase64Decoded))
+		matches = append(matches, re2.FindStringSubmatch(string(iframeBase64Decoded))...)
 
 		if len(matches) >= 2 {
 			iframeFinalUrl = matches[1]

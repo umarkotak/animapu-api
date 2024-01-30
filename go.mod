@@ -1,6 +1,6 @@
 module github.com/umarkotak/animapu-api
 
-go 1.17
+go 1.21.5
 
 require (
 	firebase.google.com/go/v4 v4.8.0
