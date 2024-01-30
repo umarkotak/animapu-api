@@ -51,7 +51,7 @@ func Get() Singelton {
 }
 
 func animensionLoadAnimeIndex() ([]models.AnimeDetail, error) {
-	animeDbFile, err := os.Open("db_animension_anime_index.json")
+	animeDbFile, err := os.Open("internal/local_db/db_animension_anime_index.json")
 	if err != nil {
 		logrus.Error(err)
 		return []models.AnimeDetail{}, err
@@ -85,7 +85,7 @@ func animensionLoadAnimeListToMap(animeList []models.AnimeDetail) map[string]mod
 }
 
 func animensionLoadSeason() ([]models.SeasonDetail, error) {
-	seasonDbFile, err := os.Open("db_animension_season_shorted_anime.json")
+	seasonDbFile, err := os.Open("internal/local_db/db_animension_season_shorted_anime.json")
 	if err != nil {
 		logrus.Error(err)
 		return []models.SeasonDetail{}, err

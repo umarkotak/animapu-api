@@ -23,7 +23,7 @@ func ScrapOtakudesuAllAnimes(ctx context.Context) error {
 		targets = append(targets, e.Attr("href"))
 	})
 
-	targetUrl := "https://otakudesu.wiki/anime-list"
+	targetUrl := "https://otakudesu.media/anime-list"
 	err := c.Visit(targetUrl)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)

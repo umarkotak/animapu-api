@@ -390,7 +390,7 @@ func (r *AnimensionLocal) GetPerSeason(ctx context.Context, queryParams models.A
 			ID:            fmt.Sprintf("%v", oneAnime.AnimensionAnimeID),
 			Source:        r.Source,
 			Title:         oneAnime.Title,
-			LatestEpisode: oneAnime.LastEpisode,
+			LatestEpisode: 0,
 			CoverUrls:     []string{oneAnime.CoverURL},
 			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
 		})
@@ -413,7 +413,7 @@ func (r *AnimensionLocal) GetRandom(ctx context.Context, queryParams models.Anim
 			ID:            fmt.Sprintf("%v", oneAnime.AnimensionAnimeID),
 			Source:        r.Source,
 			Title:         fmt.Sprint(oneAnime.Title),
-			LatestEpisode: oneAnime.Episodes[len(oneAnime.Episodes)-1].EpisodeNumber,
+			LatestEpisode: 0,
 			CoverUrls:     []string{oneAnime.CoverURL},
 			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
 		})

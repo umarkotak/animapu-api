@@ -1,9 +1,6 @@
 package app
 
 import (
-	"fmt"
-	"runtime"
-
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
@@ -11,6 +8,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/animension_legacy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/otakudesu_legacy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
@@ -24,12 +22,13 @@ func Initialize() {
 	logger.Initialize()
 	logrus.AddHook(&logger.AnimapuHook{})
 	logrus.SetReportCaller(true)
-	logrus.SetFormatter(&logrus.TextFormatter{
-		CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
-			// frame.File: For exact path
-			return "", fmt.Sprintf("[%v:%v]:", frame.File, frame.Line)
-		},
-	})
+	// logrus.SetFormatter(&logrus.TextFormatter{
+	// 	CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
+	// 		// frame.File: For exact path
+	// 		return "", fmt.Sprintf("[%v:%v]:", frame.File, frame.Line)
+	// 	},
+	// })
+	logrus.SetFormatter(&logger.Formatter{})
 	// f, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE, 0755)
 	// if err != nil {
 	// 	logrus.Error(err)
@@ -89,6 +88,8 @@ func Start() {
 
 	r.POST("/animension/quick_scrap/:anime_id", animension_legacy_controller.HandlerAnimensionQuickScrap)
 	r.POST("/animension/sync_season", animension_legacy_controller.HandlerSyncSeason)
+
+	r.POST("/otakudesu/scrap_otakudesu_all_animes", otakudesu_legacy_controller.HandlerAnimensionQuickScrap)
 
 	r.Run(":" + config.Get().Port)
 }

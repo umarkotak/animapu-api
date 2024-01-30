@@ -14,22 +14,25 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/anime_utils"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
 type Otakudesu struct {
-	AnimapuSource   string
-	Source          string
-	OtakudesuHost   string
-	DesusStreamHost string
+	AnimapuSource      string
+	Source             string
+	OtakudesuHost      string
+	OtakudesuAuthority string
+	DesusStreamHost    string
 }
 
 func NewOtakudesu() Otakudesu {
 	return Otakudesu{
-		AnimapuSource:   models.ANIME_SOURCE_OTAKUDESU,
-		Source:          "otakudesu",
-		OtakudesuHost:   "https://otakudesu.cam",
-		DesusStreamHost: "https://desustream.me",
+		AnimapuSource:      models.ANIME_SOURCE_OTAKUDESU,
+		Source:             "otakudesu",
+		OtakudesuHost:      "https://otakudesu.media",
+		OtakudesuAuthority: "otakudesu.media",
+		DesusStreamHost:    "https://desustream.me",
 	}
 }
 
@@ -112,6 +115,14 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 			}
 			anime.ReleaseMonth = splitted[0]
 			anime.ReleaseYear = utils.StringMustInt64(utils.RemoveNonNumeric(splitted[2]))
+			anime.ReleaseSeason = anime_utils.OtakudesuMonthToSeason(anime.ReleaseMonth)
+		}
+	})
+
+	c.OnHTML("#venkonten > div.venser > div.fotoanime > div.infozin > div > p > span", func(e *colly.HTMLElement) {
+		if strings.Contains(e.Text, "Genre") {
+			genreRaw := strings.ReplaceAll(e.Text, "Genre: ", "")
+			anime.Genres = strings.Split(strings.ToLower(genreRaw), ",")
 		}
 	})
 
@@ -307,6 +318,8 @@ func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQu
 		if oneAnime.ReleaseSeason != queryParams.ReleaseSeason {
 			continue
 		}
+
+		oneAnime.LatestEpisode = 0
 
 		animePerSeason.Animes = append(animePerSeason.Animes, oneAnime)
 	}
