@@ -40,7 +40,7 @@ func (s *Otakudesu) AdminAjaxCaller(action string, additionals []string) ([]byte
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("authority", s.OtakudesuAuthority)
+	req.Header.Add("authority", strings.ReplaceAll(s.OtakudesuHost, "https://", ""))
 	req.Header.Add("accept", "*/*")
 	req.Header.Add("accept-language", "en-US,en;q=0.9,id;q=0.8")
 	req.Header.Add("content-type", "application/x-www-form-urlencoded; charset=UTF-8")
