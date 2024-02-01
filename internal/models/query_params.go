@@ -25,6 +25,8 @@ type (
 		ReleaseYear   int64  `json:"release_year"`   //
 		ReleaseSeason string `json:"release_season"` // fall, winter, spring, summer
 		FromLocal     string `json:"from_local"`     //
+		Resolution    string `json:"resolution"`     // 360p, 480p, 720p
+		StreamName    string `json:"stream_name"`    //
 	}
 )
 

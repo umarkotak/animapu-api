@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -19,20 +20,24 @@ import (
 )
 
 type Otakudesu struct {
-	AnimapuSource      string
-	Source             string
-	OtakudesuHost      string
-	OtakudesuAuthority string
-	DesusStreamHost    string
+	AnimapuSource        string
+	Source               string
+	OtakudesuHost        string
+	AllowedStreamServers []string
 }
 
 func NewOtakudesu() Otakudesu {
 	return Otakudesu{
-		AnimapuSource:      models.ANIME_SOURCE_OTAKUDESU,
-		Source:             "otakudesu",
-		OtakudesuHost:      "https://otakudesu.media",
-		OtakudesuAuthority: "otakudesu.media",
-		DesusStreamHost:    "https://desustream.me",
+		AnimapuSource: models.ANIME_SOURCE_OTAKUDESU,
+		Source:        "otakudesu",
+		OtakudesuHost: "https://otakudesu.media",
+		AllowedStreamServers: []string{
+			"filelions",
+			"ondesuhd",
+			"otakustream",
+			"odstream",
+			"pdrain",
+		},
 	}
 }
 
@@ -80,7 +85,43 @@ func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 }
 
 func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	return []models.Anime{}, nil
+	animes := []models.Anime{}
+
+	c := colly.NewCollector()
+
+	c.OnHTML("#venkonten > div > div.venser > div > div > ul > li", func(e *colly.HTMLElement) {
+		coverUrl := e.ChildAttr("img", "src")
+
+		animeLink := e.ChildAttr("h2 > a", "href")
+		splitted := strings.Split(animeLink, "/anime/")
+		id := ""
+		if len(splitted) > 0 {
+			id = strings.ReplaceAll(splitted[len(splitted)-1], "/", "")
+		}
+
+		if id == "" {
+			return
+		}
+
+		animes = append(animes, models.Anime{
+			ID:            id,
+			Source:        s.Source,
+			Title:         e.ChildText("h2 > a"),
+			LatestEpisode: 0,
+			CoverUrls:     []string{coverUrl},
+			OriginalLink:  animeLink,
+		})
+	})
+
+	targetUrl := fmt.Sprintf("%s/?s=%s&post_type=anime", s.OtakudesuHost, queryParams.Title)
+	err := c.Visit(targetUrl)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+	c.Wait()
+
+	return animes, nil
 }
 
 func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
@@ -133,7 +174,6 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 		}
 	})
 
-	maxNumber := float64(0)
 	c.OnHTML("div.episodelist > ul > li", func(e *colly.HTMLElement) {
 		episodeLink := e.ChildAttr("span > a", "href")
 		splitted := strings.Split(episodeLink, "/episode/")
@@ -142,19 +182,20 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 			id = strings.ReplaceAll(splitted[len(splitted)-1], "/", "")
 		}
 
+		epNo := utils.ForceSanitizeStringToFloat(e.ChildText("span > a"))
+		if epNo > 1500 {
+			return
+		}
+
 		episode := models.Episode{
 			AnimeID:      queryParams.SourceID,
 			Source:       s.Source,
 			ID:           id,
-			Number:       utils.ForceSanitizeStringToFloat(e.ChildText("span > a")),
+			Number:       epNo,
 			Title:        e.ChildText("span > a"),
 			OriginalLink: episodeLink,
 		}
 		anime.Episodes = append(anime.Episodes, episode)
-
-		if episode.Number > maxNumber {
-			maxNumber = episode.Number
-		}
 	})
 
 	err := c.Visit(targetUrl)
@@ -164,18 +205,16 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	}
 	c.Wait()
 
-	if len(anime.Episodes) > 0 {
-		anime.LatestEpisode = maxNumber
-	}
-
-	for i, j := 0, len(anime.Episodes)-1; i < j; i, j = i+1, j-1 {
-		anime.Episodes[i], anime.Episodes[j] = anime.Episodes[j], anime.Episodes[i]
-	}
+	slices.Reverse(anime.Episodes)
 
 	return anime, nil
 }
 
 func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
+	if queryParams.Resolution == "" {
+		queryParams.Resolution = "720p"
+	}
+
 	episodeWatch := models.EpisodeWatch{}
 
 	c := colly.NewCollector()
@@ -187,11 +226,44 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 	})
 
-	ondesuIdxs := []string{}
+	streams := map[string][]map[string]string{
+		"720p": {},
+		"480p": {},
+		"360p": {},
+	}
 	c.OnHTML("#embed_holder > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
-			if strings.Contains(h.Text, "ondesuhd") || strings.Contains(h.Text, "otakustream") {
-				ondesuIdxs = append(ondesuIdxs, fmt.Sprint(i))
+			for _, oneBaypassedStream := range s.AllowedStreamServers {
+				if strings.Contains(h.Text, oneBaypassedStream) {
+					streams["720p"] = append(streams["720p"], map[string]string{
+						"name": h.Text,
+						"idx":  fmt.Sprint(i),
+					})
+				}
+			}
+		})
+	})
+	c.OnHTML("#embed_holder > div.mirrorstream > ul.m480p", func(e *colly.HTMLElement) {
+		e.ForEach("a", func(i int, h *colly.HTMLElement) {
+			for _, oneBaypassedStream := range s.AllowedStreamServers {
+				if strings.Contains(h.Text, oneBaypassedStream) {
+					streams["480p"] = append(streams["480p"], map[string]string{
+						"name": h.Text,
+						"idx":  fmt.Sprint(i),
+					})
+				}
+			}
+		})
+	})
+	c.OnHTML("#embed_holder > div.mirrorstream > ul.m360p", func(e *colly.HTMLElement) {
+		e.ForEach("a", func(i int, h *colly.HTMLElement) {
+			for _, oneBaypassedStream := range s.AllowedStreamServers {
+				if strings.Contains(h.Text, oneBaypassedStream) {
+					streams["360p"] = append(streams["360p"], map[string]string{
+						"name": h.Text,
+						"idx":  fmt.Sprint(i),
+					})
+				}
 			}
 		})
 	})
@@ -204,10 +276,21 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 	c.Wait()
 
-	if len(ondesuIdxs) <= 0 {
-		err = fmt.Errorf("720 stream server not found")
-		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, err
+	if len(streams[queryParams.Resolution]) <= 0 {
+		backupFound := false
+		for k, oneStream := range streams {
+			if len(oneStream) > 0 {
+				queryParams.Resolution = k
+				backupFound = true
+				break
+			}
+		}
+
+		if !backupFound {
+			err = fmt.Errorf(fmt.Sprintf("%s stream server not found", queryParams.Resolution))
+			logrus.WithContext(ctx).Error(err)
+			return episodeWatch, err
+		}
 	}
 
 	shortLinkUrl, err := url.Parse(shortLink)
@@ -231,7 +314,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, err
 	}
-	logrus.Infof("NONCE BODY: %+v", string(nonceBody))
+	// logrus.Infof("NONCE BODY: %+v", string(nonceBody))
 
 	nonceData := map[string]string{}
 	json.Unmarshal(nonceBody, &nonceData)
@@ -243,11 +326,10 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 
 	iframeFinalUrl := ""
-	iframeFinalUrls := []string{}
-	for _, ondesuIdx := range ondesuIdxs {
+	for _, ondesuIdx := range streams[queryParams.Resolution] {
 		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
 			fmt.Sprintf("id=%v", p),
-			fmt.Sprintf("i=%v", ondesuIdx),
+			fmt.Sprintf("i=%v", ondesuIdx["idx"]),
 			"q=720p",
 			fmt.Sprintf("nonce=%v", nonce),
 		})
@@ -272,9 +354,13 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 
 		re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
+		re2 := regexp.MustCompile(`src="(https:\/\/www\.pixeldrain\.com[^"]+)"`)
+		re3 := regexp.MustCompile(`src="(https:\/\/vidhidepro\.com[^"]+)"`)
 
 		// Find the matches
 		matches := re.FindStringSubmatch(string(iframeBase64Decoded))
+		matches = append(matches, re2.FindStringSubmatch(string(iframeBase64Decoded))...)
+		matches = append(matches, re3.FindStringSubmatch(string(iframeBase64Decoded))...)
 
 		if len(matches) >= 2 {
 			iframeFinalUrl = matches[1]
@@ -287,13 +373,12 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 			continue
 		}
 
-		iframeFinalUrls = append(iframeFinalUrls, iframeFinalUrl)
+		break
 	}
 
 	episodeWatch = models.EpisodeWatch{
 		StreamType:  "iframe",
 		IframeUrl:   iframeFinalUrl,
-		IframeUrls:  iframeFinalUrls,
 		OriginalUrl: targetUrl,
 	}
 
