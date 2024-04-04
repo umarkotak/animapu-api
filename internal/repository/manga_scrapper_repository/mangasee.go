@@ -47,6 +47,7 @@ type (
 
 type Mangasee struct {
 	Host    string
+	AltHost string
 	Source  string
 	ImgHost string
 }
@@ -54,6 +55,7 @@ type Mangasee struct {
 func NewMangasee() Mangasee {
 	return Mangasee{
 		Host:    "https://www.mangasee123.com",
+		AltHost: "https://www.manga4life.com",
 		Source:  "mangasee",
 		ImgHost: "https://temp.compsci88.com",
 	}
@@ -73,6 +75,23 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 	// c.WithTransport(t)
 
 	mangas := []models.Manga{}
+
+	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
+		// r.Headers.Set("cookie", "PHPSESSID=g96c9g1q5gkgs9crgm100vcgts; _ga=GA1.2.461659293.1712208052; _gid=GA1.2.1611366155.1712208052; FullPage=yes;")
+		// r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+		// r.Headers.Set("accept-language", "en-US,en;q=0.9,id;q=0.8")
+		// r.Headers.Set("cache-control", "max-age=0")
+		// r.Headers.Set("referer", "https://www.manga4life.com/read-online/The-S-Classes-That-I-Raised-chapter-131.html")
+		// r.Headers.Set("sec-ch-ua", "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\"")
+		// r.Headers.Set("sec-ch-ua-mobile", "?0")
+		// r.Headers.Set("sec-ch-ua-platform", "macOS")
+		// r.Headers.Set("sec-fetch-dest", "document")
+		// r.Headers.Set("sec-fetch-mode", "navigate")
+		// r.Headers.Set("sec-fetch-site", "same-origin")
+		// r.Headers.Set("sec-fetch-user", "?1")
+		// r.Headers.Set("upgrade-insecure-requests", "1")
+	})
 
 	c.OnHTML("body > script:nth-child(16)", func(e *colly.HTMLElement) {
 		footerContent := e.Text
@@ -114,11 +133,17 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 		}
 	})
 
-	err := c.Visit(fmt.Sprintf("%v", sc.Host))
-	c.Wait()
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return mangas, err
+	targetLinks := []string{
+		fmt.Sprintf("%v", sc.Host),
+		fmt.Sprintf("%v", sc.AltHost),
+	}
+	for _, targetLink := range targetLinks {
+		err := c.Visit(targetLink)
+		c.Wait()
+		if err != nil || len(mangas) <= 0 {
+			logrus.WithContext(ctx).Error(err)
+			continue
+		}
 	}
 
 	return mangas, nil
@@ -142,6 +167,10 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 		}}},
 		Chapters: []models.Chapter{},
 	}
+
+	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
+	})
 
 	c.OnHTML("div.top-5.Content", func(e *colly.HTMLElement) {
 		manga.Description = e.Text
@@ -184,14 +213,17 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 		}
 	})
 
-	targetUrl := fmt.Sprintf("%v/manga/%v", sc.Host, queryParams.SourceID)
-	err := c.Visit(targetUrl)
-	c.Wait()
-	if err != nil {
-		logrus.WithContext(ctx).WithFields(logrus.Fields{
-			"target_url": targetUrl,
-		}).Error(err)
-		return manga, err
+	targetLinks := []string{
+		fmt.Sprintf("%v/manga/%v", sc.Host, queryParams.SourceID),
+		fmt.Sprintf("%v/manga/%v", sc.AltHost, queryParams.SourceID),
+	}
+	for _, targetLink := range targetLinks {
+		err := c.Visit(targetLink)
+		c.Wait()
+		if err != nil || len(manga.Chapters) <= 0 {
+			logrus.WithContext(ctx).Error(err)
+			continue
+		}
 	}
 
 	manga.GenerateLatestChapter()
@@ -268,16 +300,10 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 	// }
 	// c.WithTransport(t)
 
-	targetLink := fmt.Sprintf("%v/read-online/%v-chapter-%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
-	if queryParams.SecondarySourceID == "2" {
-		targetLink = fmt.Sprintf("%v/read-online/%v-chapter-%v-index-2.html", sc.Host, queryParams.SourceID, queryParams.ChapterID)
-	}
-
 	chapter := models.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        sc.Source,
-		SourceLink:    targetLink,
 		Number:        utils.ForceSanitizeStringToFloat(queryParams.ChapterID),
 		ChapterImages: []models.ChapterImage{},
 	}
@@ -348,21 +374,33 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 	})
 
 	var err error
-	for i := 0; i < 5; i++ {
-		err = c.Visit(targetLink)
-		c.Wait()
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			time.Sleep(1 * time.Second)
-			continue
-		}
-		break
+	modifier := ""
+	if queryParams.SecondarySourceID == "2" {
+		modifier = "-index-2"
 	}
-	if err != nil {
-		return chapter, err
+	targetLinks := []string{
+		fmt.Sprintf("%v/read-online/%v-chapter-%v%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID, modifier),
+		fmt.Sprintf("%v/read-online/%v-chapter-%v%v.html", sc.AltHost, queryParams.SourceID, queryParams.ChapterID, modifier),
+	}
+	for _, targetLink := range targetLinks {
+		for i := 0; i < 2; i++ {
+			err = c.Visit(targetLink)
+			c.Wait()
+			if err != nil {
+				logrus.WithContext(ctx).Error(err)
+				time.Sleep(1 * time.Second)
+				continue
+			}
+			break
+		}
+
+		if len(chapter.ChapterImages) > 0 {
+			chapter.SourceLink = targetLink
+			break
+		}
 	}
 
-	return chapter, nil
+	return chapter, err
 }
 
 func mangaseeDecodeCh(s string) string {
