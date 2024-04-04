@@ -13,12 +13,14 @@ type (
 	}
 
 	AnimapuLog struct {
-		RequestID    string      `json:"request_id"`
-		ErrorMessage string      `json:"error_message"`
-		UtcTime      time.Time   `json:"utc_time"`
-		Data         interface{} `json:"data"`
-		File         string      `json:"file"`
-		Layer        string      `json:"layer"`
+		RequestID     string      `json:"request_id"`
+		ErrorMessage  string      `json:"error_message"`
+		UtcTime       time.Time   `json:"utc_time"`
+		UnixTime      int64       `json:"unix_time"`
+		FormattedTime string      `json:"formatted_time"`
+		Data          interface{} `json:"data"`
+		File          string      `json:"file"`
+		Layer         string      `json:"layer"`
 	}
 )
 
@@ -45,13 +47,16 @@ func (ah *AnimapuHook) Fire(entry *logrus.Entry) error {
 		reqID = ""
 	}
 
+	wibTime := time.Now().UTC().Add(7 * time.Hour)
 	GlobalLog = append(GlobalLog, AnimapuLog{
-		RequestID:    fmt.Sprintf("%v", reqID),
-		UtcTime:      time.Now().UTC(),
-		ErrorMessage: entry.Message,
-		Data:         entry.Data,
-		File:         entry.Caller.File,
-		Layer:        ah.fileToLayer(strings.ToLower(entry.Caller.File)),
+		RequestID:     fmt.Sprintf("%v", reqID),
+		UtcTime:       wibTime,
+		UnixTime:      wibTime.UnixMilli(),
+		FormattedTime: wibTime.Format("15:04:05"),
+		ErrorMessage:  entry.Message,
+		Data:          entry.Data,
+		File:          entry.Caller.File,
+		Layer:         ah.fileToLayer(strings.ToLower(entry.Caller.File)),
 	})
 
 	return nil
