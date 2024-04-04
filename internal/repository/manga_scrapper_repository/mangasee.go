@@ -144,6 +144,7 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 			logrus.WithContext(ctx).Error(err)
 			continue
 		}
+		break
 	}
 
 	return mangas, nil
@@ -224,6 +225,7 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 			logrus.WithContext(ctx).Error(err)
 			continue
 		}
+		break
 	}
 
 	manga.GenerateLatestChapter()
