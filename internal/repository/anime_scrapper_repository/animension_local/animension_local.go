@@ -100,7 +100,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 	//       1704604031
 	//   ]
 	// ]
-	data := [][]interface{}{}
+	data := []interface{}{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -109,16 +109,44 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 
 	animes := []models.Anime{}
 	for _, oneElem := range data {
-		latestEp, _ := strconv.ParseFloat(fmt.Sprint(oneElem[3]), 64)
+		arrAnime := []interface{}{}
+		objAnime := map[string]interface{}{}
 
-		animes = append(animes, models.Anime{
-			ID:            fmt.Sprintf("%v", int64(oneElem[1].(float64))),
-			Source:        r.Source,
-			Title:         fmt.Sprint(oneElem[0]),
-			LatestEpisode: latestEp,
-			CoverUrls:     []string{fmt.Sprint(oneElem[4])},
-			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(oneElem[1].(float64))),
-		})
+		tmpByte, _ := json.Marshal(oneElem)
+
+		if strings.HasPrefix(string(tmpByte), "[") {
+			err = json.Unmarshal(tmpByte, &arrAnime)
+		} else {
+			err = json.Unmarshal(tmpByte, &objAnime)
+		}
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return []models.Anime{}, err
+		}
+
+		if strings.HasPrefix(string(tmpByte), "[") {
+			latestEp, _ := strconv.ParseFloat(fmt.Sprint(arrAnime[3]), 64)
+
+			animes = append(animes, models.Anime{
+				ID:            fmt.Sprintf("%v", int64(arrAnime[1].(float64))),
+				Source:        r.Source,
+				Title:         fmt.Sprint(arrAnime[0]),
+				LatestEpisode: latestEp,
+				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[4])},
+				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(arrAnime[1].(float64))),
+			})
+		} else {
+			latestEp, _ := strconv.ParseFloat(fmt.Sprint(objAnime["3"]), 64)
+
+			animes = append(animes, models.Anime{
+				ID:            fmt.Sprintf("%v", int64(objAnime["1"].(float64))),
+				Source:        r.Source,
+				Title:         fmt.Sprint(objAnime["0"]),
+				LatestEpisode: latestEp,
+				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["4"])},
+				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(objAnime["1"].(float64))),
+			})
+		}
 	}
 
 	return animes, nil
