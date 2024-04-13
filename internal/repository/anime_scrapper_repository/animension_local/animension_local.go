@@ -219,7 +219,7 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 		return animes, err
 	}
 
-	res := [][]interface{}{}
+	res := []interface{}{}
 	d := json.NewDecoder(strings.NewReader(string(body)))
 	d.UseNumber()
 	err = d.Decode(&res)
@@ -229,14 +229,40 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 	}
 
 	for _, oneAnimeRes := range res {
-		animes = append(animes, models.Anime{
-			ID:            fmt.Sprintf("%v", oneAnimeRes[1]),
-			Source:        r.Source,
-			Title:         fmt.Sprint(oneAnimeRes[0]),
-			LatestEpisode: 0,
-			CoverUrls:     []string{fmt.Sprint(oneAnimeRes[2])},
-			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, fmt.Sprintf("%v", oneAnimeRes[1])),
-		})
+		arrAnime := []interface{}{}
+		objAnime := map[string]interface{}{}
+
+		tmpByte, _ := json.Marshal(oneAnimeRes)
+
+		if strings.HasPrefix(string(tmpByte), "[") {
+			err = json.Unmarshal(tmpByte, &arrAnime)
+		} else {
+			err = json.Unmarshal(tmpByte, &objAnime)
+		}
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return []models.Anime{}, err
+		}
+
+		if strings.HasPrefix(string(tmpByte), "[") {
+			animes = append(animes, models.Anime{
+				ID:            fmt.Sprintf("%v", arrAnime[1]),
+				Source:        r.Source,
+				Title:         fmt.Sprint(arrAnime[0]),
+				LatestEpisode: 0,
+				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[2])},
+				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, fmt.Sprintf("%v", arrAnime[1])),
+			})
+		} else {
+			animes = append(animes, models.Anime{
+				ID:            fmt.Sprintf("%v", objAnime["1"]),
+				Source:        r.Source,
+				Title:         fmt.Sprint(objAnime["0"]),
+				LatestEpisode: 0,
+				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["2"])},
+				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, fmt.Sprintf("%v", objAnime["1"])),
+			})
+		}
 	}
 
 	return animes, nil
@@ -296,7 +322,7 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 		animeDetail.ReleaseSeasonIndex = anime_utils.SeasonToIndex(animeDetail.ReleaseSeasonName)
 	})
 	cl.OnHTML("#thumbook > div.thumb > img", func(e *colly.HTMLElement) {
-		animeDetail.CoverURL = e.Attr("src")
+		animeDetail.CoverURL = fmt.Sprintf("%s%v", r.AnimensionHost, e.Attr("src"))
 	})
 	cl.OnHTML("#bigcover > div", func(e *colly.HTMLElement) {
 		animeDetail.HeaderCoverURL = xurls.Relaxed.FindString(e.Attr("style"))
@@ -340,7 +366,7 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 				AnimeID:      strings.ReplaceAll(h.ChildAttr("div > a", "href"), "/", ""),
 				Relationship: strings.ToLower(h.ChildText("div > a > div.limit > div.bt > span")),
 				Title:        strings.TrimSpace(h.ChildText("div > a > div.tt")),
-				CoverUrl:     h.ChildAttr("div > a > div.limit > img", "src"),
+				CoverUrl:     fmt.Sprintf("%s%v", r.AnimensionHost, h.ChildAttr("div > a > div.limit > img", "src")),
 			}
 			animeDetail.Relations = append(animeDetail.Relations, animeRelation)
 		})
