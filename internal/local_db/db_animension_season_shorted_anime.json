@@ -5,34 +5,34 @@
         "season_index": 2,
         "anime_data": [
             {
-                "animension_anime_id": "3097100081",
-                "animension_episode_id": "1643655355",
-                "cover_url": "https://gogocdn.net/cover/tensei-shitara-dainana-ouji-datta-node-kimama-ni-majutsu-wo-kiwamemasu.png",
+                "animension_anime_id": "3947365225",
+                "animension_episode_id": "2076978561",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13576.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "Tensei shitara Dainana Ouji Datta node, Kimama ni Majutsu wo Kiwamemasu",
-                "master_title": "tensei shitara dainana ouji datta node kimama ni majutsu wo kiwamemasu",
+                "title": "KonoSuba: God's Blessing on This Wonderful World! 3",
+                "master_title": "konosuba gods blessing on this wonderful world",
                 "status": "ongoing",
-                "last_episode": 1,
+                "last_episode": 2,
                 "last_episode_string": ""
             },
             {
                 "animension_anime_id": "3590158174",
                 "animension_episode_id": "3330042772",
-                "cover_url": "https://gogocdn.net/cover/tensei-shitara-slime-datta-ken-3rd-season.png",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13578.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "Tensei shitara Slime Datta Ken 3rd Season",
-                "master_title": "tensei shitara slime datta ken rd",
+                "title": "That Time I Got Reincarnated as a Slime Season 3",
+                "master_title": "that time i got reincarnated as a slime",
                 "status": "ongoing",
-                "last_episode": 0,
+                "last_episode": 2,
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2599877212",
-                "animension_episode_id": "2467658891",
-                "cover_url": "https://gogocdn.net/cover/remonster-1711737486.png",
+                "animension_anime_id": "2965078889",
+                "animension_episode_id": "1210850614",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13626.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "Re:Monster",
-                "master_title": "remonster",
+                "title": "Mushoku Tensei: Jobless Reincarnation Season 2 Part 2",
+                "master_title": "mushoku tensei jobless reincarnation   part",
                 "status": "ongoing",
                 "last_episode": 1,
                 "last_episode_string": ""
@@ -40,10 +40,241 @@
             {
                 "animension_anime_id": "1942484288",
                 "animension_episode_id": "1525236634",
-                "cover_url": "https://gogocdn.net/cover/ookami-to-koushinryou-merchant-meets-the-wise-wolf.png",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13588.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "Ookami to Koushinryou: Merchant Meets the Wise Wolf",
-                "master_title": "ookami to koushinryou merchant meets the wise wolf",
+                "title": "Spice and Wolf: Merchant Meets the Wise Wolf",
+                "master_title": "spice and wolf merchant meets the wise wolf",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1468291110",
+                "animension_episode_id": "1112079638",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13644.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Date A Live V",
+                "master_title": "date a live v",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1527719667",
+                "animension_episode_id": "1389380279",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13606.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Wind Breaker",
+                "master_title": "wind breaker",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1548239141",
+                "animension_episode_id": "2849308722",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13609.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "The Irregular at Magic High School Season 3",
+                "master_title": "the irregular at magic high school",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2135483593",
+                "animension_episode_id": "3227158691",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13599.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Bartender: Glass of God",
+                "master_title": "bartender glass of god",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2991969082",
+                "animension_episode_id": "2106853690",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13602.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "An Archdemon's Dilemma: How to Love Your Elf Bride",
+                "master_title": "an archdemons dilemma how to love your elf bride",
+                "status": "ongoing",
+                "last_episode": 3,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2243430691",
+                "animension_episode_id": "2517772622",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13622.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Go! Go! Loser Ranger!",
+                "master_title": "go go loser ranger",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3049130642",
+                "animension_episode_id": "1665591261",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13621.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Mission: Yozakura Family",
+                "master_title": "mission yozakura family",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2599877212",
+                "animension_episode_id": "2467658891",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13586.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Re:Monster",
+                "master_title": "remonster",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2503538246",
+                "animension_episode_id": "1263930709",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13625.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Grandpa and Grandma Turn Young Again",
+                "master_title": "grandpa and grandma turn young again",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3052612023",
+                "animension_episode_id": "2744370941",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13604.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "A Condition Called Love",
+                "master_title": "a condition called love",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4145713124",
+                "animension_episode_id": "2957258597",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13579.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Studio Apartment, Good Lighting, Angel Included",
+                "master_title": "studio apartment good lighting angel included",
+                "status": "ongoing",
+                "last_episode": 3,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1813357932",
+                "animension_episode_id": "3939808801",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13598.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Chillin' in Another World with Level 2 Super Cheat Powers",
+                "master_title": "chillin in another world with level  super cheat powers",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1036669357",
+                "animension_episode_id": "1839236822",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13645.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Viral Hit",
+                "master_title": "viral hit",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3174912668",
+                "animension_episode_id": "2712743499",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13624.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Vampire Dormitory",
+                "master_title": "vampire dormitory",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2949125721",
+                "animension_episode_id": "1959630539",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13568.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Gods' Game We Play",
+                "master_title": "gods game we play",
+                "status": "ongoing",
+                "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2913473923",
+                "animension_episode_id": "2769155928",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13589.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "The Banished Former Hero Lives as He Pleases",
+                "master_title": "the banished former hero lives as he pleases",
+                "status": "ongoing",
+                "last_episode": 3,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1808546860",
+                "animension_episode_id": "2219587952",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13658.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "The New Gate",
+                "master_title": "the new gate",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1709252660",
+                "animension_episode_id": "2379062611",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13650.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Maou Gakuin no Futekigousha: Shijou Saikyou no Maou no Shiso, Tensei shite Shison-tachi no Gakkou e Kayou II Part 2",
+                "master_title": "maou gakuin no futekigousha shijou saikyou no maou no shiso tensei shite shisontachi no gakkou e kayou ii part",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2578963147",
+                "animension_episode_id": "1184949080",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13613.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "My Hero Academia Season 7",
+                "master_title": "my hero academia",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1697074614",
+                "animension_episode_id": "4053260663",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13655.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Kaijuu 8-gou",
+                "master_title": "kaijuu gou",
+                "status": "ongoing",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3425354827",
+                "animension_episode_id": "3211508303",
+                "cover_url": "https://gogocdn.net/cover/tensei-kizoku-kantei-skill-de-nariagaru-1711739105.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Tensei Kizoku, Kantei Skill de Nariagaru",
+                "master_title": "tensei kizoku kantei skill de nariagaru",
                 "status": "ongoing",
                 "last_episode": 1,
                 "last_episode_string": ""
@@ -60,47 +291,14 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3947365225",
-                "animension_episode_id": "2076978561",
-                "cover_url": "https://gogocdn.net/cover/kono-subarashii-sekai-ni-shukufuku-wo-3-1711735625.png",
+                "animension_anime_id": "3097100081",
+                "animension_episode_id": "1643655355",
+                "cover_url": "https://animension.to//assets/images/sh/covers/13587.png",
                 "avatar_url": "/images/youtube.png",
-                "title": "Kono Subarashii Sekai ni Shukufuku wo! 3",
-                "master_title": "kono subarashii sekai ni shukufuku wo",
-                "status": "ongoing",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2913473923",
-                "animension_episode_id": "2769155928",
-                "cover_url": "https://gogocdn.net/cover/dekisokonai-to-yobareta-motoeiyuu-wa-jikka-kara-tsuihou-sareta-node-sukikatte-ni-ikiru-koto-ni-shita-1711733239.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Dekisokonai to Yobareta Motoeiyuu wa Jikka kara Tsuihou sareta node Sukikatte ni Ikiru Koto ni Shita",
-                "master_title": "dekisokonai to yobareta motoeiyuu wa jikka kara tsuihou sareta node sukikatte ni ikiru koto ni shita",
+                "title": "Tensei shitara Dainana Ouji Datta node, Kimama ni Majutsu wo Kiwamemasu",
+                "master_title": "tensei shitara dainana ouji datta node kimama ni majutsu wo kiwamemasu",
                 "status": "ongoing",
                 "last_episode": 2,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "4145713124",
-                "animension_episode_id": "2957258597",
-                "cover_url": "https://gogocdn.net/cover/one-room-hiatari-futsuu-tenshi-tsuki-1711737097.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "One Room, Hiatari Futsuu, Tenshi-tsuki.",
-                "master_title": "one room hiatari futsuu tenshitsuki",
-                "status": "ongoing",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3425354827",
-                "animension_episode_id": "3211508303",
-                "cover_url": "https://gogocdn.net/cover/tensei-kizoku-kantei-skill-de-nariagaru-1711739105.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Tensei Kizoku, Kantei Skill de Nariagaru",
-                "master_title": "tensei kizoku kantei skill de nariagaru",
-                "status": "ongoing",
-                "last_episode": 1,
                 "last_episode_string": ""
             }
         ]
@@ -386,17 +584,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "4290241078",
-                "animension_episode_id": "4035161532",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx164204-HKCkCfJM2n6r.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Cardfight!! Vanguard: Divinez",
-                "master_title": "cardfight vanguard divinez",
-                "status": "ongoing",
-                "last_episode": 11,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3097096404",
                 "animension_episode_id": "2976210456",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx164244-cOP5eMVqVIew.jpg",
@@ -405,6 +592,17 @@
                 "master_title": "the foolish angel dances with the devil",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4290241078",
+                "animension_episode_id": "4035161532",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx164204-HKCkCfJM2n6r.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Cardfight!! Vanguard: Divinez",
+                "master_title": "cardfight vanguard divinez",
+                "status": "ongoing",
+                "last_episode": 11,
                 "last_episode_string": ""
             },
             {
@@ -474,17 +672,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1670783903",
-                "animension_episode_id": "1109840914",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx162985-3J7PrG5oO67v.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Metallic Rouge",
-                "master_title": "metallic rouge",
-                "status": "ongoing",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3047762355",
                 "animension_episode_id": "1899937347",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx165314-oHSkxN95nSsx.jpg",
@@ -492,6 +679,17 @@
                 "title": "The Way of Pon",
                 "master_title": "the way of pon",
                 "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1670783903",
+                "animension_episode_id": "1109840914",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx162985-3J7PrG5oO67v.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Metallic Rouge",
+                "master_title": "metallic rouge",
+                "status": "ongoing",
                 "last_episode": 12,
                 "last_episode_string": ""
             },
@@ -606,17 +804,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2379150893",
-                "animension_episode_id": "2573527499",
-                "cover_url": "https://gogocdn.net/cover/kingdom-5th-season-chinese-name.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Kingdom 5th Season (Chinese Name)",
-                "master_title": "kingdom th  chinese name",
-                "status": "ongoing",
-                "last_episode": 3,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3471921457",
                 "animension_episode_id": "2349736259",
                 "cover_url": "https://gogocdn.net/cover/chiyu-mahou-no-machigatta-tsukaikata-senjou-wo-kakeru-kaifuku-youin-1704169353.png",
@@ -625,6 +812,17 @@
                 "master_title": "chiyu mahou no machigatta tsukaikata senjou wo kakeru kaifuku youin",
                 "status": "ongoing",
                 "last_episode": 4,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2023190340",
+                "animension_episode_id": "3797357722",
+                "cover_url": "https://gogocdn.net/cover/himesama-goumon-no-jikan-desu-1704184795.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Himesama \"Goumon\" no Jikan desu",
+                "master_title": "himesama goumon no jikan desu",
+                "status": "ongoing",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -639,14 +837,14 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2023190340",
-                "animension_episode_id": "3797357722",
-                "cover_url": "https://gogocdn.net/cover/himesama-goumon-no-jikan-desu-1704184795.png",
+                "animension_anime_id": "2379150893",
+                "animension_episode_id": "2573527499",
+                "cover_url": "https://gogocdn.net/cover/kingdom-5th-season-chinese-name.png",
                 "avatar_url": "/images/youtube.png",
-                "title": "Himesama \"Goumon\" no Jikan desu",
-                "master_title": "himesama goumon no jikan desu",
+                "title": "Kingdom 5th Season (Chinese Name)",
+                "master_title": "kingdom th  chinese name",
                 "status": "ongoing",
-                "last_episode": 12,
+                "last_episode": 3,
                 "last_episode_string": ""
             },
             {
@@ -811,12 +1009,12 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2141948429",
-                "animension_episode_id": "1400225724",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx111322-2jQMDQva4YD7.png",
+                "animension_anime_id": "2412664710",
+                "animension_episode_id": "2148591112",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx164312-3eLpxsRk5COE.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "The Rising of the Shield Hero Season 3",
-                "master_title": "the rising of the shield hero",
+                "title": "The Yuzuki Family's Four Sons",
+                "master_title": "the yuzuki familys four sons",
                 "status": "ongoing",
                 "last_episode": 6,
                 "last_episode_string": ""
@@ -833,12 +1031,12 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2412664710",
-                "animension_episode_id": "2148591112",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx164312-3eLpxsRk5COE.jpg",
+                "animension_anime_id": "2141948429",
+                "animension_episode_id": "1400225724",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx111322-2jQMDQva4YD7.png",
                 "avatar_url": "/images/youtube.png",
-                "title": "The Yuzuki Family's Four Sons",
-                "master_title": "the yuzuki familys four sons",
+                "title": "The Rising of the Shield Hero Season 3",
+                "master_title": "the rising of the shield hero",
                 "status": "ongoing",
                 "last_episode": 6,
                 "last_episode_string": ""
@@ -888,17 +1086,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1129683357",
-                "animension_episode_id": "3190388577",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx146206-76MkUJBXlq4v.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "The Saint's Magic Power is Omnipotent Season 2",
-                "master_title": "the saints magic power is omnipotent",
-                "status": "ongoing",
-                "last_episode": 7,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2122235942",
                 "animension_episode_id": "3958238209",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154384-3tpmugzrVpE9.jpg",
@@ -907,6 +1094,17 @@
                 "master_title": "tearmoon empire",
                 "status": "ongoing",
                 "last_episode": 6,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1129683357",
+                "animension_episode_id": "3190388577",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx146206-76MkUJBXlq4v.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "The Saint's Magic Power is Omnipotent Season 2",
+                "master_title": "the saints magic power is omnipotent",
+                "status": "ongoing",
+                "last_episode": 7,
                 "last_episode_string": ""
             },
             {
@@ -1020,23 +1218,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3839663602",
-                "animension_episode_id": "4264269440",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx142666-V3L6TwYLZ33l.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Migi \u0026 Dali",
-                "master_title": "migi  dali",
-                "status": "ongoing",
-                "last_episode": 7,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2181781104",
                 "animension_episode_id": "1674330429",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154214-Uf9x7mY4IJJr.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "I'm Giving the Disgraced Noble Lady I Rescued a Crash Course in Naughtiness",
                 "master_title": "im giving the disgraced noble lady i rescued a crash course in naughtiness",
+                "status": "ongoing",
+                "last_episode": 7,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3839663602",
+                "animension_episode_id": "4264269440",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx142666-V3L6TwYLZ33l.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Migi \u0026 Dali",
+                "master_title": "migi  dali",
                 "status": "ongoing",
                 "last_episode": 7,
                 "last_episode_string": ""
@@ -1097,17 +1295,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1393482678",
-                "animension_episode_id": "3524032829",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx140501-pXY8yUDScfHS.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "The Demon Sword Master of Excalibur Academy",
-                "master_title": "the demon sword master of excalibur academy",
-                "status": "ongoing",
-                "last_episode": 7,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3859513139",
                 "animension_episode_id": "4207973398",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx165159-aCFC9Sng7t4M.png",
@@ -1116,6 +1303,17 @@
                 "master_title": "beyblade x",
                 "status": "ongoing",
                 "last_episode": 6,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1393482678",
+                "animension_episode_id": "3524032829",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx140501-pXY8yUDScfHS.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "The Demon Sword Master of Excalibur Academy",
+                "master_title": "the demon sword master of excalibur academy",
+                "status": "ongoing",
+                "last_episode": 7,
                 "last_episode_string": ""
             },
             {
@@ -1445,17 +1643,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2192284378",
-                "animension_episode_id": "2815453739",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx163542-p2TquRJYjPty.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Spy Classroom Season 2",
-                "master_title": "spy classroom",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2735431095",
                 "animension_episode_id": "3931231759",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx160188-4RvYLaru3vKj.jpg",
@@ -1464,6 +1651,17 @@
                 "master_title": "the girl i like forgot her glasses",
                 "status": "finished",
                 "last_episode": 13,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2192284378",
+                "animension_episode_id": "2815453739",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx163542-p2TquRJYjPty.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Spy Classroom Season 2",
+                "master_title": "spy classroom",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -1782,17 +1980,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1749201225",
-                "animension_episode_id": "1352881920",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154965-vZbBRjtmLp7S.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "My Love Story with Yamada-kun at Lv999",
-                "master_title": "my love story with yamadakun at lv",
-                "status": "finished",
-                "last_episode": 13,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2482771455",
                 "animension_episode_id": "3012812087",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx148370-db0LjJfaOCg9.jpg",
@@ -1801,6 +1988,17 @@
                 "master_title": "uma musume pretty derby  road to the top",
                 "status": "finished",
                 "last_episode": 4,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1749201225",
+                "animension_episode_id": "1352881920",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154965-vZbBRjtmLp7S.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "My Love Story with Yamada-kun at Lv999",
+                "master_title": "my love story with yamadakun at lv",
+                "status": "finished",
+                "last_episode": 13,
                 "last_episode_string": ""
             },
             {
@@ -1903,17 +2101,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2214266196",
-                "animension_episode_id": "1864305168",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx127550-S9s5Y7dldE18.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Kuma Kuma Kuma Bear Punch!",
-                "master_title": "kuma kuma kuma bear punch",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1929425149",
                 "animension_episode_id": "2132790281",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx153452-6aGeSxRw2cxY.jpg",
@@ -1922,6 +2109,17 @@
                 "master_title": "ranking of kings the treasure chest of courage",
                 "status": "finished",
                 "last_episode": 10,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2214266196",
+                "animension_episode_id": "1864305168",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx127550-S9s5Y7dldE18.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Kuma Kuma Kuma Bear Punch!",
+                "master_title": "kuma kuma kuma bear punch",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -2229,23 +2427,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1471914009",
-                "animension_episode_id": "1120246058",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx147864-Idb77ylQTTBh.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Onimai: I'm Now Your Sister! (Uncensored)",
-                "master_title": "onimai im now your sister uncensored",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1847859311",
                 "animension_episode_id": "1486984466",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx147864-Idb77ylQTTBh.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Onimai: I'm Now Your Sister!",
                 "master_title": "onimai im now your sister",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1471914009",
+                "animension_episode_id": "1120246058",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx147864-Idb77ylQTTBh.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Onimai: I'm Now Your Sister! (Uncensored)",
+                "master_title": "onimai im now your sister uncensored",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -3537,17 +3735,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2399379168",
-                "animension_episode_id": "3944543850",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx132171-7eUhRXuzbR20.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Dance Dance Danseur",
-                "master_title": "dance dance danseur",
-                "status": "finished",
-                "last_episode": 11,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3394421217",
                 "animension_episode_id": "1506443467",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx123330-AU2jllC75uSE.png",
@@ -3556,6 +3743,17 @@
                 "master_title": "the demon girl next door",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2399379168",
+                "animension_episode_id": "3944543850",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx132171-7eUhRXuzbR20.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Dance Dance Danseur",
+                "master_title": "dance dance danseur",
+                "status": "finished",
+                "last_episode": 11,
                 "last_episode_string": ""
             },
             {
@@ -3581,17 +3779,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2032136055",
-                "animension_episode_id": "1393267620",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx132532-DwjK9wnlSaKl.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Deaimon: Recipe for Happiness",
-                "master_title": "deaimon recipe for happiness",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1826610620",
                 "animension_episode_id": "3300252457",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx133898-KdQ7fWTG06n4.png",
@@ -3600,6 +3787,17 @@
                 "master_title": "dragon ball super super hero",
                 "status": "finished",
                 "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2032136055",
+                "animension_episode_id": "1393267620",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx132532-DwjK9wnlSaKl.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Deaimon: Recipe for Happiness",
+                "master_title": "deaimon recipe for happiness",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -5299,6 +5497,17 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "2888912789",
+                "animension_episode_id": "3950351261",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx124223-A1D1ZAW0KQnH.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Uma Musume: Pretty Derby Season 2",
+                "master_title": "uma musume pretty derby",
+                "status": "finished",
+                "last_episode": 13,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "4170546699",
                 "animension_episode_id": "3922089217",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx109261-65rKxMDlcU9r.png",
@@ -5318,17 +5527,6 @@
                 "master_title": "world trigger nd",
                 "status": "finished",
                 "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2888912789",
-                "animension_episode_id": "3950351261",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx124223-A1D1ZAW0KQnH.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Uma Musume: Pretty Derby Season 2",
-                "master_title": "uma musume pretty derby",
-                "status": "finished",
-                "last_episode": 13,
                 "last_episode_string": ""
             },
             {
@@ -5984,23 +6182,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "4271058197",
-                "animension_episode_id": "3924487390",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx111852-W3cRNx9CO7sJ.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Date A Bullet: Dead or Bullet",
-                "master_title": "date a bullet dead or bullet",
-                "status": "finished",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2926521980",
                 "animension_episode_id": "3690482368",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx114195-3h9rxnFnNkzw.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Ore wo Suki nano wa Omae dake ka yo: Oretachi no Game Set",
                 "master_title": "ore wo suki nano wa omae dake ka yo oretachi no game set",
+                "status": "finished",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4271058197",
+                "animension_episode_id": "3924487390",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx111852-W3cRNx9CO7sJ.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Date A Bullet: Dead or Bullet",
+                "master_title": "date a bullet dead or bullet",
                 "status": "finished",
                 "last_episode": 1,
                 "last_episode_string": ""
@@ -6310,23 +6508,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3815262657",
-                "animension_episode_id": "2629846847",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx108266-XIxj8RVcidLX.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Tsugu Tsugumomo",
-                "master_title": "tsugu tsugumomo",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1094229403",
                 "animension_episode_id": "1985881256",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx109019-xlrVQRdo1EQi.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "Diary of Our Days at the Breakwater",
                 "master_title": "diary of our days at the breakwater",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3815262657",
+                "animension_episode_id": "2629846847",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx108266-XIxj8RVcidLX.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Tsugu Tsugumomo",
+                "master_title": "tsugu tsugumomo",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -6570,17 +6768,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "4237431953",
-                "animension_episode_id": "1271492157",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx110350-uchN78wglmhN.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "ID:Invaded",
-                "master_title": "idinvaded",
-                "status": "finished",
-                "last_episode": 13,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2926507614",
                 "animension_episode_id": "2211281345",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx111790-MrEJLRJxjPja.jpg",
@@ -6589,6 +6776,17 @@
                 "master_title": "haikyu land vs air",
                 "status": "finished",
                 "last_episode": 2,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4237431953",
+                "animension_episode_id": "1271492157",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx110350-uchN78wglmhN.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "ID:Invaded",
+                "master_title": "idinvaded",
+                "status": "finished",
+                "last_episode": 13,
                 "last_episode_string": ""
             },
             {
@@ -7083,23 +7281,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1765778510",
-                "animension_episode_id": "3442629852",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101349-AWy5SjUS8mYZ.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Babylon",
-                "master_title": "babylon",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1479415798",
                 "animension_episode_id": "3201247635",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx107346-KZQFFzxrCH3g.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "Granblue Fantasy: The Animation Season 2",
                 "master_title": "granblue fantasy the animation",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1765778510",
+                "animension_episode_id": "3442629852",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101349-AWy5SjUS8mYZ.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Babylon",
+                "master_title": "babylon",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -7541,23 +7739,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1370204085",
-                "animension_episode_id": "1066721649",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx107672-HBpAeSGSTFlt.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "To the Abandoned Sacred Beasts",
-                "master_title": "to the abandoned sacred beasts",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3905008370",
                 "animension_episode_id": "2675483225",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105074-flcJxKWZ5IZz.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "Magical Sempai",
                 "master_title": "magical sempai",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1370204085",
+                "animension_episode_id": "1066721649",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx107672-HBpAeSGSTFlt.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "To the Abandoned Sacred Beasts",
+                "master_title": "to the abandoned sacred beasts",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -7647,17 +7845,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "4168385428",
-                "animension_episode_id": "3799427588",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx103223-bfdnnKWxE4YE.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Bungo Stray Dogs 3",
-                "master_title": "bungo stray dogs",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2196873683",
                 "animension_episode_id": "1437718528",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105334-b7sF53ayVDoB.jpg",
@@ -7666,6 +7853,17 @@
                 "master_title": "fruits basket",
                 "status": "finished",
                 "last_episode": 25,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4168385428",
+                "animension_episode_id": "3799427588",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx103223-bfdnnKWxE4YE.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Bungo Stray Dogs 3",
+                "master_title": "bungo stray dogs",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -8105,23 +8303,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1871943841",
-                "animension_episode_id": "4128715635",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100876-RfvmpW1B8bDQ.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Kakegurui XX",
-                "master_title": "kakegurui xx",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3443291249",
                 "animension_episode_id": "3644046710",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100722-M5nXzDkuGOLC.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Date A Live III",
                 "master_title": "date a live iii",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1871943841",
+                "animension_episode_id": "4128715635",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100876-RfvmpW1B8bDQ.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Kakegurui XX",
+                "master_title": "kakegurui xx",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -8244,17 +8442,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1138020326",
-                "animension_episode_id": "3623164866",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx102977-gUejfwQWpnzX.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Golden Kamuy Season 2",
-                "master_title": "golden kamuy",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2488335091",
                 "animension_episode_id": "2401166680",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101291-L71WpAkZPtgm.jpg",
@@ -8263,6 +8450,17 @@
                 "master_title": "rascal does not dream of bunny girl senpai",
                 "status": "finished",
                 "last_episode": 13,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1138020326",
+                "animension_episode_id": "3623164866",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx102977-gUejfwQWpnzX.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Golden Kamuy Season 2",
+                "master_title": "golden kamuy",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -8636,14 +8834,14 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1784408340",
-                "animension_episode_id": "4243585490",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100977-qXCh0qB9on52.jpg",
+                "animension_anime_id": "4154620227",
+                "animension_episode_id": "2006899265",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100723-7f5e1BCTCDoB.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "Cells at Work!",
-                "master_title": "cells at work",
+                "title": "My Hero Academia: Two Heroes (Movie)",
+                "master_title": "my hero academia two heroes movie",
                 "status": "finished",
-                "last_episode": 13,
+                "last_episode": 1,
                 "last_episode_string": ""
             },
             {
@@ -8658,14 +8856,14 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "4154620227",
-                "animension_episode_id": "2006899265",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100723-7f5e1BCTCDoB.jpg",
+                "animension_anime_id": "1784408340",
+                "animension_episode_id": "4243585490",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100977-qXCh0qB9on52.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "My Hero Academia: Two Heroes (Movie)",
-                "master_title": "my hero academia two heroes movie",
+                "title": "Cells at Work!",
+                "master_title": "cells at work",
                 "status": "finished",
-                "last_episode": 1,
+                "last_episode": 13,
                 "last_episode_string": ""
             },
             {
@@ -8735,17 +8933,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2329479881",
-                "animension_episode_id": "3084600738",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx101045-byKzyG0rZD8b.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Hanebado!",
-                "master_title": "hanebado",
-                "status": "finished",
-                "last_episode": 13,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3666758821",
                 "animension_episode_id": "2362238132",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101004-rJLBIWGypbYK.png",
@@ -8754,6 +8941,17 @@
                 "master_title": "how not to summon a demon lord",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2329479881",
+                "animension_episode_id": "3084600738",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx101045-byKzyG0rZD8b.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Hanebado!",
+                "master_title": "hanebado",
+                "status": "finished",
+                "last_episode": 13,
                 "last_episode_string": ""
             },
             {
@@ -8856,39 +9054,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3383758748",
-                "animension_episode_id": "1686555089",
-                "cover_url": "https://gogocdn.net/cover/angolmois-genkou-kassenki.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Angolmois: Genkou Kassenki",
-                "master_title": "angolmois genkou kassenki",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3543804980",
-                "animension_episode_id": "3788629553",
-                "cover_url": "https://gogocdn.net/cover/gintama-shirogane-no-tamashii-hen-2.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Gintama.: Shirogane no Tamashii-hen 2",
-                "master_title": "gintama shirogane no tamashiihen",
-                "status": "finished",
-                "last_episode": 14,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "1330263172",
-                "animension_episode_id": "2358798883",
-                "cover_url": "https://gogocdn.net/cover/yama-no-susume-third-season.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Yama no Susume: Third Season",
-                "master_title": "yama no susume third",
-                "status": "finished",
-                "last_episode": 13,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1407723184",
                 "animension_episode_id": "2981908066",
                 "cover_url": "https://gogocdn.net/cover/back-street-girls-gokudolls.png",
@@ -8909,6 +9074,39 @@
                 "status": "finished",
                 "last_episode": 24,
                 "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1330263172",
+                "animension_episode_id": "2358798883",
+                "cover_url": "https://gogocdn.net/cover/yama-no-susume-third-season.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Yama no Susume: Third Season",
+                "master_title": "yama no susume third",
+                "status": "finished",
+                "last_episode": 13,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3383758748",
+                "animension_episode_id": "1686555089",
+                "cover_url": "https://gogocdn.net/cover/angolmois-genkou-kassenki.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Angolmois: Genkou Kassenki",
+                "master_title": "angolmois genkou kassenki",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3543804980",
+                "animension_episode_id": "3788629553",
+                "cover_url": "https://gogocdn.net/cover/gintama-shirogane-no-tamashii-hen-2.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Gintama.: Shirogane no Tamashii-hen 2",
+                "master_title": "gintama shirogane no tamashiihen",
+                "status": "finished",
+                "last_episode": 14,
+                "last_episode_string": ""
             }
         ]
     },
@@ -8918,17 +9116,6 @@
         "season_index": 2,
         "anime_data": [
             {
-                "animension_anime_id": "1878681335",
-                "animension_episode_id": "4212094756",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100957-YzfrlJDqswJc.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Lupin the Third Part 5",
-                "master_title": "lupin the third part",
-                "status": "finished",
-                "last_episode": 24,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2431362506",
                 "animension_episode_id": "2887763805",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100077-B4bfXz0wVOPO.jpg",
@@ -8937,6 +9124,17 @@
                 "master_title": "hinamatsuri",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1878681335",
+                "animension_episode_id": "4212094756",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100957-YzfrlJDqswJc.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Lupin the Third Part 5",
+                "master_title": "lupin the third part",
+                "status": "finished",
+                "last_episode": 24,
                 "last_episode_string": ""
             },
             {
@@ -9072,17 +9270,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3036096583",
-                "animension_episode_id": "3193265165",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100401-frKNiXOnRKdu.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Forest of Piano",
-                "master_title": "forest of piano",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1903328797",
                 "animension_episode_id": "2683879194",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98514-l4F8uqPzI7Mk.jpg",
@@ -9091,6 +9278,17 @@
                 "master_title": "uma musume pretty derby tv",
                 "status": "finished",
                 "last_episode": 13,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3036096583",
+                "animension_episode_id": "3193265165",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100401-frKNiXOnRKdu.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Forest of Piano",
+                "master_title": "forest of piano",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             },
             {
@@ -9193,50 +9391,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1224357247",
-                "animension_episode_id": "1536674210",
-                "cover_url": "https://gogocdn.net/cover/saredo-tsumibito-wa-ryuu-to-odoru.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Saredo Tsumibito wa Ryuu to Odoru",
-                "master_title": "saredo tsumibito wa ryuu to odoru",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3761361886",
-                "animension_episode_id": "2026165091",
-                "cover_url": "https://gogocdn.net/cover/juushinki-pandora.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Juushinki Pandora",
-                "master_title": "juushinki pandora",
-                "status": "finished",
-                "last_episode": 26,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3250909056",
-                "animension_episode_id": "2013105041",
-                "cover_url": "https://gogocdn.net/cover/amanchu-advance.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Amanchu! Advance",
-                "master_title": "amanchu advance",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2786764761",
-                "animension_episode_id": "3616243880",
-                "cover_url": "https://gogocdn.net/cover/major-2nd-tv.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Major 2nd (TV)",
-                "master_title": "major nd tv",
-                "status": "finished",
-                "last_episode": 25,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3007897881",
                 "animension_episode_id": "2957224112",
                 "cover_url": "https://gogocdn.net/cover/hisone-to-maso-tan.png",
@@ -9259,6 +9413,39 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "3761361886",
+                "animension_episode_id": "2026165091",
+                "cover_url": "https://gogocdn.net/cover/juushinki-pandora.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Juushinki Pandora",
+                "master_title": "juushinki pandora",
+                "status": "finished",
+                "last_episode": 26,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1224357247",
+                "animension_episode_id": "1536674210",
+                "cover_url": "https://gogocdn.net/cover/saredo-tsumibito-wa-ryuu-to-odoru.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Saredo Tsumibito wa Ryuu to Odoru",
+                "master_title": "saredo tsumibito wa ryuu to odoru",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3250909056",
+                "animension_episode_id": "2013105041",
+                "cover_url": "https://gogocdn.net/cover/amanchu-advance.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Amanchu! Advance",
+                "master_title": "amanchu advance",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "1978748324",
                 "animension_episode_id": "1296346324",
                 "cover_url": "https://gogocdn.net/cover/dorei-ku-the-animation.png",
@@ -9267,6 +9454,17 @@
                 "master_title": "doreiku the animation",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2786764761",
+                "animension_episode_id": "3616243880",
+                "cover_url": "https://gogocdn.net/cover/major-2nd-tv.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Major 2nd (TV)",
+                "master_title": "major nd tv",
+                "status": "finished",
+                "last_episode": 25,
                 "last_episode_string": ""
             }
         ]
@@ -9409,17 +9607,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1671122763",
-                "animension_episode_id": "1026742541",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx99476-iKxjBWYZmDYl.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Yowamushi Pedal: Glory Line",
-                "master_title": "yowamushi pedal glory line",
-                "status": "finished",
-                "last_episode": 25,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "4220600771",
                 "animension_episode_id": "2342860566",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx99539-caPX28RSsgRP.jpg",
@@ -9428,6 +9615,17 @@
                 "master_title": "the seven deadly sins revival of the commandments",
                 "status": "finished",
                 "last_episode": 24,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1671122763",
+                "animension_episode_id": "1026742541",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx99476-iKxjBWYZmDYl.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Yowamushi Pedal: Glory Line",
+                "master_title": "yowamushi pedal glory line",
+                "status": "finished",
+                "last_episode": 25,
                 "last_episode_string": ""
             },
             {
@@ -9856,17 +10054,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2035428510",
-                "animension_episode_id": "2931577830",
-                "cover_url": "https://gogocdn.net/cover/yuuki-yuuna-wa-yuusha-de-aru-yuusha-no-shou.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Yuuki Yuuna wa Yuusha de Aru: Yuusha no Shou",
-                "master_title": "yuuki yuuna wa yuusha de aru yuusha no shou",
-                "status": "finished",
-                "last_episode": 6,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3489061916",
                 "animension_episode_id": "1407143374",
                 "cover_url": "https://gogocdn.net/cover/two-car.png",
@@ -9875,6 +10062,17 @@
                 "master_title": "two car",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2035428510",
+                "animension_episode_id": "2931577830",
+                "cover_url": "https://gogocdn.net/cover/yuuki-yuuna-wa-yuusha-de-aru-yuusha-no-shou.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Yuuki Yuuna wa Yuusha de Aru: Yuusha no Shou",
+                "master_title": "yuuki yuuna wa yuusha de aru yuusha no shou",
+                "status": "finished",
+                "last_episode": 6,
                 "last_episode_string": ""
             }
         ]
@@ -10182,89 +10380,12 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2651765945",
-                "animension_episode_id": "2797670628",
-                "cover_url": "https://gogocdn.net/cover/saiyuuki-reload-blast.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Saiyuuki Reload Blast",
-                "master_title": "saiyuuki reload blast",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3531734597",
-                "animension_episode_id": "1860225142",
-                "cover_url": "https://gogocdn.net/cover/dive.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Dive!!",
-                "master_title": "dive",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2725198470",
-                "animension_episode_id": "3621565803",
-                "cover_url": "https://gogocdn.net/cover/action-heroine-cheer-fruits.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Action Heroine Cheer Fruits",
-                "master_title": "action heroine cheer fruits",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "1255938792",
-                "animension_episode_id": "3432303035",
-                "cover_url": "https://gogocdn.net/cover/konbini-kareshi.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Konbini Kareshi",
-                "master_title": "konbini kareshi",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "1149906471",
-                "animension_episode_id": "2931149342",
-                "cover_url": "https://gogocdn.net/cover/nana-maru-san-batsu.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Nana Maru San Batsu",
-                "master_title": "nana maru san batsu",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3866402148",
                 "animension_episode_id": "3664205178",
                 "cover_url": "https://gogocdn.net/cover/nora-to-oujo-to-noraneko-heart.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Nora to Oujo to Noraneko Heart",
                 "master_title": "nora to oujo to noraneko heart",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2230609179",
-                "animension_episode_id": "1852094621",
-                "cover_url": "https://gogocdn.net/cover/tenshi-no-3p.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Tenshi no 3P!",
-                "master_title": "tenshi no p",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2320701420",
-                "animension_episode_id": "3908633928",
-                "cover_url": "https://gogocdn.net/cover/centaur-no-nayami.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Centaur no Nayami",
-                "master_title": "centaur no nayami",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -10281,12 +10402,89 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "1255938792",
+                "animension_episode_id": "3432303035",
+                "cover_url": "https://gogocdn.net/cover/konbini-kareshi.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Konbini Kareshi",
+                "master_title": "konbini kareshi",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2725198470",
+                "animension_episode_id": "3621565803",
+                "cover_url": "https://gogocdn.net/cover/action-heroine-cheer-fruits.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Action Heroine Cheer Fruits",
+                "master_title": "action heroine cheer fruits",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1149906471",
+                "animension_episode_id": "2931149342",
+                "cover_url": "https://gogocdn.net/cover/nana-maru-san-batsu.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Nana Maru San Batsu",
+                "master_title": "nana maru san batsu",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2651765945",
+                "animension_episode_id": "2797670628",
+                "cover_url": "https://gogocdn.net/cover/saiyuuki-reload-blast.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Saiyuuki Reload Blast",
+                "master_title": "saiyuuki reload blast",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2230609179",
+                "animension_episode_id": "1852094621",
+                "cover_url": "https://gogocdn.net/cover/tenshi-no-3p.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Tenshi no 3P!",
+                "master_title": "tenshi no p",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3531734597",
+                "animension_episode_id": "1860225142",
+                "cover_url": "https://gogocdn.net/cover/dive.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Dive!!",
+                "master_title": "dive",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "3941645589",
                 "animension_episode_id": "4074985619",
                 "cover_url": "https://gogocdn.net/cover/princess-principal.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Princess Principal",
                 "master_title": "princess principal",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2320701420",
+                "animension_episode_id": "3908633928",
+                "cover_url": "https://gogocdn.net/cover/centaur-no-nayami.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Centaur no Nayami",
+                "master_title": "centaur no nayami",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -10376,17 +10574,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3232512320",
-                "animension_episode_id": "1343569930",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx21684-MAT6GdCnfPdR.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "The Irregular at Magic High School The Movie - The Girl Who Summons The Stars",
-                "master_title": "the irregular at magic high school the movie  the girl who summons the stars",
-                "status": "finished",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3721431168",
                 "animension_episode_id": "1664848248",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx97932-mIhBEmGhR6uB.jpg",
@@ -10395,6 +10582,17 @@
                 "master_title": "the royal tutor",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3232512320",
+                "animension_episode_id": "1343569930",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx21684-MAT6GdCnfPdR.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "The Irregular at Magic High School The Movie - The Girl Who Summons The Stars",
+                "master_title": "the irregular at magic high school the movie  the girl who summons the stars",
+                "status": "finished",
+                "last_episode": 1,
                 "last_episode_string": ""
             },
             {
@@ -10453,23 +10651,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2892802546",
-                "animension_episode_id": "2036518434",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx97682-YRhTwV979zSr.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Grimoire of Zero",
-                "master_title": "grimoire of zero",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1597195433",
                 "animension_episode_id": "3002083887",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21676-98OeKU9NDhJI.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "Sword Oratoria: Is It Wrong to Try to Pick Up Girls in a Dungeon? On the Side",
                 "master_title": "sword oratoria is it wrong to try to pick up girls in a dungeon on the side",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2892802546",
+                "animension_episode_id": "2036518434",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx97682-YRhTwV979zSr.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Grimoire of Zero",
+                "master_title": "grimoire of zero",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -10541,23 +10739,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3181649235",
-                "animension_episode_id": "2617380242",
-                "cover_url": "https://gogocdn.net/cover/alice-to-zouroku.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Alice to Zouroku",
-                "master_title": "alice to zouroku",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2765590364",
                 "animension_episode_id": "1074349174",
                 "cover_url": "https://gogocdn.net/cover/hinako-note.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Hinako Note",
                 "master_title": "hinako note",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3181649235",
+                "animension_episode_id": "2617380242",
+                "cover_url": "https://gogocdn.net/cover/alice-to-zouroku.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Alice to Zouroku",
+                "master_title": "alice to zouroku",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -10574,23 +10772,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2114006315",
-                "animension_episode_id": "3200996518",
-                "cover_url": "https://gogocdn.net/cover/seikaisuru-kado.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Seikaisuru Kado",
-                "master_title": "seikaisuru kado",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1024511278",
                 "animension_episode_id": "4009624980",
                 "cover_url": "https://gogocdn.net/cover/frame-arms-girl.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Frame Arms Girl",
                 "master_title": "frame arms girl",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2114006315",
+                "animension_episode_id": "3200996518",
+                "cover_url": "https://gogocdn.net/cover/seikaisuru-kado.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Seikaisuru Kado",
+                "master_title": "seikaisuru kado",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -10823,28 +11021,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3179953014",
-                "animension_episode_id": "2559577011",
-                "cover_url": "https://gogocdn.net/cover/eldlive.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "ēlDLIVE",
-                "master_title": "ldlive",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "1463103149",
-                "animension_episode_id": "2816578534",
-                "cover_url": "https://gogocdn.net/cover/nyanko-days.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Nyanko Days",
-                "master_title": "nyanko days",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2882291356",
                 "animension_episode_id": "1927966920",
                 "cover_url": "https://gogocdn.net/cover/gintama-2017.png",
@@ -10867,6 +11043,17 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "3720956476",
+                "animension_episode_id": "3126566458",
+                "cover_url": "https://gogocdn.net/cover/acca-13-ku-kansatsu-ka.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "ACCA: 13-ku Kansatsu-ka",
+                "master_title": "acca ku kansatsuka",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "1186033559",
                 "animension_episode_id": "3701458598",
                 "cover_url": "https://gogocdn.net/cover/urara-meirochou.png",
@@ -10878,12 +11065,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3720956476",
-                "animension_episode_id": "3126566458",
-                "cover_url": "https://gogocdn.net/cover/acca-13-ku-kansatsu-ka.png",
+                "animension_anime_id": "3179953014",
+                "animension_episode_id": "2559577011",
+                "cover_url": "https://gogocdn.net/cover/eldlive.png",
                 "avatar_url": "/images/youtube.png",
-                "title": "ACCA: 13-ku Kansatsu-ka",
-                "master_title": "acca ku kansatsuka",
+                "title": "ēlDLIVE",
+                "master_title": "ldlive",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1463103149",
+                "animension_episode_id": "2816578534",
+                "cover_url": "https://gogocdn.net/cover/nyanko-days.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Nyanko Days",
+                "master_title": "nyanko days",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -11039,17 +11237,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3446595025",
-                "animension_episode_id": "2175537648",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx21757-zH78HtS4b0GU.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "The Moment You Fall in Love",
-                "master_title": "the moment you fall in love",
-                "status": "finished",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2352500902",
                 "animension_episode_id": "3420360545",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21349-J2C50KiPF5Rv.png",
@@ -11058,6 +11245,17 @@
                 "master_title": "all out",
                 "status": "finished",
                 "last_episode": 25,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3446595025",
+                "animension_episode_id": "2175537648",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx21757-zH78HtS4b0GU.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "The Moment You Fall in Love",
+                "master_title": "the moment you fall in love",
+                "status": "finished",
+                "last_episode": 1,
                 "last_episode_string": ""
             },
             {
@@ -11083,78 +11281,23 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "2174216690",
+                "animension_episode_id": "1463549073",
+                "cover_url": "https://gogocdn.net/cover/stella-no-mahou.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Stella no Mahou",
+                "master_title": "stella no mahou",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "2782550594",
                 "animension_episode_id": "4104127708",
                 "cover_url": "https://gogocdn.net/cover/touken-ranbu-hanamaru.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Touken Ranbu: Hanamaru",
                 "master_title": "touken ranbu hanamaru",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "4242153482",
-                "animension_episode_id": "1448376505",
-                "cover_url": "https://gogocdn.net/cover/cheating-craft.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Cheating Craft",
-                "master_title": "cheating craft",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3080182979",
-                "animension_episode_id": "2882493480",
-                "cover_url": "https://gogocdn.net/cover/brave-witches.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Brave Witches",
-                "master_title": "brave witches",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "1018784349",
-                "animension_episode_id": "3952683268",
-                "cover_url": "https://gogocdn.net/cover/fune-wo-amu.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Fune wo Amu",
-                "master_title": "fune wo amu",
-                "status": "finished",
-                "last_episode": 11,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "3048065590",
-                "animension_episode_id": "1124013566",
-                "cover_url": "https://gogocdn.net/cover/shuumatsu-no-izetta.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Shuumatsu no Izetta",
-                "master_title": "shuumatsu no izetta",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "4100530819",
-                "animension_episode_id": "2750599245",
-                "cover_url": "https://gogocdn.net/cover/long-riders.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Long Riders!",
-                "master_title": "long riders",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2792537829",
-                "animension_episode_id": "3762556341",
-                "cover_url": "https://gogocdn.net/cover/bubuki-buranki-hoshi-no-kyojin.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Bubuki Buranki: Hoshi no Kyojin",
-                "master_title": "bubuki buranki hoshi no kyojin",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -11171,12 +11314,67 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2174216690",
-                "animension_episode_id": "1463549073",
-                "cover_url": "https://gogocdn.net/cover/stella-no-mahou.png",
+                "animension_anime_id": "2792537829",
+                "animension_episode_id": "3762556341",
+                "cover_url": "https://gogocdn.net/cover/bubuki-buranki-hoshi-no-kyojin.png",
                 "avatar_url": "/images/youtube.png",
-                "title": "Stella no Mahou",
-                "master_title": "stella no mahou",
+                "title": "Bubuki Buranki: Hoshi no Kyojin",
+                "master_title": "bubuki buranki hoshi no kyojin",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4100530819",
+                "animension_episode_id": "2750599245",
+                "cover_url": "https://gogocdn.net/cover/long-riders.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Long Riders!",
+                "master_title": "long riders",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1018784349",
+                "animension_episode_id": "3952683268",
+                "cover_url": "https://gogocdn.net/cover/fune-wo-amu.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Fune wo Amu",
+                "master_title": "fune wo amu",
+                "status": "finished",
+                "last_episode": 11,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3080182979",
+                "animension_episode_id": "2882493480",
+                "cover_url": "https://gogocdn.net/cover/brave-witches.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Brave Witches",
+                "master_title": "brave witches",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4242153482",
+                "animension_episode_id": "1448376505",
+                "cover_url": "https://gogocdn.net/cover/cheating-craft.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Cheating Craft",
+                "master_title": "cheating craft",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3048065590",
+                "animension_episode_id": "1124013566",
+                "cover_url": "https://gogocdn.net/cover/shuumatsu-no-izetta.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Shuumatsu no Izetta",
+                "master_title": "shuumatsu no izetta",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -11420,17 +11618,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2444942858",
-                "animension_episode_id": "3489607497",
-                "cover_url": "https://gogocdn.net/cover/saiki-kusuo-no-ps-nan.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Saiki Kusuo no Ψ Nan",
-                "master_title": "saiki kusuo no  nan",
-                "status": "finished",
-                "last_episode": 24,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2751375524",
                 "animension_episode_id": "1128390930",
                 "cover_url": "https://gogocdn.net/cover/berserk-2016.jpg",
@@ -11450,6 +11637,17 @@
                 "master_title": "amanchu",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2444942858",
+                "animension_episode_id": "3489607497",
+                "cover_url": "https://gogocdn.net/cover/saiki-kusuo-no-ps-nan.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Saiki Kusuo no Ψ Nan",
+                "master_title": "saiki kusuo no  nan",
+                "status": "finished",
+                "last_episode": 24,
                 "last_episode_string": ""
             }
         ]
@@ -11669,34 +11867,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3812410693",
-                "animension_episode_id": "1348767765",
-                "cover_url": "https://gogocdn.net/cover/flying-witch.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Flying Witch",
-                "master_title": "flying witch",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "4037291332",
-                "animension_episode_id": "2856444452",
-                "cover_url": "https://gogocdn.net/cover/kuma-miko.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Kuma Miko",
-                "master_title": "kuma miko",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1035954602",
                 "animension_episode_id": "3963548903",
                 "cover_url": "https://gogocdn.net/cover/mayoiga.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "Mayoiga",
                 "master_title": "mayoiga",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3812410693",
+                "animension_episode_id": "1348767765",
+                "cover_url": "https://gogocdn.net/cover/flying-witch.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Flying Witch",
+                "master_title": "flying witch",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -11710,6 +11897,17 @@
                 "master_title": "kuromukuro",
                 "status": "finished",
                 "last_episode": 26,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4037291332",
+                "animension_episode_id": "2856444452",
+                "cover_url": "https://gogocdn.net/cover/kuma-miko.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Kuma Miko",
+                "master_title": "kuma miko",
+                "status": "finished",
+                "last_episode": 12,
                 "last_episode_string": ""
             }
         ]
@@ -12225,17 +12423,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "4011864568",
-                "animension_episode_id": "2636368509",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx20963-xWZjgqAdFOfn.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Beyond the Boundary: I'll Be Here - Future (Movie)",
-                "master_title": "beyond the boundary ill be here  future movie",
-                "status": "finished",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "3298895550",
                 "animension_episode_id": "1663941237",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx20923-BPzRptpHC9Mw.jpg",
@@ -12244,6 +12431,17 @@
                 "master_title": "food wars shokugeki no soma",
                 "status": "finished",
                 "last_episode": 24,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "4011864568",
+                "animension_episode_id": "2636368509",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx20963-xWZjgqAdFOfn.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Beyond the Boundary: I'll Be Here - Future (Movie)",
+                "master_title": "beyond the boundary ill be here  future movie",
+                "status": "finished",
+                "last_episode": 1,
                 "last_episode_string": ""
             },
             {
@@ -12789,17 +12987,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1088346869",
-                "animension_episode_id": "1534240372",
-                "cover_url": "https://gogocdn.net/images/fall/Ai Tenchi Muyo.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Ai Tenchi Muyou!",
-                "master_title": "ai tenchi muyou",
-                "status": "finished",
-                "last_episode": 50,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2568166844",
                 "animension_episode_id": "2564126506",
                 "cover_url": "https://gogocdn.net/images/fall/Ushinawareta Mirai o Motomete.jpg",
@@ -12808,6 +12995,17 @@
                 "master_title": "ushinawareta mirai o motomete",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1088346869",
+                "animension_episode_id": "1534240372",
+                "cover_url": "https://gogocdn.net/images/fall/Ai Tenchi Muyo.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Ai Tenchi Muyou!",
+                "master_title": "ai tenchi muyou",
+                "status": "finished",
+                "last_episode": 50,
                 "last_episode_string": ""
             },
             {
@@ -12994,17 +13192,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "3336561059",
-                "animension_episode_id": "1860896547",
-                "cover_url": "https://gogocdn.net/images/summer/yama_no_susume_2.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Yama no Susume: Second Season",
-                "master_title": "yama no susume second",
-                "status": "finished",
-                "last_episode": 24,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "2543274701",
                 "animension_episode_id": "3493997500",
                 "cover_url": "https://gogocdn.net/images/summer/hana_yamata.jpg",
@@ -13013,6 +13200,17 @@
                 "master_title": "hana yamata",
                 "status": "finished",
                 "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "3336561059",
+                "animension_episode_id": "1860896547",
+                "cover_url": "https://gogocdn.net/images/summer/yama_no_susume_2.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Yama no Susume: Second Season",
+                "master_title": "yama no susume second",
+                "status": "finished",
+                "last_episode": 24,
                 "last_episode_string": ""
             },
             {
@@ -13067,17 +13265,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1302544028",
-                "animension_episode_id": "1787947176",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20510-S72XBO504JWD.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Baby Steps",
-                "master_title": "baby steps",
-                "status": "finished",
-                "last_episode": 25,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1338578489",
                 "animension_episode_id": "2983586683",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20609-G6mQO4oF7HfT.png",
@@ -13086,6 +13273,17 @@
                 "master_title": "magi sinbad no bouken",
                 "status": "finished",
                 "last_episode": 5,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1302544028",
+                "animension_episode_id": "1787947176",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20510-S72XBO504JWD.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Baby Steps",
+                "master_title": "baby steps",
+                "status": "finished",
+                "last_episode": 25,
                 "last_episode_string": ""
             },
             {
@@ -13221,17 +13419,6 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2464013602",
-                "animension_episode_id": "3722746113",
-                "cover_url": "https://gogocdn.net/images/spring/Sidonia no Kishi.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Sidonia no Kishi",
-                "master_title": "sidonia no kishi",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "4270465652",
                 "animension_episode_id": "3872431893",
                 "cover_url": "https://gogocdn.net/images/spring/Gochuumon wa Usagi Desuka.jpg",
@@ -13249,6 +13436,17 @@
                 "avatar_url": "/images/youtube.png",
                 "title": "Break Blade (2014)",
                 "master_title": "break blade",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2464013602",
+                "animension_episode_id": "3722746113",
+                "cover_url": "https://gogocdn.net/images/spring/Sidonia no Kishi.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Sidonia no Kishi",
+                "master_title": "sidonia no kishi",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -13433,23 +13631,23 @@
         "season_index": 4,
         "anime_data": [
             {
-                "animension_anime_id": "1621052343",
-                "animension_episode_id": "3731192420",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx18115-dilbAD4yGMfc.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Magi The Kingdom of Magic 2",
-                "master_title": "magi the kingdom of magic",
-                "status": "finished",
-                "last_episode": 25,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "1465690163",
                 "animension_episode_id": "2191350469",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx16894-iXt8GDs1L6dr.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "Kuroko's Basketball 2",
                 "master_title": "kurokos basketball",
+                "status": "finished",
+                "last_episode": 25,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1621052343",
+                "animension_episode_id": "3731192420",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx18115-dilbAD4yGMfc.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Magi The Kingdom of Magic 2",
+                "master_title": "magi the kingdom of magic",
                 "status": "finished",
                 "last_episode": 25,
                 "last_episode_string": ""
@@ -13909,23 +14107,23 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "2696957667",
-                "animension_episode_id": "3027617679",
-                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx15583-Sxd2J4RJdRhj.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Date a Live",
-                "master_title": "date a live",
-                "status": "finished",
-                "last_episode": 12,
-                "last_episode_string": ""
-            },
-            {
                 "animension_anime_id": "4218446018",
                 "animension_episode_id": "2190203282",
                 "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx15225-Bmi8gyIc4JIb.jpg",
                 "avatar_url": "/images/youtube.png",
                 "title": "The \"Hentai\" Prince and the Stony Cat.",
                 "master_title": "the hentai prince and the stony cat",
+                "status": "finished",
+                "last_episode": 12,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "2696957667",
+                "animension_episode_id": "3027617679",
+                "cover_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx15583-Sxd2J4RJdRhj.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Date a Live",
+                "master_title": "date a live",
                 "status": "finished",
                 "last_episode": 12,
                 "last_episode_string": ""
@@ -16159,23 +16357,23 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "2564940272",
+                "animension_episode_id": "4028732329",
+                "cover_url": "https://gogocdn.net/cover/ninja-kamui-1708402702.png",
+                "avatar_url": "/images/youtube.png",
+                "title": "Ninja Kamui",
+                "master_title": "ninja kamui",
+                "status": "ongoing",
+                "last_episode": 8,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "1662117274",
                 "animension_episode_id": "1316972937",
                 "cover_url": "https://gogocdn.net/cover/mahoutsukai-precure-movie-kiseki-no-henshin-cure-mofurun.png",
                 "avatar_url": "/images/youtube.png",
                 "title": "Mahoutsukai Precure! Movie: Kiseki no Henshin! Cure Mofurun!",
                 "master_title": "mahoutsukai precure movie kiseki no henshin cure mofurun",
-                "status": "finished",
-                "last_episode": 1,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2672891580",
-                "animension_episode_id": "1584641974",
-                "cover_url": "https://gogocdn.net/images/anime/F/Fresh-Precure-Movie.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Fresh Precure! Movie",
-                "master_title": "fresh precure movie",
                 "status": "finished",
                 "last_episode": 1,
                 "last_episode_string": ""
@@ -16192,23 +16390,12 @@
                 "last_episode_string": ""
             },
             {
-                "animension_anime_id": "1203967956",
-                "animension_episode_id": "2253489648",
-                "cover_url": "https://gogocdn.net/images/anime/Y/Yes-Pretty-Cure-5-Go-Go.jpg",
+                "animension_anime_id": "2672891580",
+                "animension_episode_id": "1584641974",
+                "cover_url": "https://gogocdn.net/images/anime/F/Fresh-Precure-Movie.jpg",
                 "avatar_url": "/images/youtube.png",
-                "title": "Yes Pretty Cure 5 Go Go",
-                "master_title": "yes pretty cure  go go",
-                "status": "finished",
-                "last_episode": 48,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "1725700465",
-                "animension_episode_id": "2339144366",
-                "cover_url": "https://gogocdn.net/images/16.jpg",
-                "avatar_url": "/images/youtube.png",
-                "title": "Futari wa Precure: SplashStar (2006)",
-                "master_title": "futari wa precure splashstar",
+                "title": "Fresh Precure! Movie",
+                "master_title": "fresh precure movie",
                 "status": "finished",
                 "last_episode": 1,
                 "last_episode_string": ""
@@ -16236,6 +16423,28 @@
                 "last_episode_string": ""
             },
             {
+                "animension_anime_id": "1203967956",
+                "animension_episode_id": "2253489648",
+                "cover_url": "https://gogocdn.net/images/anime/Y/Yes-Pretty-Cure-5-Go-Go.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Yes Pretty Cure 5 Go Go",
+                "master_title": "yes pretty cure  go go",
+                "status": "finished",
+                "last_episode": 48,
+                "last_episode_string": ""
+            },
+            {
+                "animension_anime_id": "1725700465",
+                "animension_episode_id": "2339144366",
+                "cover_url": "https://gogocdn.net/images/16.jpg",
+                "avatar_url": "/images/youtube.png",
+                "title": "Futari wa Precure: SplashStar (2006)",
+                "master_title": "futari wa precure splashstar",
+                "status": "finished",
+                "last_episode": 1,
+                "last_episode_string": ""
+            },
+            {
                 "animension_anime_id": "1588517236",
                 "animension_episode_id": "2034996061",
                 "cover_url": "https://gogocdn.net/cover/futari-wa-precure-splashstar.png",
@@ -16255,17 +16464,6 @@
                 "master_title": "pretty cure",
                 "status": "finished",
                 "last_episode": 49,
-                "last_episode_string": ""
-            },
-            {
-                "animension_anime_id": "2564940272",
-                "animension_episode_id": "4028732329",
-                "cover_url": "https://gogocdn.net/cover/ninja-kamui-1708402702.png",
-                "avatar_url": "/images/youtube.png",
-                "title": "Ninja Kamui",
-                "master_title": "ninja kamui",
-                "status": "ongoing",
-                "last_episode": 8,
                 "last_episode_string": ""
             }
         ]

@@ -75,6 +75,11 @@ func quickScrapAnimeDetail(ctx context.Context, params ReqBody) (models.AnimeDet
 	})
 	cl.OnHTML("#thumbook > div.thumb > img", func(e *colly.HTMLElement) {
 		animeDetail.CoverURL = e.Attr("src")
+
+		u, err := url.Parse(animeDetail.CoverURL)
+		if err != nil || u.Host == "" {
+			animeDetail.CoverURL = fmt.Sprintf("%s/%v", AnimensionHost, animeDetail.CoverURL)
+		}
 	})
 	cl.OnHTML("#bigcover > div", func(e *colly.HTMLElement) {
 		animeDetail.HeaderCoverURL = xurls.Relaxed.FindString(e.Attr("style"))
