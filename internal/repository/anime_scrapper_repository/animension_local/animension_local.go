@@ -132,7 +132,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 				Source:        r.Source,
 				Title:         fmt.Sprint(arrAnime[0]),
 				LatestEpisode: latestEp,
-				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[4])},
+				CoverUrls:     []string{utils.AnimensionImgProxy(fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[4]))},
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(arrAnime[1].(float64))),
 			})
 		} else {
@@ -143,7 +143,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 				Source:        r.Source,
 				Title:         fmt.Sprint(objAnime["0"]),
 				LatestEpisode: latestEp,
-				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["4"])},
+				CoverUrls:     []string{utils.AnimensionImgProxy(fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["4"]))},
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(objAnime["1"].(float64))),
 			})
 		}

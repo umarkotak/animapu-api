@@ -77,6 +77,7 @@ func Start() {
 	r.GET("/mangas/fizmanga/image_proxy/*url", proxy_controller.FizmangaImage)
 	r.GET("/mangas/klikmanga/image_proxy/*url", proxy_controller.KlikmangaImage)
 	r.GET("/mangas/komikindo/image_proxy/*url", proxy_controller.KomikindoImage)
+	r.GET("/animes/animension/image_proxy/*url", proxy_controller.AnimensionImage)
 	r.GET("/image_proxy", proxy_controller.GenericImage)
 
 	r.GET("/animes/:anime_source/latest", anime_controller.GetLatest)
