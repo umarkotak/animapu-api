@@ -43,6 +43,7 @@ type (
 		ReleaseSeasonIndex int             `json:"release_season_index"` //
 		MalScore           float64         `json:"mal_score"`            //
 		CoverURL           string          `json:"cover_url"`            //
+		CoverURLs          []string        `json:"cover_urls"`           //
 		HeaderCoverURL     string          `json:"header_cover_url"`     //
 		Episodes           []AnimeEpisode  `json:"episodes"`             //
 		VideoSources       []VideoSource   `json:"video_sources"`        //
@@ -62,21 +63,23 @@ type (
 	}
 
 	AnimeEpisode struct {
-		AnimensionAnimeID   string  `json:"animension_anime_id"`
-		AnimensionEpisodeID string  `json:"animension_episode_id"`
-		EpisodeTitle        string  `json:"episode_title"`
-		EpisodeNumber       float64 `json:"episode_number"`
-		CoverURL            string  `json:"cover_url"`
-		RawHlsPlaybackURL   string  `json:"raw_hls_playback_url"`
-		YtUrl               string  `json:"yt_url"`
-		YtIdUrl             string  `json:"yt_id_url"`
+		AnimensionAnimeID   string   `json:"animension_anime_id"`
+		AnimensionEpisodeID string   `json:"animension_episode_id"`
+		EpisodeTitle        string   `json:"episode_title"`
+		EpisodeNumber       float64  `json:"episode_number"`
+		CoverURL            string   `json:"cover_url"`
+		CoverURLs           []string `json:"cover_urls"`
+		RawHlsPlaybackURL   string   `json:"raw_hls_playback_url"`
+		YtUrl               string   `json:"yt_url"`
+		YtIdUrl             string   `json:"yt_id_url"`
 	}
 
 	AnimeRelation struct {
-		AnimeID      string `json:"anime_id"`
-		Relationship string `json:"relationship"` // Enum: prequel, sequel
-		Title        string `json:"title"`
-		CoverUrl     string `json:"cover_url"`
+		AnimeID      string   `json:"anime_id"`
+		Relationship string   `json:"relationship"` // Enum: prequel, sequel
+		Title        string   `json:"title"`
+		CoverUrl     string   `json:"cover_url"`
+		CoverUrls    []string `json:"cover_urls"`
 	}
 
 	AnimeSummary struct {

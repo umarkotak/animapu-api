@@ -132,7 +132,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 				Source:        r.Source,
 				Title:         fmt.Sprint(arrAnime[0]),
 				LatestEpisode: latestEp,
-				CoverUrls:     []string{utils.AnimensionImgProxy(fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[4]))},
+				CoverUrls:     r.animensionImages(fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[4])),
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(arrAnime[1].(float64))),
 			})
 		} else {
@@ -143,7 +143,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 				Source:        r.Source,
 				Title:         fmt.Sprint(objAnime["0"]),
 				LatestEpisode: latestEp,
-				CoverUrls:     []string{utils.AnimensionImgProxy(fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["4"]))},
+				CoverUrls:     r.animensionImages(fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["4"])),
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, int64(objAnime["1"].(float64))),
 			})
 		}
@@ -250,7 +250,7 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 				Source:        r.Source,
 				Title:         fmt.Sprint(arrAnime[0]),
 				LatestEpisode: 0,
-				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[2])},
+				CoverUrls:     r.animensionImages(fmt.Sprintf("%s%v", r.AnimensionHost, arrAnime[2])),
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, fmt.Sprintf("%v", arrAnime[1])),
 			})
 		} else {
@@ -259,7 +259,7 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 				Source:        r.Source,
 				Title:         fmt.Sprint(objAnime["0"]),
 				LatestEpisode: 0,
-				CoverUrls:     []string{fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["2"])},
+				CoverUrls:     r.animensionImages(fmt.Sprintf("%s%v", r.AnimensionHost, objAnime["2"])),
 				OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, fmt.Sprintf("%v", objAnime["1"])),
 			})
 		}
@@ -323,6 +323,7 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 	})
 	cl.OnHTML("#thumbook > div.thumb > img", func(e *colly.HTMLElement) {
 		animeDetail.CoverURL = fmt.Sprintf("%s%v", r.AnimensionHost, e.Attr("src"))
+		animeDetail.CoverURLs = r.animensionImages(fmt.Sprintf("%s%v", r.AnimensionHost, e.Attr("src")))
 	})
 	cl.OnHTML("#bigcover > div", func(e *colly.HTMLElement) {
 		animeDetail.HeaderCoverURL = xurls.Relaxed.FindString(e.Attr("style"))
@@ -367,6 +368,7 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 				Relationship: strings.ToLower(h.ChildText("div > a > div.limit > div.bt > span")),
 				Title:        strings.TrimSpace(h.ChildText("div > a > div.tt")),
 				CoverUrl:     fmt.Sprintf("%s%v", r.AnimensionHost, h.ChildAttr("div > a > div.limit > img", "src")),
+				CoverUrls:    r.animensionImages(fmt.Sprintf("%s%v", r.AnimensionHost, h.ChildAttr("div > a > div.limit > img", "src"))),
 			}
 			animeDetail.Relations = append(animeDetail.Relations, animeRelation)
 		})
@@ -445,7 +447,7 @@ func (r *AnimensionLocal) GetPerSeason(ctx context.Context, queryParams models.A
 			Source:        r.Source,
 			Title:         oneAnime.Title,
 			LatestEpisode: 0,
-			CoverUrls:     []string{oneAnime.CoverURL},
+			CoverUrls:     r.animensionImages(oneAnime.CoverURL),
 			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
 		})
 	}
@@ -461,14 +463,14 @@ func (r *AnimensionLocal) GetPerSeason(ctx context.Context, queryParams models.A
 func (r *AnimensionLocal) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
 	animes := []models.Anime{}
 
-	randomAnimes := getRandomElements(local_db.AnimensionAnimeIndex, 40)
+	randomAnimes := r.getRandomElements(local_db.AnimensionAnimeIndex, 40)
 	for _, oneAnime := range randomAnimes {
 		animes = append(animes, models.Anime{
 			ID:            fmt.Sprintf("%v", oneAnime.AnimensionAnimeID),
 			Source:        r.Source,
 			Title:         fmt.Sprint(oneAnime.Title),
 			LatestEpisode: 0,
-			CoverUrls:     []string{oneAnime.CoverURL},
+			CoverUrls:     r.animensionImages(oneAnime.CoverURL),
 			OriginalLink:  fmt.Sprintf("%s/%v", r.AnimensionHost, oneAnime.AnimensionAnimeID),
 		})
 	}
@@ -486,6 +488,7 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 			Number:       oneEp.EpisodeNumber,
 			Title:        fmt.Sprintf("Episode %v", oneEp.EpisodeNumber),
 			CoverUrl:     animeDetail.CoverURL,
+			CoverUrls:    r.animensionImages(animeDetail.CoverURL),
 			OriginalLink: fmt.Sprintf("%s/%v#%v", r.AnimensionHost, animeDetail.AnimensionAnimeID, oneEp.AnimensionEpisodeID),
 		})
 	}
@@ -496,7 +499,7 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 			ID:           oneRelation.AnimeID,
 			Source:       r.AnimensionHost,
 			Title:        oneRelation.Title,
-			CoverUrls:    []string{oneRelation.CoverUrl},
+			CoverUrls:    r.animensionImages(oneRelation.CoverUrl),
 			OriginalLink: fmt.Sprintf("%s/%v", r.AnimensionHost, oneRelation.AnimeID),
 			Relationship: oneRelation.Relationship,
 		})
@@ -509,7 +512,7 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 		LatestEpisode:      animeDetail.Episodes[len(animeDetail.Episodes)-1].EpisodeNumber,
 		Description:        animeDetail.Description,
 		Genres:             animeDetail.Genres,
-		CoverUrls:          []string{animeDetail.CoverURL},
+		CoverUrls:          r.animensionImages(animeDetail.CoverURL),
 		Episodes:           episodes,
 		OriginalLink:       fmt.Sprintf("%s/%v", r.AnimensionHost, animeDetail.AnimensionAnimeID),
 		ReleaseSeason:      animeDetail.ReleaseSeasonName,
@@ -522,7 +525,7 @@ func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) mod
 	}
 }
 
-func getRandomElements(arr []models.AnimeDetail, count int) []models.AnimeDetail {
+func (r *AnimensionLocal) getRandomElements(arr []models.AnimeDetail, count int) []models.AnimeDetail {
 	// Check if the count is greater than the array length
 	if count > len(arr) {
 		count = len(arr)
@@ -538,4 +541,12 @@ func getRandomElements(arr []models.AnimeDetail, count int) []models.AnimeDetail
 
 	// Return the first 'count' elements
 	return shuffled[:count]
+}
+
+func (r *AnimensionLocal) animensionImages(url string) []string {
+	return []string{
+		url,
+		utils.AnimensionImgProxy(url),
+		"/images/animehub_cover.jpeg",
+	}
 }

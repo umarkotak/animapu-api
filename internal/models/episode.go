@@ -1,13 +1,14 @@
 package models
 
 type Episode struct {
-	AnimeID      string  `json:"anime_id"`
-	Source       string  `json:"source"`
-	ID           string  `json:"id"`
-	Number       float64 `json:"number"`
-	Title        string  `json:"title"`
-	OriginalLink string  `json:"original_link"`
-	CoverUrl     string  `json:"cover_url"`
+	AnimeID      string   `json:"anime_id"`
+	Source       string   `json:"source"`
+	ID           string   `json:"id"`
+	Number       float64  `json:"number"`
+	Title        string   `json:"title"`
+	OriginalLink string   `json:"original_link"`
+	CoverUrl     string   `json:"cover_url"`
+	CoverUrls    []string `json:"cover_urls"`
 }
 
 type EpisodeWatch struct {
