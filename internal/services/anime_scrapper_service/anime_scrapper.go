@@ -30,7 +30,14 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 		return animes, models.Meta{}, err
 	}
 
-	animes, err = animeScrapper.GetLatest(ctx, queryParams)
+	for i := 1; i <= 3; i++ {
+		animes, err = animeScrapper.GetLatest(ctx, queryParams)
+		if err == nil {
+			break
+		} else {
+			time.Sleep(2 * time.Second)
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return animes, models.Meta{}, err
@@ -52,7 +59,14 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 		return animePerSeason, models.Meta{}, err
 	}
 
-	animePerSeason, err = animeScrapper.GetPerSeason(ctx, queryParams)
+	for i := 1; i <= 3; i++ {
+		animePerSeason, err = animeScrapper.GetPerSeason(ctx, queryParams)
+		if err == nil {
+			break
+		} else {
+			time.Sleep(2 * time.Second)
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return animePerSeason, models.Meta{}, err
@@ -81,7 +95,14 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models
 		return anime, models.Meta{}, err
 	}
 
-	anime, err = animeScrapper.GetDetail(ctx, queryParams)
+	for i := 1; i <= 3; i++ {
+		anime, err = animeScrapper.GetDetail(ctx, queryParams)
+		if err == nil {
+			break
+		} else {
+			time.Sleep(2 * time.Second)
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return anime, models.Meta{}, err
@@ -114,7 +135,14 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 		return episodeWatch, models.Meta{}, err
 	}
 
-	episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
+	for i := 1; i <= 3; i++ {
+		episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
+		if err == nil {
+			break
+		} else {
+			time.Sleep(2 * time.Second)
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return episodeWatch, models.Meta{}, err
@@ -147,7 +175,14 @@ func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 		return animes, models.Meta{}, err
 	}
 
-	animes, err = animeScrapper.GetSearch(ctx, queryParams)
+	for i := 1; i <= 3; i++ {
+		animes, err = animeScrapper.GetSearch(ctx, queryParams)
+		if err == nil {
+			break
+		} else {
+			time.Sleep(2 * time.Second)
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return animes, models.Meta{}, err
@@ -169,7 +204,14 @@ func GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 		return animes, models.Meta{}, err
 	}
 
-	animes, err = animeScrapper.GetRandom(ctx, queryParams)
+	for i := 1; i <= 3; i++ {
+		animes, err = animeScrapper.GetRandom(ctx, queryParams)
+		if err == nil {
+			break
+		} else {
+			time.Sleep(2 * time.Second)
+		}
+	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return animes, models.Meta{}, err

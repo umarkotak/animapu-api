@@ -49,7 +49,10 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 
 	url := fmt.Sprintf("%s/public-api/index.php?page=%v&mode=sub", r.AnimensionHost, queryParams.Page)
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
