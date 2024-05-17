@@ -1,6 +1,7 @@
 package proxy_controller
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -9,6 +10,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
+)
+
+var (
+	imageCache = make(map[string][]byte)
 )
 
 func AnimensionImage(c *gin.Context) {
@@ -28,7 +33,12 @@ func AnimensionImage(c *gin.Context) {
 		return
 	}
 
-	req, err := http.NewRequest("GET", targetUrl, nil)
+	if imgBytes, ok := imageCache[targetUrl]; ok {
+		c.Writer.Write(imgBytes)
+		return
+	}
+
+	req, err := http.NewRequestWithContext(c.Request.Context(), "GET", targetUrl, nil)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
@@ -51,12 +61,21 @@ func AnimensionImage(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
+	if resp.StatusCode != http.StatusOK {
+		err = fmt.Errorf("HTTP error %d", resp.StatusCode)
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
+		logrus.WithContext(c.Request.Context()).Error(err)
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	imageCache[targetUrl] = body
 
 	c.Writer.Write(body)
 }
