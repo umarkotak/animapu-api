@@ -377,6 +377,23 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 		})
 	})
 
+	cl.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+		r.Headers.Set("accept-language", "en-US,en;q=0.9,id;q=0.8")
+		r.Headers.Set("cache-control", "max-age=0")
+		r.Headers.Set("cookie", "MicrosoftApplicationsTelemetryDeviceId=6ee9fc8b-8ce4-43d2-af98-ac4f7a5e97da; MicrosoftApplicationsTelemetryFirstLaunchTime=2024-04-26T00:27:41.344Z")
+		r.Headers.Set("priority", "u=0, i")
+		r.Headers.Set("sec-ch-ua", "\"Chromium\";v=\"124\", \"Google Chrome\";v=\"124\", \"Not-A.Brand\";v=\"99\"")
+		r.Headers.Set("sec-ch-ua-mobile", "?0")
+		r.Headers.Set("sec-ch-ua-platform", "\"Windows\"")
+		r.Headers.Set("sec-fetch-dest", "document")
+		r.Headers.Set("sec-fetch-mode", "navigate")
+		r.Headers.Set("sec-fetch-site", "same-origin")
+		r.Headers.Set("sec-fetch-user", "?1")
+		r.Headers.Set("upgrade-insecure-requests", "1")
+		r.Headers.Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+	})
+
 	targetUrl := fmt.Sprintf("%v/%v", r.AnimensionHost, queryParams.SourceID)
 	err := cl.Visit(targetUrl)
 	if err != nil {
