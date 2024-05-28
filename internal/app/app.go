@@ -1,6 +1,10 @@
 package app
 
 import (
+	"log"
+	"path/filepath"
+
+	goface "github.com/Kagami/go-face"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
@@ -42,6 +46,8 @@ func Initialize() {
 }
 
 func Start() {
+	FaceRecogTest()
+
 	r := gin.New()
 	r.Use(RequestID())
 	r.Use(CORSMiddleware())
@@ -93,4 +99,31 @@ func Start() {
 	r.POST("/otakudesu/scrap_otakudesu_all_animes", otakudesu_legacy_controller.HandlerAnimensionQuickScrap)
 
 	r.Run(":" + config.Get().Port)
+}
+
+func FaceRecogTest() {
+	const dataDir = "testdata"
+
+	var (
+		modelsDir = filepath.Join(dataDir, "models")
+		imagesDir = filepath.Join(dataDir, "images")
+	)
+
+	// Init the recognizer.
+	rec, err := goface.NewRecognizer(modelsDir)
+	if err != nil {
+		log.Fatalf("Can't init face recognizer: %v", err)
+	}
+	// Free the resources when you're finished.
+	defer rec.Close()
+
+	// Test image with 10 faces.
+	testImagePristin := filepath.Join(imagesDir, "pristin.jpg")
+	// Recognize faces on that image.
+	faces, err := rec.RecognizeFile(testImagePristin)
+	if err != nil {
+		log.Fatalf("Can't recognize: %v", err)
+	}
+
+	logrus.Infof("face count: %v", len(faces))
 }
