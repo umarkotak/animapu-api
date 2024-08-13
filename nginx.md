@@ -204,3 +204,28 @@ server {
     return 404; # managed by Certbot
 }
 ```
+
+---
+
+How to renew the DNS name
+
+```
+// Create a lets encrypt cert for all domains you have
+sudo certbot --nginx -d api.shadow-animapu-2.site
+sudo certbot --nginx -d bukukaskita-api.shadow-animapu-2.site
+sudo certbot --nginx -d bukukaskita-utils-api.shadow-animapu-2.site
+
+// Modify the nginx site config, to point the new DNS
+sudo vi /etc/nginx/sites-available/default
+
+// VI command to string replace
+:%s/animapu-1/animapu-2/g
+
+// Reload nginx
+sudo systemctl reload nginx
+sudo systemctl status nginx
+
+// Check certificates and delete the old certificates
+sudo certbot certificates
+sudo certbot delete
+```
