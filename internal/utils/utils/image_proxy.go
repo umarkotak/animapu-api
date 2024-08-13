@@ -1,9 +1,15 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/umarkotak/animapu-api/config"
+)
 
 func AnimensionImgProxy(target string) string {
-	host := "https://api.shadow-animapu-1.site"
+	host := config.Get().AnimapuOnlineHost
 	// host := "http://localhost:6001"
-	return fmt.Sprintf(`%s/animes/animension/image_proxy/%s`, host, target)
+	return fmt.Sprintf(
+		`%s/animes/animension/image_proxy/%s`, host, target,
+	)
 }
