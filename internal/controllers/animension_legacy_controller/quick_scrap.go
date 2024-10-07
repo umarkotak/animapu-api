@@ -188,7 +188,7 @@ func getAnimensionEpisodes(animeID string) ([][]interface{}, error) {
 	if err != nil {
 		return res, err
 	}
-	req.Header.Add("authority", "animension.to")
+	req.Header.Add("authority", AnimensionBase)
 	req.Header.Add("accept", "*/*")
 	req.Header.Add("accept-language", "en-US,en;q=0.9,id;q=0.8")
 	req.Header.Add("cookie", "token=2296020162393900497; username=umarkotak; id=39682; loggedin=1")
@@ -223,7 +223,7 @@ func getAnimensionEpisodes(animeID string) ([][]interface{}, error) {
 }
 
 func getHlsUrl(epid string) (string, error) {
-	targetUrl := fmt.Sprintf("https://animension.to/public-api/episode.php?id=%s", epid)
+	targetUrl := fmt.Sprintf("%s/public-api/episode.php?id=%s", AnimensionHost, epid)
 	req, err := http.NewRequest("GET", targetUrl, nil)
 	if err != nil {
 		logrus.Error(err)
@@ -297,4 +297,79 @@ func getHlsUrl(epid string) (string, error) {
 	}
 
 	return "", fmt.Errorf("HLS URL not found")
+}
+
+func getAnimensionAnimesBySeason(ctx context.Context, seasonID string, page int64) ([]int64, error) {
+	animeIDs := []int64{}
+
+	url := fmt.Sprintf("%s/public-api/search.php?season=%s&sort=popular-week&page=%v", AnimensionHost, seasonID, page)
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animeIDs, err
+	}
+	req.Header.Add("authority", AnimensionBase)
+	req.Header.Add("accept", "*/*")
+	req.Header.Add("accept-language", "en-US,en;q=0.9,id;q=0.8")
+	req.Header.Add("cookie", "token=2296020162393900497; username=umarkotak; id=39682; loggedin=1")
+	req.Header.Add("origin", AnimensionHost)
+	req.Header.Add("sec-ch-ua", "\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"")
+	req.Header.Add("sec-ch-ua-mobile", "?0")
+	req.Header.Add("sec-ch-ua-platform", "\"macOS\"")
+	req.Header.Add("sec-fetch-dest", "empty")
+	req.Header.Add("sec-fetch-mode", "cors")
+	req.Header.Add("sec-fetch-site", "same-origin")
+	req.Header.Add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animeIDs, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animeIDs, err
+	}
+
+	rawAnimes := []any{}
+	err = json.Unmarshal(body, &rawAnimes)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animeIDs, err
+	}
+
+	// logrus.WithContext(ctx).Infof("RESULT STRUCT: %+v\n", rawAnimes)
+
+	for _, rawAnime := range rawAnimes {
+		switch animeMap := rawAnime.(type) {
+		case map[string]any:
+			tmpByte, _ := json.Marshal(animeMap)
+
+			tmpAnime := struct {
+				ID int64 `json:"1"`
+			}{}
+			json.Unmarshal(tmpByte, &tmpAnime)
+
+			animeIDs = append(animeIDs, tmpAnime.ID)
+
+		case []any:
+			tmpByte, _ := json.Marshal(animeMap)
+
+			tmpAnime := []any{}
+			d := json.NewDecoder(strings.NewReader(string(tmpByte)))
+			d.UseNumber()
+			d.Decode(&tmpAnime)
+
+			animeIDs = append(animeIDs, utils.StringMustInt64(fmt.Sprint(tmpAnime[1])))
+		}
+	}
+
+	return animeIDs, nil
 }

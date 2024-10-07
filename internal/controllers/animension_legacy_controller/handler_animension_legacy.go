@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
 type (
@@ -16,7 +17,8 @@ type (
 )
 
 var (
-	AnimensionHost = "https://animension.to"
+	AnimensionBase = "animension.to"
+	AnimensionHost = fmt.Sprintf("https://%s", AnimensionBase)
 	ExtractEpRegex = regexp.MustCompile(`Episode (\d+)`)
 )
 
@@ -52,4 +54,23 @@ func HandlerSyncSeason(c *gin.Context) {
 	syncSeason()
 
 	c.JSON(200, gin.H{"message": "ok", "data": "ok"})
+}
+
+func HandlerAnimensionQuickScrapSeason(c *gin.Context) {
+	seasonID := c.Param("season_id") // Eg: fall-2024, [summer, fall, winter, spring]-{year}
+	page := utils.StringMustInt64(c.Query("page"))
+
+	animeIDs, err := getAnimensionAnimesBySeason(
+		c.Request.Context(), seasonID, page,
+	)
+	if err != nil {
+		c.JSON(422, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "ok", "data": map[string]any{
+		"page":      page,
+		"total":     len(animeIDs),
+		"anime_ids": animeIDs,
+	}})
 }
