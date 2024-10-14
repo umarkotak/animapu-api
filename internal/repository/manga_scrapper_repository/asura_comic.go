@@ -184,7 +184,7 @@ func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryPara
 
 	pageCount := 5
 	for i := 1; i <= pageCount; i++ {
-		err := c.Visit(fmt.Sprintf("%v/series?page=%v&name=%v&order=update", t.Host, i, queryParams.Title))
+		err := c.Visit(fmt.Sprintf("%v/series?page=%v&name=%v&order=update", t.Host, i, strings.ReplaceAll(queryParams.Title, " ", "%20")))
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
 		}
