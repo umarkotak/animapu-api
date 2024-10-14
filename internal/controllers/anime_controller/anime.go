@@ -100,6 +100,7 @@ func GetWatch(c *gin.Context) {
 		EpisodeID:       c.Param("episode_id"),
 		WatchVersion:    c.Request.URL.Query().Get("watch_version"),
 		Resolution:      c.Request.URL.Query().Get("resolution"),
+		StreamIdx:       c.Request.URL.Query().Get("stream_idx"),
 		ManualServerOpt: c.Request.URL.Query().Get("manual_server_opt"),
 	}
 

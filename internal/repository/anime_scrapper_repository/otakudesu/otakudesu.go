@@ -349,16 +349,67 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 
 	iframeFinalUrl := ""
-	for _, ondesuIdx := range streams[queryParams.Resolution] {
+	if queryParams.StreamIdx == "" {
+		for _, ondesuIdx := range streams[queryParams.Resolution] {
+			iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
+				fmt.Sprintf("id=%v", p),
+				fmt.Sprintf("i=%v", ondesuIdx.Idx),
+				fmt.Sprintf("q=%v", queryParams.Resolution),
+				fmt.Sprintf("nonce=%v", nonce),
+			})
+			if err != nil {
+				logrus.WithContext(ctx).Error(err)
+				continue
+			}
+
+			iframeBase64Data := map[string]string{}
+			json.Unmarshal(iframeBody, &iframeBase64Data)
+			iframeBase64 := iframeBase64Data["data"]
+			if iframeBase64 == "" {
+				err = fmt.Errorf("missing iframe data")
+				logrus.WithContext(ctx).Error(err)
+				continue
+			}
+
+			iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
+			if err != nil {
+				logrus.WithContext(ctx).Error(err)
+				continue
+			}
+
+			re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
+			re2 := regexp.MustCompile(`src="(https:\/\/www\.pixeldrain\.com[^"]+)"`)
+			re3 := regexp.MustCompile(`src="(https:\/\/vidhidepro\.com[^"]+)"`)
+
+			// Find the matches
+			matches := re.FindStringSubmatch(string(iframeBase64Decoded))
+			matches = append(matches, re2.FindStringSubmatch(string(iframeBase64Decoded))...)
+			matches = append(matches, re3.FindStringSubmatch(string(iframeBase64Decoded))...)
+
+			if len(matches) >= 2 {
+				iframeFinalUrl = matches[1]
+			}
+			if iframeFinalUrl == "" {
+				err = fmt.Errorf("missing final iframe url")
+				logrus.WithContext(ctx).WithFields(logrus.Fields{
+					"iframe_element": string(iframeBase64Decoded),
+				}).Error(err)
+				continue
+			}
+
+			break
+		}
+
+	} else {
 		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
 			fmt.Sprintf("id=%v", p),
-			fmt.Sprintf("i=%v", ondesuIdx.Idx),
+			fmt.Sprintf("i=%v", queryParams.StreamIdx),
 			fmt.Sprintf("q=%v", queryParams.Resolution),
 			fmt.Sprintf("nonce=%v", nonce),
 		})
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
-			continue
+			return models.EpisodeWatch{}, err
 		}
 
 		iframeBase64Data := map[string]string{}
@@ -367,13 +418,13 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		if iframeBase64 == "" {
 			err = fmt.Errorf("missing iframe data")
 			logrus.WithContext(ctx).Error(err)
-			continue
+			return models.EpisodeWatch{}, err
 		}
 
 		iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
-			continue
+			return models.EpisodeWatch{}, err
 		}
 
 		re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
@@ -393,10 +444,8 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 			logrus.WithContext(ctx).WithFields(logrus.Fields{
 				"iframe_element": string(iframeBase64Decoded),
 			}).Error(err)
-			continue
+			return models.EpisodeWatch{}, err
 		}
-
-		break
 	}
 
 	episodeWatch = models.EpisodeWatch{

@@ -26,6 +26,7 @@ type (
 		ReleaseSeason   string `json:"release_season"`    // fall, winter, spring, summer
 		FromLocal       string `json:"from_local"`        //
 		Resolution      string `json:"resolution"`        // 360p, 480p, 720p
+		StreamIdx       string `json:"stream_idx"`        //
 		StreamName      string `json:"stream_name"`       //
 		ManualServerOpt string `json:"manual_server_opt"` //
 	}
