@@ -21,7 +21,7 @@ type AsuraNacm struct {
 
 func NewAsuraNacm() AsuraNacm {
 	return AsuraNacm{
-		Host: "https://asuratoon.com",
+		Host: "https://asuracomic.net",
 	}
 }
 

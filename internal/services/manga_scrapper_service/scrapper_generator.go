@@ -14,7 +14,8 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 		mangaScrapper := manga_scrapper_repository.NewMangabat()
 		return &mangaScrapper, nil
 	case models.SOURCE_ASURA_NACM:
-		mangaScrapper := manga_scrapper_repository.NewAsuraNacm()
+		// mangaScrapper := manga_scrapper_repository.NewAsuraNacm()
+		mangaScrapper := manga_scrapper_repository.NewAsuraComic()
 		return &mangaScrapper, nil
 	case models.SOURCE_KOMIKINDO:
 		mangaScrapper := manga_scrapper_repository.NewKomikindo()
