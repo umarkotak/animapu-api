@@ -37,7 +37,7 @@ func NewOtakudesu() Otakudesu {
 			"otakustream",
 			"odstream",
 			"pdrain",
-			"",
+			"", // whitelist all
 		},
 	}
 }
@@ -214,7 +214,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 
 func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
 	if queryParams.Resolution == "" {
-		queryParams.Resolution = "720p"
+		queryParams.Resolution = "480p"
 	}
 
 	streamOptions := []models.StreamOption{}
@@ -241,53 +241,41 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 	c.OnHTML("#embed_holder > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
-			for _, oneBaypassedStream := range s.AllowedStreamServers {
-				if strings.Contains(h.Text, oneBaypassedStream) {
-					streams["720p"] = append(streams["720p"], serverOpt{
-						Name: h.Text,
-						Idx:  fmt.Sprint(i),
-					})
-					streamOptions = append(streamOptions, models.StreamOption{
-						Resolution: "720p",
-						Index:      fmt.Sprint(i),
-						Name:       h.Text,
-					})
-				}
-			}
+			streams["720p"] = append(streams["720p"], serverOpt{
+				Name: h.Text,
+				Idx:  fmt.Sprint(i),
+			})
+			streamOptions = append(streamOptions, models.StreamOption{
+				Resolution: "720p",
+				Index:      fmt.Sprint(i),
+				Name:       h.Text,
+			})
 		})
 	})
 	c.OnHTML("#embed_holder > div.mirrorstream > ul.m480p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
-			for _, oneBaypassedStream := range s.AllowedStreamServers {
-				if strings.Contains(h.Text, oneBaypassedStream) {
-					streams["480p"] = append(streams["480p"], serverOpt{
-						Name: h.Text,
-						Idx:  fmt.Sprint(i),
-					})
-					streamOptions = append(streamOptions, models.StreamOption{
-						Resolution: "480p",
-						Index:      fmt.Sprint(i),
-						Name:       h.Text,
-					})
-				}
-			}
+			streams["480p"] = append(streams["480p"], serverOpt{
+				Name: h.Text,
+				Idx:  fmt.Sprint(i),
+			})
+			streamOptions = append(streamOptions, models.StreamOption{
+				Resolution: "480p",
+				Index:      fmt.Sprint(i),
+				Name:       h.Text,
+			})
 		})
 	})
 	c.OnHTML("#embed_holder > div.mirrorstream > ul.m360p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
-			for _, oneBaypassedStream := range s.AllowedStreamServers {
-				if strings.Contains(h.Text, oneBaypassedStream) {
-					streams["360p"] = append(streams["360p"], serverOpt{
-						Name: h.Text,
-						Idx:  fmt.Sprint(i),
-					})
-					streamOptions = append(streamOptions, models.StreamOption{
-						Resolution: "480p",
-						Index:      fmt.Sprint(i),
-						Name:       h.Text,
-					})
-				}
-			}
+			streams["360p"] = append(streams["360p"], serverOpt{
+				Name: h.Text,
+				Idx:  fmt.Sprint(i),
+			})
+			streamOptions = append(streamOptions, models.StreamOption{
+				Resolution: "360p",
+				Index:      fmt.Sprint(i),
+				Name:       h.Text,
+			})
 		})
 	})
 
@@ -349,7 +337,56 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 
 	iframeFinalUrl := ""
-	if queryParams.StreamIdx == "" {
+	logrus.Infof("QUERY PARAMS: %+v", queryParams)
+
+	if queryParams.StreamIdx != "" {
+		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
+			fmt.Sprintf("id=%v", p),
+			fmt.Sprintf("i=%v", queryParams.StreamIdx),
+			fmt.Sprintf("q=%v", queryParams.Resolution),
+			fmt.Sprintf("nonce=%v", nonce),
+		})
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return models.EpisodeWatch{}, err
+		}
+
+		iframeBase64Data := map[string]string{}
+		json.Unmarshal(iframeBody, &iframeBase64Data)
+		iframeBase64 := iframeBase64Data["data"]
+		if iframeBase64 == "" {
+			err = fmt.Errorf("missing iframe data")
+			logrus.WithContext(ctx).Error(err)
+			return models.EpisodeWatch{}, err
+		}
+
+		iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return models.EpisodeWatch{}, err
+		}
+
+		re := regexp.MustCompile(`src="([^"]+)"`)
+
+		// Find the matches
+		match := re.FindStringSubmatch(string(iframeBase64Decoded))
+
+		if len(match) > 1 {
+			iframeFinalUrl = match[1]
+		}
+		if iframeFinalUrl != "" {
+			episodeWatch = models.EpisodeWatch{
+				StreamType:    "iframe",
+				IframeUrl:     iframeFinalUrl,
+				OriginalUrl:   targetUrl,
+				StreamOptions: streamOptions,
+			}
+
+			return episodeWatch, nil
+		}
+	}
+
+	if iframeFinalUrl == "" {
 		for _, ondesuIdx := range streams[queryParams.Resolution] {
 			iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
 				fmt.Sprintf("id=%v", p),
@@ -377,17 +414,13 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 				continue
 			}
 
-			re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
-			re2 := regexp.MustCompile(`src="(https:\/\/www\.pixeldrain\.com[^"]+)"`)
-			re3 := regexp.MustCompile(`src="(https:\/\/vidhidepro\.com[^"]+)"`)
+			re := regexp.MustCompile(`src="([^"]+)"`)
 
 			// Find the matches
-			matches := re.FindStringSubmatch(string(iframeBase64Decoded))
-			matches = append(matches, re2.FindStringSubmatch(string(iframeBase64Decoded))...)
-			matches = append(matches, re3.FindStringSubmatch(string(iframeBase64Decoded))...)
+			match := re.FindStringSubmatch(string(iframeBase64Decoded))
 
-			if len(matches) >= 2 {
-				iframeFinalUrl = matches[1]
+			if len(match) > 1 {
+				iframeFinalUrl = match[1]
 			}
 			if iframeFinalUrl == "" {
 				err = fmt.Errorf("missing final iframe url")
@@ -399,53 +432,11 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 
 			break
 		}
+	}
 
-	} else {
-		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
-			fmt.Sprintf("id=%v", p),
-			fmt.Sprintf("i=%v", queryParams.StreamIdx),
-			fmt.Sprintf("q=%v", queryParams.Resolution),
-			fmt.Sprintf("nonce=%v", nonce),
-		})
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			return models.EpisodeWatch{}, err
-		}
-
-		iframeBase64Data := map[string]string{}
-		json.Unmarshal(iframeBody, &iframeBase64Data)
-		iframeBase64 := iframeBase64Data["data"]
-		if iframeBase64 == "" {
-			err = fmt.Errorf("missing iframe data")
-			logrus.WithContext(ctx).Error(err)
-			return models.EpisodeWatch{}, err
-		}
-
-		iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			return models.EpisodeWatch{}, err
-		}
-
-		re := regexp.MustCompile(`src="(https:\/\/desustream\.me[^"]+)"`)
-		re2 := regexp.MustCompile(`src="(https:\/\/www\.pixeldrain\.com[^"]+)"`)
-		re3 := regexp.MustCompile(`src="(https:\/\/vidhidepro\.com[^"]+)"`)
-
-		// Find the matches
-		matches := re.FindStringSubmatch(string(iframeBase64Decoded))
-		matches = append(matches, re2.FindStringSubmatch(string(iframeBase64Decoded))...)
-		matches = append(matches, re3.FindStringSubmatch(string(iframeBase64Decoded))...)
-
-		if len(matches) >= 2 {
-			iframeFinalUrl = matches[1]
-		}
-		if iframeFinalUrl == "" {
-			err = fmt.Errorf("missing final iframe url")
-			logrus.WithContext(ctx).WithFields(logrus.Fields{
-				"iframe_element": string(iframeBase64Decoded),
-			}).Error(err)
-			return models.EpisodeWatch{}, err
-		}
+	if iframeFinalUrl == "" {
+		err = fmt.Errorf("final iframe url not found at all")
+		return models.EpisodeWatch{}, err
 	}
 
 	episodeWatch = models.EpisodeWatch{
