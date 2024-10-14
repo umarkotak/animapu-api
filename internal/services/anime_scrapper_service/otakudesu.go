@@ -15,6 +15,8 @@ import (
 )
 
 func ScrapOtakudesuAllAnimes(ctx context.Context) error {
+	otakudesuScrapper := anime_scrapper_otakudesu.NewOtakudesu()
+
 	c := colly.NewCollector()
 
 	targets := []string{}
@@ -23,7 +25,7 @@ func ScrapOtakudesuAllAnimes(ctx context.Context) error {
 		targets = append(targets, e.Attr("href"))
 	})
 
-	targetUrl := "https://otakudesu.media/anime-list"
+	targetUrl := fmt.Sprintf("%s/anime-list", otakudesuScrapper.OtakudesuHost)
 	err := c.Visit(targetUrl)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -51,7 +53,6 @@ func ScrapOtakudesuAllAnimes(ctx context.Context) error {
 
 		anime, found := otakudesuDB[id]
 		if !found {
-			otakudesuScrapper := anime_scrapper_otakudesu.NewOtakudesu()
 			anime, err = otakudesuScrapper.GetDetail(ctx, models.AnimeQueryParams{
 				SourceID: id,
 			})
@@ -73,7 +74,7 @@ func ScrapOtakudesuAllAnimes(ctx context.Context) error {
 	}
 
 	result, _ := json.MarshalIndent(searchMap, " ", "  ")
-	err = os.WriteFile("otakudesu_search_map", result, 0644)
+	err = os.WriteFile("internal/local_db/otakudesu_anime_list_raw.go", result, 0644)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return err
