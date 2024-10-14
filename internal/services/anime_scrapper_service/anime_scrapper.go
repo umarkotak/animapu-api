@@ -148,9 +148,9 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 		return episodeWatch, models.Meta{}, err
 	}
 
-	if episodeWatch.RawStreamUrl != "" || episodeWatch.IframeUrl != "" {
-		repository.GoCache().Set(queryParams.ToKey("Watch"), episodeWatch, 24*time.Hour)
-	}
+	// if episodeWatch.RawStreamUrl != "" || episodeWatch.IframeUrl != "" {
+	// 	repository.GoCache().Set(queryParams.ToKey("Watch"), episodeWatch, 24*time.Hour)
+	// }
 
 	return episodeWatch, models.Meta{}, nil
 }

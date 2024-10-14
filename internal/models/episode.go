@@ -21,4 +21,7 @@ type EpisodeWatch struct {
 }
 
 type StreamOption struct {
+	Resolution string `json:"resolution"` // Enum: 720p, 480p, 360p
+	Index      string `json:"index"`
+	Name       string `json:"name"`
 }

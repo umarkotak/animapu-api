@@ -95,10 +95,12 @@ func GetWatch(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
-		Source:       c.Param("anime_source"),
-		SourceID:     c.Param("anime_id"),
-		EpisodeID:    c.Param("episode_id"),
-		WatchVersion: c.Request.URL.Query().Get("watch_version"),
+		Source:          c.Param("anime_source"),
+		SourceID:        c.Param("anime_id"),
+		EpisodeID:       c.Param("episode_id"),
+		WatchVersion:    c.Request.URL.Query().Get("watch_version"),
+		Resolution:      c.Request.URL.Query().Get("resolution"),
+		ManualServerOpt: c.Request.URL.Query().Get("manual_server_opt"),
 	}
 
 	episodeWatch, meta, err := anime_scrapper_service.Watch(ctx, queryParams)

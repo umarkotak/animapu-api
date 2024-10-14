@@ -26,6 +26,7 @@ type (
 		Score              float64   `json:"score"`
 		Relations          []Anime   `json:"relations"`
 		Relationship       string    `json:"relationship"`
+		MultipleServer     bool      `json:"multiple_server"`
 	}
 
 	AnimeDetail struct {

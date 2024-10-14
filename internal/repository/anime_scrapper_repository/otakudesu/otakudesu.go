@@ -30,13 +30,14 @@ func NewOtakudesu() Otakudesu {
 	return Otakudesu{
 		AnimapuSource: models.ANIME_SOURCE_OTAKUDESU,
 		Source:        "otakudesu",
-		OtakudesuHost: "https://otakudesu.media",
+		OtakudesuHost: "https://otakudesu.cloud",
 		AllowedStreamServers: []string{
 			"filelions",
 			"ondesuhd",
 			"otakustream",
 			"odstream",
 			"pdrain",
+			"",
 		},
 	}
 }
@@ -127,13 +128,14 @@ func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQuery
 func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
 	targetUrl := fmt.Sprintf("%v/anime/%v", s.OtakudesuHost, queryParams.SourceID)
 	anime := models.Anime{
-		ID:            queryParams.SourceID,
-		Source:        s.AnimapuSource,
-		Title:         "",
-		LatestEpisode: 0,          // done
-		CoverUrls:     []string{}, // done
-		Episodes:      []models.Episode{},
-		OriginalLink:  targetUrl,
+		ID:             queryParams.SourceID,
+		Source:         s.AnimapuSource,
+		Title:          "",
+		LatestEpisode:  0,          // done
+		CoverUrls:      []string{}, // done
+		Episodes:       []models.Episode{},
+		OriginalLink:   targetUrl,
+		MultipleServer: true,
 	}
 
 	c := colly.NewCollector()
@@ -215,6 +217,8 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		queryParams.Resolution = "720p"
 	}
 
+	streamOptions := []models.StreamOption{}
+
 	episodeWatch := models.EpisodeWatch{}
 
 	c := colly.NewCollector()
@@ -226,7 +230,11 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 	})
 
-	streams := map[string][]map[string]string{
+	type serverOpt struct {
+		Name string
+		Idx  string
+	}
+	streams := map[string][]serverOpt{
 		"720p": {},
 		"480p": {},
 		"360p": {},
@@ -235,9 +243,14 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
 			for _, oneBaypassedStream := range s.AllowedStreamServers {
 				if strings.Contains(h.Text, oneBaypassedStream) {
-					streams["720p"] = append(streams["720p"], map[string]string{
-						"name": h.Text,
-						"idx":  fmt.Sprint(i),
+					streams["720p"] = append(streams["720p"], serverOpt{
+						Name: h.Text,
+						Idx:  fmt.Sprint(i),
+					})
+					streamOptions = append(streamOptions, models.StreamOption{
+						Resolution: "720p",
+						Index:      fmt.Sprint(i),
+						Name:       h.Text,
 					})
 				}
 			}
@@ -247,9 +260,14 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
 			for _, oneBaypassedStream := range s.AllowedStreamServers {
 				if strings.Contains(h.Text, oneBaypassedStream) {
-					streams["480p"] = append(streams["480p"], map[string]string{
-						"name": h.Text,
-						"idx":  fmt.Sprint(i),
+					streams["480p"] = append(streams["480p"], serverOpt{
+						Name: h.Text,
+						Idx:  fmt.Sprint(i),
+					})
+					streamOptions = append(streamOptions, models.StreamOption{
+						Resolution: "480p",
+						Index:      fmt.Sprint(i),
+						Name:       h.Text,
 					})
 				}
 			}
@@ -259,9 +277,14 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
 			for _, oneBaypassedStream := range s.AllowedStreamServers {
 				if strings.Contains(h.Text, oneBaypassedStream) {
-					streams["360p"] = append(streams["360p"], map[string]string{
-						"name": h.Text,
-						"idx":  fmt.Sprint(i),
+					streams["360p"] = append(streams["360p"], serverOpt{
+						Name: h.Text,
+						Idx:  fmt.Sprint(i),
+					})
+					streamOptions = append(streamOptions, models.StreamOption{
+						Resolution: "480p",
+						Index:      fmt.Sprint(i),
+						Name:       h.Text,
 					})
 				}
 			}
@@ -329,8 +352,8 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	for _, ondesuIdx := range streams[queryParams.Resolution] {
 		iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
 			fmt.Sprintf("id=%v", p),
-			fmt.Sprintf("i=%v", ondesuIdx["idx"]),
-			"q=720p",
+			fmt.Sprintf("i=%v", ondesuIdx.Idx),
+			fmt.Sprintf("q=%v", queryParams.Resolution),
 			fmt.Sprintf("nonce=%v", nonce),
 		})
 		if err != nil {
@@ -377,9 +400,10 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 
 	episodeWatch = models.EpisodeWatch{
-		StreamType:  "iframe",
-		IframeUrl:   iframeFinalUrl,
-		OriginalUrl: targetUrl,
+		StreamType:    "iframe",
+		IframeUrl:     iframeFinalUrl,
+		OriginalUrl:   targetUrl,
+		StreamOptions: streamOptions,
 	}
 
 	return episodeWatch, nil
