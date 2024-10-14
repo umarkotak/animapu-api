@@ -89,6 +89,7 @@ func Start() {
 
 	r.POST("/animension/quick_scrap/:anime_id", animension_legacy_controller.HandlerAnimensionQuickScrap)
 	r.POST("/animension/quick_scrap/season/:season_id", animension_legacy_controller.HandlerAnimensionQuickScrapSeason)
+	r.POST("/animension/quick_scrap/season/sync_multi_seasons", animension_legacy_controller.HandlerAnimensionSyncMultiSeasons)
 	r.POST("/animension/sync_season", animension_legacy_controller.HandlerSyncSeason)
 
 	r.POST("/otakudesu/scrap_otakudesu_all_animes", otakudesu_legacy_controller.HandlerAnimensionQuickScrap)

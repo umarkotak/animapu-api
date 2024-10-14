@@ -1,6 +1,8 @@
 module github.com/umarkotak/animapu-api
 
-go 1.21.5
+go 1.22
+
+toolchain go1.22.1
 
 require (
 	firebase.google.com/go/v4 v4.8.0
@@ -12,6 +14,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/schollz/progressbar/v3 v3.16.1
 	github.com/sirupsen/logrus v1.8.1
 	google.golang.org/api v0.73.0
 	mvdan.cc/xurls v1.1.0
@@ -41,10 +44,12 @@ require (
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
 	github.com/mvdan/xurls v1.1.0 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
@@ -52,7 +57,8 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
-	golang.org/x/sys v0.0.0-20220622161953-175b2fd9d664 // indirect
+	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/term v0.24.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
