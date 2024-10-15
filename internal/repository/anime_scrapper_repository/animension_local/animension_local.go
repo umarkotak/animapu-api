@@ -433,7 +433,7 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 		return animeDetail.Episodes[i].EpisodeNumber < animeDetail.Episodes[j].EpisodeNumber
 	})
 
-	return r.AnimeDetailToAnime(animeDetail), nil
+	return r.animeDetailToAnime(animeDetail), nil
 }
 
 func (r *AnimensionLocal) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
@@ -498,7 +498,7 @@ func (r *AnimensionLocal) GetRandom(ctx context.Context, queryParams models.Anim
 	return animes, nil
 }
 
-func (r *AnimensionLocal) AnimeDetailToAnime(animeDetail models.AnimeDetail) models.Anime {
+func (r *AnimensionLocal) animeDetailToAnime(animeDetail models.AnimeDetail) models.Anime {
 	episodes := []models.Episode{}
 	for _, oneEp := range animeDetail.Episodes {
 		episodes = append(episodes, models.Episode{

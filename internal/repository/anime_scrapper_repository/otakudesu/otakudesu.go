@@ -196,6 +196,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 			Number:       epNo,
 			Title:        e.ChildText("span > a"),
 			OriginalLink: episodeLink,
+			UseTitle:     true,
 		}
 		anime.Episodes = append(anime.Episodes, episode)
 	})
@@ -206,6 +207,11 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 		return anime, err
 	}
 	c.Wait()
+
+	for idx, _ := range anime.Episodes {
+		anime.Episodes[idx].CoverUrl = anime.CoverUrls[0]
+		anime.Episodes[idx].CoverUrls = anime.CoverUrls
+	}
 
 	slices.Reverse(anime.Episodes)
 

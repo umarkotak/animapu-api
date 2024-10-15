@@ -9,6 +9,7 @@ type Episode struct {
 	OriginalLink string   `json:"original_link"`
 	CoverUrl     string   `json:"cover_url"`
 	CoverUrls    []string `json:"cover_urls"`
+	UseTitle     bool     `json:"use_title"`
 }
 
 type EpisodeWatch struct {
