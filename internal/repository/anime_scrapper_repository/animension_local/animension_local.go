@@ -103,7 +103,7 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 	//       1704604031
 	//   ]
 	// ]
-	data := []interface{}{}
+	data := []any{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -112,8 +112,8 @@ func (r *AnimensionLocal) GetLatest(ctx context.Context, queryParams models.Anim
 
 	animes := []models.Anime{}
 	for _, oneElem := range data {
-		arrAnime := []interface{}{}
-		objAnime := map[string]interface{}{}
+		arrAnime := []any{}
+		objAnime := map[string]any{}
 
 		tmpByte, _ := json.Marshal(oneElem)
 
@@ -222,7 +222,7 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 		return animes, err
 	}
 
-	res := []interface{}{}
+	res := []any{}
 	d := json.NewDecoder(strings.NewReader(string(body)))
 	d.UseNumber()
 	err = d.Decode(&res)
@@ -232,8 +232,8 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 	}
 
 	for _, oneAnimeRes := range res {
-		arrAnime := []interface{}{}
-		objAnime := map[string]interface{}{}
+		arrAnime := []any{}
+		objAnime := map[string]any{}
 
 		tmpByte, _ := json.Marshal(oneAnimeRes)
 
@@ -436,7 +436,7 @@ func (r *AnimensionLocal) GetDetail(ctx context.Context, queryParams models.Anim
 	return r.animeDetailToAnime(animeDetail), nil
 }
 
-func (r *AnimensionLocal) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
+func (r *AnimensionLocal) WatchLegacy(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
 	hlsUrl, err := r.GetHlsUrl(ctx, queryParams.EpisodeID)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -447,6 +447,83 @@ func (r *AnimensionLocal) Watch(ctx context.Context, queryParams models.AnimeQue
 		StreamType:   "hls",
 		RawStreamUrl: hlsUrl,
 		OriginalUrl:  fmt.Sprintf("%s/%v#%v", r.AnimensionHost, queryParams.SourceID, queryParams.EpisodeID),
+	}, nil
+}
+
+func (r *AnimensionLocal) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
+	targetUrl := fmt.Sprintf("%s/public-api/episode.php?id=%s", r.AnimensionHost, queryParams.EpisodeID)
+	req, err := http.NewRequest("GET", targetUrl, nil)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return models.EpisodeWatch{}, err
+	}
+
+	req.Header.Set("accept", "*/*")
+	req.Header.Set("accept-language", "en-US,en;q=0.9,id;q=0.8")
+	req.Header.Set("cache-control", "no-cache")
+	req.Header.Set("pragma", "no-cache")
+	req.Header.Set("sec-ch-ua", "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"")
+	req.Header.Set("sec-ch-ua-mobile", "?0")
+	req.Header.Set("sec-ch-ua-platform", "\"macOS\"")
+	req.Header.Set("sec-fetch-dest", "empty")
+	req.Header.Set("sec-fetch-mode", "cors")
+	req.Header.Set("sec-fetch-site", "same-origin")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return models.EpisodeWatch{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return models.EpisodeWatch{}, err
+	}
+
+	data := []any{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return models.EpisodeWatch{}, err
+	}
+
+	type EmbedUrls struct {
+		VidCDN     string `json:"VidCDN-embed"`
+		Streamwish string `json:"Streamwish-embed"`
+		Mp4upload  string `json:"Mp4upload-embed"`
+		Doodstream string `json:"Doodstream-embed"`
+		Vidhide    string `json:"Vidhide-embed"`
+	}
+	embedUrls := EmbedUrls{}
+
+	for _, val := range data {
+		stringVal := fmt.Sprint(val)
+
+		if !strings.Contains(stringVal, "VidCDN-embed") {
+			continue
+		}
+
+		err = json.Unmarshal([]byte(stringVal), &embedUrls)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			return models.EpisodeWatch{}, err
+		}
+	}
+
+	return models.EpisodeWatch{
+		StreamType: "iframe",
+		IframeUrl:  r.cleanUpUrl(embedUrls.VidCDN),
+		IframeUrls: map[string]string{
+			"VidCDN":     r.cleanUpUrl(embedUrls.VidCDN),
+			"Streamwish": r.cleanUpUrl(embedUrls.Streamwish),
+			"Mp4upload":  r.cleanUpUrl(embedUrls.Mp4upload),
+			"Doodstream": r.cleanUpUrl(embedUrls.Doodstream),
+			"Vidhide":    r.cleanUpUrl(embedUrls.Vidhide),
+		},
+		OriginalUrl: fmt.Sprintf("%s/%v#%v", r.AnimensionHost, queryParams.SourceID, queryParams.EpisodeID),
 	}, nil
 }
 
@@ -569,4 +646,8 @@ func (r *AnimensionLocal) animensionImages(url string) []string {
 		utils.AnimensionImgProxy(url),
 		"/images/animehub_cover.jpeg",
 	}
+}
+
+func (r *AnimensionLocal) cleanUpUrl(str string) string {
+	return strings.ReplaceAll(str, "\u0026", "&")
 }
