@@ -236,11 +236,13 @@ func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.Anim
 		objAnime := map[string]any{}
 
 		tmpByte, _ := json.Marshal(oneAnimeRes)
+		d := json.NewDecoder(strings.NewReader(string(tmpByte)))
+		d.UseNumber()
 
 		if strings.HasPrefix(string(tmpByte), "[") {
-			err = json.Unmarshal(tmpByte, &arrAnime)
+			err = d.Decode(&arrAnime)
 		} else {
-			err = json.Unmarshal(tmpByte, &objAnime)
+			err = d.Decode(&objAnime)
 		}
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
