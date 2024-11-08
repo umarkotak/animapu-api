@@ -11,11 +11,11 @@ import (
 
 type (
 	DummyCookieParams struct {
-		Cookies []CustomCookie `json:"cookies"`
+		Origin  string         `json:"origin"`  // https://chatgpt.com
+		Cookies []CustomCookie `json:"cookies"` //
 	}
 
 	CustomCookie struct {
-		Origin string `json:"origin"` // https://chatgpt.com
 		Name   string `json:"name"`   // name,
 		Value  string `json:"value"`  // value,
 		Path   string `json:"path"`   // "/",
@@ -57,6 +57,6 @@ func HandlerDummyCookie(c *gin.Context) {
 	}
 
 	render.Response(ctx, c, map[string]any{
-		"origin": params.Cookies[0].Origin,
+		"origin": params.Origin,
 	}, nil, 200)
 }
