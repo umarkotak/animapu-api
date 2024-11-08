@@ -6,6 +6,7 @@ import (
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/animension_legacy_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/dummy_cookie_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/otakudesu_legacy_controller"
@@ -93,6 +94,9 @@ func Start() {
 	r.POST("/animension/sync_season", animension_legacy_controller.HandlerSyncSeason)
 
 	r.POST("/otakudesu/scrap_otakudesu_all_animes", otakudesu_legacy_controller.HandlerAnimensionQuickScrap)
+
+	r.GET("/dummy-cookie", dummy_cookie_controller.HandlerDummyCookie)
+	r.POST("/dummy-cookie", dummy_cookie_controller.HandlerDummyCookie)
 
 	r.Run(":" + config.Get().Port)
 }
