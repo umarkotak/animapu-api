@@ -22,6 +22,7 @@ func Response(ctx context.Context, c *gin.Context, bodyPayload interface{}, err 
 		"Access-Control-Allow-Headers",
 		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Animapu-User-Uid, X-Visitor-Id, X-From-Path",
 	)
+	c.Header("Access-Control-Allow-Credentials", "true")
 	c.JSON(status, gin.H{
 		"success": success,
 		"data":    bodyPayload,
