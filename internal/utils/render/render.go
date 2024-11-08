@@ -2,13 +2,14 @@ package render
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func Response(ctx context.Context, c *gin.Context, bodyPayload interface{}, err interface{}, status int) {
+func Response(ctx context.Context, c *gin.Context, bodyPayload any, err any, status int) {
 	success := true
 	if status != 200 {
 		success = false
@@ -16,7 +17,13 @@ func Response(ctx context.Context, c *gin.Context, bodyPayload interface{}, err 
 
 	// logrus.Infof("BODY RESPONSE: %+v", bodyPayload)
 
-	c.Header("Access-Control-Allow-Origin", "*")
+	if c.Request.URL.Path == "/dummy-cookie" {
+		c.Header("Access-Control-Allow-Origin", "*")
+	} else {
+		bodyPayloadTmp := bodyPayload.(map[string]any)
+		c.Header("Access-Control-Allow-Origin", fmt.Sprint(bodyPayloadTmp["origin"]))
+	}
+
 	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	c.Header(
 		"Access-Control-Allow-Headers",

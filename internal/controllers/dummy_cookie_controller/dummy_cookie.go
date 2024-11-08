@@ -15,6 +15,7 @@ type (
 	}
 
 	CustomCookie struct {
+		Origin string `json:"origin"` // https://chatgpt.com
 		Name   string `json:"name"`   // name,
 		Value  string `json:"value"`  // value,
 		Path   string `json:"path"`   // "/",
@@ -55,5 +56,7 @@ func HandlerDummyCookie(c *gin.Context) {
 		http.SetCookie(c.Writer, cookie)
 	}
 
-	render.Response(ctx, c, map[string]any{}, nil, 200)
+	render.Response(ctx, c, map[string]any{
+		"origin": params.Cookies[0].Origin,
+	}, nil, 200)
 }
