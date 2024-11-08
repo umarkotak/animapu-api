@@ -11,7 +11,6 @@ import (
 
 type (
 	DummyCookieParams struct {
-		Origin  string         `json:"origin"`  // https://chatgpt.com
 		Cookies []CustomCookie `json:"cookies"` //
 	}
 
@@ -56,7 +55,5 @@ func HandlerDummyCookie(c *gin.Context) {
 		http.SetCookie(c.Writer, cookie)
 	}
 
-	render.Response(ctx, c, map[string]any{
-		"origin": params.Origin,
-	}, nil, 200)
+	render.Response(ctx, c, map[string]any{}, nil, 200)
 }

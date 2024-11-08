@@ -22,19 +22,6 @@ func RequestID() gin.HandlerFunc {
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Method == "OPTIONS" {
-			if c.Request.URL.Path == "/dummy-cookie" {
-				params := struct {
-					Origin string `json:"origin"`
-				}{}
-
-				c.BindJSON(&params)
-
-				render.Response(c.Request.Context(), c, map[string]any{
-					"origin": params.Origin,
-				}, nil, 200)
-				return
-			}
-
 			render.Response(c.Request.Context(), c, nil, nil, 200)
 			return
 		}

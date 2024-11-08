@@ -17,9 +17,7 @@ func Response(ctx context.Context, c *gin.Context, bodyPayload any, err any, sta
 	// logrus.Infof("BODY RESPONSE: %+v", bodyPayload)
 
 	if c.Request.URL.Path == "/dummy-cookie" {
-		// bodyPayloadTmp := bodyPayload.(map[string]any)
-		// c.Header("Access-Control-Allow-Origin", fmt.Sprint(bodyPayloadTmp["origin"]))
-		c.Header("Access-Control-Allow-Origin", "https://chatgpt.com")
+		c.Header("Access-Control-Allow-Origin", c.Request.URL.Query().Get("origin"))
 	} else {
 		c.Header("Access-Control-Allow-Origin", "*")
 	}
