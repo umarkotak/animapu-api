@@ -49,7 +49,7 @@ func HandlerDummyCookie(c *gin.Context) {
 			Path:     oneCookie.Path,
 			Domain:   oneCookie.Domain,
 			Secure:   oneCookie.Secure,
-			HttpOnly: true,
+			HttpOnly: false,
 			SameSite: http.SameSiteLaxMode,
 		}
 		http.SetCookie(c.Writer, cookie)
