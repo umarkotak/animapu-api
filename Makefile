@@ -36,15 +36,13 @@ connect_idcloud:
 	ssh umarkotak@103.187.146.246
 
 deploy_idcloud:
-	GOOS=linux GOARCH=amd64 go build cmd/web/main.go
-	scp .env umarkotak@103.187.146.246:/home/umarkotak/app
-	# scp db_animension_anime_index.json umarkotak@103.187.146.246:/home/umarkotak/app
-	# scp db_animension_season_shorted_anime.json umarkotak@103.187.146.246:/home/umarkotak/app
-	ssh umarkotak@103.187.146.246 "sudo pkill main"
-	scp main umarkotak@103.187.146.246:/home/umarkotak/app
+	GOOS=linux GOARCH=amd64 go build -o animapu-api cmd/web/main.go
+	scp .env umarkotak@103.187.146.246:/home/umarkotak/app/animapu-api
+	ssh umarkotak@103.187.146.246 "sudo pkill animapu-api"
+	scp animapu-api umarkotak@103.187.146.246:/home/umarkotak/app/animapu-api
 	ssh umarkotak@103.187.146.246
 
 default_restart_on_cloud:
-	cd ~/app
-	sudo nohup ./main &
+	cd ~/app/animapu-api
+	sudo nohup ./animapu-api &
 	rm -rf nohup.out

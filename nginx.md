@@ -13,12 +13,101 @@ sudo certbot --nginx -d api.shadow-animapu-1.site
 sudo systemctl status certbot.timer
 sudo certbot renew --dry-run
 sudo systemctl reload nginx
+sudo service nginx start
+sudo service nginx stop
 
 cd .ssh/
 sudo vi authorized_keys
 ```
 
-nginx conf
+/etc/nginx/nginx.conf
+```
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+	worker_connections 768;
+	# multi_accept on;
+}
+
+http {
+
+	##
+	# Basic Settings
+	##
+
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+	# server_tokens off;
+
+	# server_names_hash_bucket_size 64;
+	# server_name_in_redirect off;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	##
+	# SSL Settings
+	##
+
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+	ssl_prefer_server_ciphers on;
+
+	##
+	# Logging Settings
+	##
+
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	##
+	# Gzip Settings
+	##
+
+	gzip on;
+
+	# gzip_vary on;
+	# gzip_proxied any;
+	# gzip_comp_level 6;
+	# gzip_buffers 16 8k;
+	# gzip_http_version 1.1;
+	# gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+	##
+	# Virtual Host Configs
+	##
+
+	include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
+}
+
+
+#mail {
+#	# See sample authentication script at:
+#	# http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript
+#
+#	# auth_http localhost/auth.php;
+#	# pop3_capabilities "TOP" "USER";
+#	# imap_capabilities "IMAP4rev1" "UIDPLUS";
+#
+#	server {
+#		listen     localhost:110;
+#		protocol   pop3;
+#		proxy      on;
+#	}
+#
+#	server {
+#		listen     localhost:143;
+#		protocol   imap;
+#		proxy      on;
+#	}
+#}
+```
+
+/etc/nginx/sites-available/default
 ```
 server {
 	listen 80 default_server;
@@ -96,7 +185,7 @@ server {
         root /var/www/html;
 
         index index.html index.htm index.nginx-debian.html;
-        server_name api.shadow-animapu-1.site; # managed by Certbot
+        server_name api.shadow-animapu-2.site; # managed by Certbot
 
 
         location / {
@@ -111,21 +200,21 @@ server {
 
         listen [::]:443 ssl ipv6only=on; # managed by Certbot
         listen 443 ssl; # managed by Certbot
-        ssl_certificate /etc/letsencrypt/live/api.shadow-animapu-1.site/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/api.shadow-animapu-1.site/privkey.pem; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/api.shadow-animapu-2.site/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/api.shadow-animapu-2.site/privkey.pem; # managed by Certbot
         include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 }
 
 server {
-    if ($host = api.shadow-animapu-1.site) {
+    if ($host = api.shadow-animapu-2.site) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
 	listen 80 ;
 	listen [::]:80 ;
-    server_name api.shadow-animapu-1.site;
+    server_name api.shadow-animapu-2.site;
     return 404; # managed by Certbot
 }
 
@@ -133,7 +222,7 @@ server {
 	root /var/www/html;
 
 	index index.html index.htm index.nginx-debian.html;
-    	server_name bukukaskita-api.shadow-animapu-1.site; # managed by Certbot
+    	server_name bukukaskita-api.shadow-animapu-2.site; # managed by Certbot
 
 
 	location / {
@@ -148,22 +237,22 @@ server {
 
     listen [::]:443 ssl; # managed by Certbot
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/bukukaskita-api.shadow-animapu-1.site/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/bukukaskita-api.shadow-animapu-1.site/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/bukukaskita-api.shadow-animapu-2.site/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/bukukaskita-api.shadow-animapu-2.site/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 }
 
 server {
-    if ($host = bukukaskita-api.shadow-animapu-1.site) {
+    if ($host = bukukaskita-api.shadow-animapu-2.site) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
 	listen 80 ;
 	listen [::]:80 ;
-    server_name bukukaskita-api.shadow-animapu-1.site;
+    server_name bukukaskita-api.shadow-animapu-2.site;
     return 404; # managed by Certbot
 }
 
@@ -171,7 +260,7 @@ server {
 	root /var/www/html;
 
 	index index.html index.htm index.nginx-debian.html;
-   	server_name bukukaskita-utils-api.shadow-animapu-1.site; # managed by Certbot
+   	server_name bukukaskita-utils-api.shadow-animapu-2.site; # managed by Certbot
 
 	location / {
 		proxy_pass http://localhost:26000;
@@ -185,22 +274,22 @@ server {
 
     listen [::]:443 ssl; # managed by Certbot
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/bukukaskita-utils-api.shadow-animapu-1.site/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/bukukaskita-utils-api.shadow-animapu-1.site/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/bukukaskita-utils-api.shadow-animapu-2.site/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/bukukaskita-utils-api.shadow-animapu-2.site/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 }
 
 server {
-    if ($host = bukukaskita-utils-api.shadow-animapu-1.site) {
+    if ($host = bukukaskita-utils-api.shadow-animapu-2.site) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
 	listen 80 ;
 	listen [::]:80 ;
-    server_name bukukaskita-utils-api.shadow-animapu-1.site;
+    server_name bukukaskita-utils-api.shadow-animapu-2.site;
     return 404; # managed by Certbot
 }
 ```

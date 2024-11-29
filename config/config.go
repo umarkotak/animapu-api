@@ -48,11 +48,6 @@ func Initialize() error {
 
 	cacheObj := cache.New(5*time.Minute, 10*time.Minute)
 
-	animapuOnlineHost := "https://animapu-api.herokuapp.com"
-	if os.Getenv("ANIMAPU_ONLINE_HOST") != "" {
-		animapuOnlineHost = os.Getenv("ANIMAPU_ONLINE_HOST")
-	}
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "6001"
@@ -60,7 +55,7 @@ func Initialize() error {
 
 	config = Config{
 		Port:                        port,
-		AnimapuOnlineHost:           animapuOnlineHost,
+		AnimapuOnlineHost:           os.Getenv("ANIMAPU_API_HOST"),
 		CacheObj:                    cacheObj,
 		AnimapuLocalHost:            "http://localhost:6001",
 		AnimapuGoogleServiceAccount: os.Getenv("ANIMAPU_GOOGLE_SERVICE_ACCOUNT"),
