@@ -1,8 +1,20 @@
 run:
 	go run cmd/web/main.go
 
+build:
+	go build -o animapu-api cmd/web/main.go
+
+rund:
+	nohup ./animapu-api &
+
+stopd:
+	pkill animapu-api
+
+statusd:
+	ps aux | grep animapu
+
 buildrun:
-	go build -o local cmd/web/main.go && ./local
+	go build -o animapu-api cmd/web/main.go && ./animapu-api
 
 build_ubuntu:
 	GOOS=linux GOARCH=amd64 go build cmd/web/main.go

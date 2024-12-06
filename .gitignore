@@ -6,3 +6,4 @@ app.log
 local
 .vscode
 animapu-api
+nohup.out
