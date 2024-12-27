@@ -71,9 +71,16 @@ func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 		})
 	})
 
-	maxPage := 3
-	for i := 1; i <= maxPage; i++ {
-		targetUrl := fmt.Sprintf("%v/ongoing-anime/page/%v", s.OtakudesuHost, i)
+	targetUrl := fmt.Sprintf("%v/ongoing-anime/page/%v", s.OtakudesuHost, queryParams.Page)
+	err := c.Visit(targetUrl)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+	c.Wait()
+
+	if queryParams.Page >= 4 {
+		targetUrl := fmt.Sprintf("%v/complete-anime/page/%v", s.OtakudesuHost, queryParams.Page-3)
 		err := c.Visit(targetUrl)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)

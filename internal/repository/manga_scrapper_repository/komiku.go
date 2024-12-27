@@ -39,6 +39,14 @@ func (sc *Komiku) GetHome(ctx context.Context, queryParams models.QueryParams) (
 		mangaID = strings.ReplaceAll(mangaID, "/manga/", "")
 		mangaID = strings.TrimSuffix(mangaID, "/")
 
+		latestChapterNumber := float64(0)
+		e.ForEach("div.new1", func(i int, h *colly.HTMLElement) {
+			if !strings.Contains(h.Text, "Terbaru") {
+				return
+			}
+			latestChapterNumber = utils.ForceSanitizeStringToFloat(h.Text)
+		})
+
 		mangas = append(mangas, models.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
@@ -46,7 +54,7 @@ func (sc *Komiku) GetHome(ctx context.Context, queryParams models.QueryParams) (
 			Title:               e.ChildText("body > div > div.kan > a > h3"),
 			Genres:              []string{},
 			LatestChapterID:     "",
-			LatestChapterNumber: 0,
+			LatestChapterNumber: latestChapterNumber,
 			LatestChapterTitle:  "",
 			Chapters:            []models.Chapter{},
 			CoverImages: []models.CoverImage{

@@ -14,6 +14,7 @@ const (
 	SOURCE_ASURA_NACM = "asura_nacm"
 	SOURCE_KOMIKINDO  = "komikindo"
 	SOURCE_KOMIKU     = "komiku"
+	SOURCE_KOMIKCAST  = "komikcast"
 	SOURCE_MANGASEE   = "mangasee"
 
 	// powered by mangamee
@@ -41,7 +42,7 @@ var (
 		{
 			ID:       SOURCE_KOMIKINDO,
 			Language: "id",
-			Title:    "KomikIndo",
+			Title:    "Komik Indo",
 			WebLink:  "https://komikindo.pw",
 			Active:   true,
 			Status:   "stable",
@@ -51,6 +52,14 @@ var (
 			Language: "id",
 			Title:    "Komiku",
 			WebLink:  "https://komiku.id",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_KOMIKCAST,
+			Language: "id",
+			Title:    "Komik Cast",
+			WebLink:  "https://komikcast.bz",
 			Active:   true,
 			Status:   "stable",
 		},
