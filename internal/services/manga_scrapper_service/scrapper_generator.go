@@ -20,6 +20,9 @@ func mangaScrapperGenerator(mangaSource string) (models.MangaScrapper, error) {
 	case models.SOURCE_KOMIKINDO:
 		mangaScrapper := manga_scrapper_repository.NewKomikindo()
 		return &mangaScrapper, nil
+	case models.SOURCE_KOMIKU:
+		mangaScrapper := manga_scrapper_repository.NewKomiku()
+		return &mangaScrapper, nil
 	case models.SOURCE_MANGASEE:
 		mangaScrapper := manga_scrapper_repository.NewMangasee()
 		return &mangaScrapper, nil

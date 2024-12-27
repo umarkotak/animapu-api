@@ -13,6 +13,7 @@ const (
 	SOURCE_MANGABAT   = "mangabat"
 	SOURCE_ASURA_NACM = "asura_nacm"
 	SOURCE_KOMIKINDO  = "komikindo"
+	SOURCE_KOMIKU     = "komiku"
 	SOURCE_MANGASEE   = "mangasee"
 
 	// powered by mangamee
@@ -38,6 +39,22 @@ const (
 var (
 	MangaSources = []MangaSource{
 		{
+			ID:       SOURCE_KOMIKINDO,
+			Language: "id",
+			Title:    "KomikIndo",
+			WebLink:  "https://komikindo.pw",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_KOMIKU,
+			Language: "id",
+			Title:    "Komiku",
+			WebLink:  "https://komiku.id",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
 			ID:       SOURCE_MANGABAT,
 			Language: "en",
 			Title:    "Manga Bat",
@@ -54,14 +71,6 @@ var (
 			Status:   "stable",
 		},
 		{
-			ID:       SOURCE_KOMIKINDO,
-			Language: "id",
-			Title:    "KomikIndo",
-			WebLink:  "https://komikindo.one",
-			Active:   true,
-			Status:   "un-stable",
-		},
-		{
 			ID:       SOURCE_MANGASEE,
 			Language: "en",
 			Title:    "Mangasee",
@@ -70,6 +79,7 @@ var (
 			Status:   "stable",
 		},
 
+		// mangamee
 		{
 			ID:       SOURCE_M_MANGABAT,
 			Language: "en",

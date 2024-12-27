@@ -21,7 +21,7 @@ type Komikindo struct {
 
 func NewKomikindo() Komikindo {
 	return Komikindo{
-		Host:   "https://komikindo.tv",
+		Host:   "https://komikindo.pw",
 		Source: "komikindo",
 	}
 }
