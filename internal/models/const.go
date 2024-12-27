@@ -101,7 +101,7 @@ var (
 			Language: "en",
 			Title:    "Manga Read",
 			WebLink:  "https://www.mangaread.org/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 		{
@@ -109,7 +109,7 @@ var (
 			Language: "en",
 			Title:    "Manga Town",
 			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 		{
@@ -117,7 +117,7 @@ var (
 			Language: "en",
 			Title:    "Asura",
 			WebLink:  "https://asura.nacm.xyz",
-			Active:   true,
+			Active:   false,
 			Status:   "stable - from mangamee",
 		},
 		{
