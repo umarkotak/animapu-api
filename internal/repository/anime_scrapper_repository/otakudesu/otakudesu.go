@@ -176,29 +176,41 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 		}
 	})
 
-	c.OnHTML("div.episodelist > ul > li", func(e *colly.HTMLElement) {
-		episodeLink := e.ChildAttr("span > a", "href")
-		splitted := strings.Split(episodeLink, "/episode/")
-		id := ""
-		if len(splitted) > 0 {
-			id = strings.ReplaceAll(splitted[len(splitted)-1], "/", "")
-		}
-
-		epNo := utils.ForceSanitizeStringToFloat(e.ChildText("span > a"))
-		if epNo > 1500 {
+	c.OnHTML("div.episodelist", func(e *colly.HTMLElement) {
+		checkText := e.ChildText("div > span > span")
+		if !strings.Contains(strings.ToLower(checkText), strings.ToLower("Link Download Episode + Streaming")) {
 			return
 		}
 
-		episode := models.Episode{
-			AnimeID:      queryParams.SourceID,
-			Source:       s.Source,
-			ID:           id,
-			Number:       epNo,
-			Title:        e.ChildText("span > a"),
-			OriginalLink: episodeLink,
-			UseTitle:     true,
-		}
-		anime.Episodes = append(anime.Episodes, episode)
+		e.ForEach("ul > li", func(i int, h *colly.HTMLElement) {
+			episodeLink := h.ChildAttr("span > a", "href")
+			splitted := strings.Split(episodeLink, "/episode/")
+			id := ""
+			if len(splitted) > 0 {
+				id = strings.ReplaceAll(splitted[len(splitted)-1], "/", "")
+			}
+
+			epTitle := h.ChildText("span > a")
+			epTitleSplitted := strings.Split(epTitle, " ")
+
+			epNo := float64(0)
+			for _, content := range epTitleSplitted {
+				if utils.ForceSanitizeStringToFloat(content) > 0 {
+					epNo = utils.ForceSanitizeStringToFloat(content)
+				}
+			}
+
+			episode := models.Episode{
+				AnimeID:      queryParams.SourceID,
+				Source:       s.Source,
+				ID:           id,
+				Number:       epNo,
+				Title:        epTitle,
+				OriginalLink: episodeLink,
+				UseTitle:     true,
+			}
+			anime.Episodes = append(anime.Episodes, episode)
+		})
 	})
 
 	err := c.Visit(targetUrl)
@@ -209,6 +221,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	c.Wait()
 
 	for idx, _ := range anime.Episodes {
+		// anime.Episodes[idx].Number = float64(len(anime.Episodes) - idx)
 		anime.Episodes[idx].CoverUrl = anime.CoverUrls[0]
 		anime.Episodes[idx].CoverUrls = anime.CoverUrls
 	}
@@ -220,7 +233,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 
 func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
 	if queryParams.Resolution == "" {
-		queryParams.Resolution = "480p"
+		queryParams.Resolution = "720p"
 	}
 
 	streamOptions := []models.StreamOption{}
@@ -380,18 +393,23 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		if len(match) > 1 {
 			iframeFinalUrl = match[1]
 		}
+
 		if iframeFinalUrl != "" {
 			episodeWatch = models.EpisodeWatch{
 				StreamType:    "iframe",
 				IframeUrl:     iframeFinalUrl,
 				OriginalUrl:   targetUrl,
 				StreamOptions: streamOptions,
+				Resolution:    queryParams.Resolution,
+				StreamIdx:     queryParams.StreamIdx,
 			}
 
 			return episodeWatch, nil
 		}
 	}
 
+	selectedResolution := ""
+	selectedStreamIdx := ""
 	if iframeFinalUrl == "" {
 		for _, ondesuIdx := range streams[queryParams.Resolution] {
 			iframeBody, err := s.AdminAjaxCaller("2a3505c93b0035d3f455df82bf976b84", []string{
@@ -427,7 +445,11 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 
 			if len(match) > 1 {
 				iframeFinalUrl = match[1]
+				selectedResolution = queryParams.Resolution
+				selectedStreamIdx = ondesuIdx.Idx
+				break
 			}
+
 			if iframeFinalUrl == "" {
 				err = fmt.Errorf("missing final iframe url")
 				logrus.WithContext(ctx).WithFields(logrus.Fields{
@@ -435,8 +457,6 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 				}).Error(err)
 				continue
 			}
-
-			break
 		}
 	}
 
@@ -450,6 +470,8 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		IframeUrl:     iframeFinalUrl,
 		OriginalUrl:   targetUrl,
 		StreamOptions: streamOptions,
+		Resolution:    selectedResolution,
+		StreamIdx:     selectedStreamIdx,
 	}
 
 	return episodeWatch, nil

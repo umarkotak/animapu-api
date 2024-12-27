@@ -20,10 +20,13 @@ type EpisodeWatch struct {
 	IframeUrls    map[string]string `json:"iframe_urls"`    //
 	OriginalUrl   string            `json:"original_url"`   //
 	StreamOptions []StreamOption    `json:"stream_options"` //
+	Resolution    string            `json:"resolution"`     //
+	StreamIdx     string            `json:"stream_idx"`     //
 }
 
 type StreamOption struct {
 	Resolution string `json:"resolution"` // Enum: 720p, 480p, 360p
 	Index      string `json:"index"`
 	Name       string `json:"name"`
+	Used       bool   `json:"used"`
 }
