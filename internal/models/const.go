@@ -33,6 +33,8 @@ const (
 	SOURCE_MANGADEX   = "mangadex"
 
 	ANIME_SOURCE_OTAKUDESU        = "otakudesu"
+	ANIME_SOURCE_ANIMEINDO        = "animeindo"
+	ANIME_SOURCE_GOGO_ANIME       = "gogo_anime"
 	ANIME_SOURCE_ANIMENSION       = "animension"
 	ANIME_SOURCE_ANIMENSION_LOCAL = "animension_local"
 )
