@@ -47,7 +47,7 @@ func GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Mang
 	}
 
 	if len(mangas) > 0 {
-		go repository.GoCache().Set(queryParams.ToKey("page_latest"), mangas, 30*time.Minute)
+		go repository.GoCache().Set(queryParams.ToKey("page_latest"), mangas, 10*time.Minute)
 	}
 
 	return mangas, models.Meta{}, nil
@@ -86,7 +86,7 @@ func GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Mang
 	}
 
 	if len(manga.Chapters) > 0 {
-		go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 12*time.Hour)
+		go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 15*time.Hour)
 		// go cacheManga(context.Background(), queryParams.ToKey("page_detail"), manga)
 	}
 
