@@ -65,6 +65,34 @@ func (s *GogoAnimeNew) GetLatest(ctx context.Context, queryParams models.AnimeQu
 func (s *GogoAnimeNew) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
 	animes := []models.Anime{}
 
+	c := colly.NewCollector()
+
+	c.OnHTML("#content > div > div.postbody > div > div.listupd > article", func(e *colly.HTMLElement) {
+		coverUrl := e.ChildAttr("div > a > div.limit > img", "src")
+
+		animeLink := e.ChildAttr("div > a", "href")
+		animeID := strings.ReplaceAll(animeLink, s.Host, "")
+		animeID = strings.ReplaceAll(animeID, "/series/", "")
+		animeID = strings.TrimSuffix(animeID, "/")
+
+		animes = append(animes, models.Anime{
+			ID:            animeID,
+			Source:        s.Source,
+			Title:         e.ChildText("div > a > div.tt.tts > h2"),
+			LatestEpisode: 0,
+			CoverUrls:     []string{coverUrl},
+			OriginalLink:  animeLink,
+		})
+	})
+
+	targetUrl := fmt.Sprintf("%s/?s=%s", s.Host, url.QueryEscape(queryParams.Title))
+	err := c.Visit(targetUrl)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, err
+	}
+	c.Wait()
+
 	return animes, nil
 }
 
