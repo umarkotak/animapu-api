@@ -8,6 +8,7 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"regexp"
 	"sort"
 	"strconv"
@@ -178,7 +179,7 @@ func (r *AnimensionLocal) GetSearchLegacy(ctx context.Context, queryParams model
 func (r *AnimensionLocal) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
 	animes := []models.Anime{}
 
-	url := fmt.Sprintf("%v/public-api/search.php?search_text=%v&sort=popular-week&page=1", r.AnimensionHost, queryParams.Title)
+	url := fmt.Sprintf("%v/public-api/search.php?search_text=%v&sort=popular-week&page=1", r.AnimensionHost, url.QueryEscape(queryParams.Title))
 	method := "GET"
 
 	client := &http.Client{}
