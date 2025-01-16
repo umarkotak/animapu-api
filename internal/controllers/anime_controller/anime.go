@@ -36,15 +36,35 @@ func GetSearch(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
-		Source: c.Param("anime_source"),
-		Title:  c.Query("title"),
+		Source:    c.Param("anime_source"),
+		Title:     c.Query("title"),
+		SearchAll: c.Query("search_all") == "true",
 	}
 
-	animes, meta, err := anime_scrapper_service.GetSearch(ctx, queryParams)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		render.ErrorResponse(ctx, c, err, true)
-		return
+	var animes []models.Anime
+	var meta models.Meta
+	var err error
+	if queryParams.SearchAll {
+		sources := []string{"otakudesu", "gogo_anime", "gogo_anime_new"}
+
+		for _, source := range sources {
+			var tmpAnimes []models.Anime
+			queryParams.Source = source
+			tmpAnimes, meta, err = anime_scrapper_service.GetSearch(ctx, queryParams)
+			if err != nil {
+				logrus.WithContext(ctx).Error(err)
+				continue
+			}
+			animes = append(animes, tmpAnimes...)
+		}
+
+	} else {
+		animes, meta, err = anime_scrapper_service.GetSearch(ctx, queryParams)
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			render.ErrorResponse(ctx, c, err, true)
+			return
+		}
 	}
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))

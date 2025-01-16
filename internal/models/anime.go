@@ -12,6 +12,7 @@ type (
 		ID                 string    `json:"id"`
 		Source             string    `json:"source"`
 		Title              string    `json:"title"`
+		AltTitles          []string  `json:"alt_titles"`
 		Description        string    `json:"description"`
 		LatestEpisode      float64   `json:"latest_episode"`
 		CoverUrls          []string  `json:"cover_urls"`
@@ -27,6 +28,7 @@ type (
 		Relations          []Anime   `json:"relations"`
 		Relationship       string    `json:"relationship"`
 		MultipleServer     bool      `json:"multiple_server"`
+		SearchTitle        string    `json:"search_title"`
 	}
 
 	AnimeDetail struct {
