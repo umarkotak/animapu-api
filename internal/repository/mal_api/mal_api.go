@@ -43,7 +43,7 @@ func GetSeasonalAnime(ctx context.Context, year int, season string) ([]mal.Anime
 	c := mal.NewClient(publicInfoClient)
 
 	animes, _, err := c.Anime.Seasonal(
-		ctx, year, mal.AnimeSeason(season), mal.SortSeasonalByAnimeScore, mal.Limit(500),
+		ctx, year, mal.AnimeSeason(season), mal.SortSeasonalByAnimeNumListUsers, mal.Limit(500),
 		mal.Fields{"synopsis", "num_episodes", "alternative_titles"},
 	)
 	if err != nil {
