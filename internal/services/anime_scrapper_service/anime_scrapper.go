@@ -59,6 +59,17 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
 	}
 
+	cachedAnimePerSeason, found := repository.GoCache().Get(queryParams.ToKey("GetPerSeason"))
+	if found {
+		cachedAnimesByte, err := json.Marshal(cachedAnimePerSeason)
+		if err == nil {
+			err = json.Unmarshal(cachedAnimesByte, &animePerSeason)
+			if err == nil {
+				return animePerSeason, models.Meta{FromCache: true}, nil
+			}
+		}
+	}
+
 	malAnimes, err := mal_api.GetSeasonalAnime(ctx, int(queryParams.ReleaseYear), queryParams.ReleaseSeason)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -106,6 +117,10 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 		animes = append(animes, anime)
 	}
 	animePerSeason.Animes = animes
+
+	if len(animePerSeason.Animes) > 0 {
+		repository.GoCache().Set(queryParams.ToKey("GetPerSeason"), animes, 7*24*time.Hour)
+	}
 
 	return animePerSeason, models.Meta{}, nil
 }
