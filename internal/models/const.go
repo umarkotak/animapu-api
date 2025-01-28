@@ -10,12 +10,13 @@ type MangaSource struct {
 }
 
 const (
-	SOURCE_MANGABAT   = "mangabat"
-	SOURCE_ASURA_NACM = "asura_nacm"
-	SOURCE_KOMIKINDO  = "komikindo"
-	SOURCE_KOMIKU     = "komiku"
-	SOURCE_KOMIKCAST  = "komikcast"
-	SOURCE_MANGASEE   = "mangasee"
+	SOURCE_MANGABAT     = "mangabat"
+	SOURCE_ASURA_NACM   = "asura_nacm"
+	SOURCE_KOMIKINDO    = "komikindo"
+	SOURCE_KOMIKU       = "komiku"
+	SOURCE_KOMIKCAST    = "komikcast"
+	SOURCE_MANGASEE     = "mangasee"
+	SOURCE_WEEB_CENTRAL = "weeb_central"
 
 	// powered by mangamee
 	SOURCE_M_MANGABAT  = "m_mangabat"
@@ -87,6 +88,14 @@ var (
 			Language: "en",
 			Title:    "Mangasee",
 			WebLink:  "https://www.mangasee123.com",
+			Active:   true,
+			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_WEEB_CENTRAL,
+			Language: "en",
+			Title:    "Weeb Central",
+			WebLink:  "https://weebcentral.com",
 			Active:   true,
 			Status:   "stable",
 		},

@@ -47,50 +47,26 @@ type (
 
 type Mangasee struct {
 	Host    string
-	AltHost string
 	Source  string
 	ImgHost string
 }
 
 func NewMangasee() Mangasee {
 	return Mangasee{
-		Host:    "https://www.mangasee123.com",
-		AltHost: "https://www.manga4life.com",
 		Source:  "mangasee",
+		Host:    "https://www.mangasee123.com",
 		ImgHost: "https://temp.compsci88.com",
 	}
 }
 
 func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
 	c := colly.NewCollector()
-	// c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.SetRequestTimeout(config.Get().CollyTimeout)
-	// t := &http.Transport{
-	// 	Dial: (&net.Dialer{
-	// 		Timeout:   60 * time.Second,
-	// 		KeepAlive: 30 * time.Second,
-	// 	}).Dial,
-	// 	TLSHandshakeTimeout: 60 * time.Second,
-	// }
-	// c.WithTransport(t)
 
 	mangas := []models.Manga{}
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
-		// r.Headers.Set("cookie", "PHPSESSID=g96c9g1q5gkgs9crgm100vcgts; _ga=GA1.2.461659293.1712208052; _gid=GA1.2.1611366155.1712208052; FullPage=yes;")
-		// r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
-		// r.Headers.Set("accept-language", "en-US,en;q=0.9,id;q=0.8")
-		// r.Headers.Set("cache-control", "max-age=0")
-		// r.Headers.Set("referer", "https://www.manga4life.com/read-online/The-S-Classes-That-I-Raised-chapter-131.html")
-		// r.Headers.Set("sec-ch-ua", "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\"")
-		// r.Headers.Set("sec-ch-ua-mobile", "?0")
-		// r.Headers.Set("sec-ch-ua-platform", "macOS")
-		// r.Headers.Set("sec-fetch-dest", "document")
-		// r.Headers.Set("sec-fetch-mode", "navigate")
-		// r.Headers.Set("sec-fetch-site", "same-origin")
-		// r.Headers.Set("sec-fetch-user", "?1")
-		// r.Headers.Set("upgrade-insecure-requests", "1")
 	})
 
 	c.OnHTML("body > script:nth-child(16)", func(e *colly.HTMLElement) {
@@ -135,7 +111,6 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 
 	targetLinks := []string{
 		fmt.Sprintf("%v", sc.Host),
-		fmt.Sprintf("%v", sc.AltHost),
 	}
 	for _, targetLink := range targetLinks {
 		err := c.Visit(targetLink)
@@ -216,7 +191,6 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 
 	targetLinks := []string{
 		fmt.Sprintf("%v/manga/%v", sc.Host, queryParams.SourceID),
-		fmt.Sprintf("%v/manga/%v", sc.AltHost, queryParams.SourceID),
 	}
 	for _, targetLink := range targetLinks {
 		err := c.Visit(targetLink)
@@ -382,7 +356,6 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 	}
 	targetLinks := []string{
 		fmt.Sprintf("%v/read-online/%v-chapter-%v%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID, modifier),
-		fmt.Sprintf("%v/read-online/%v-chapter-%v%v.html", sc.AltHost, queryParams.SourceID, queryParams.ChapterID, modifier),
 	}
 	for _, targetLink := range targetLinks {
 		for i := 0; i < 2; i++ {

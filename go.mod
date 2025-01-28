@@ -9,6 +9,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-rod/rod v0.116.2
 	github.com/gocolly/colly v1.2.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/google/uuid v1.3.0
@@ -17,7 +18,6 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/schollz/progressbar/v3 v3.16.1
 	github.com/sirupsen/logrus v1.8.1
-	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a
 	google.golang.org/api v0.73.0
 	mvdan.cc/xurls v1.1.0
 )
@@ -55,9 +55,15 @@ require (
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
+	github.com/ysmood/fetchup v0.2.3 // indirect
+	github.com/ysmood/goob v0.4.0 // indirect
+	github.com/ysmood/got v0.40.0 // indirect
+	github.com/ysmood/gson v0.7.3 // indirect
+	github.com/ysmood/leakless v0.9.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
+	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/term v0.24.0 // indirect
 	golang.org/x/text v0.3.7 // indirect

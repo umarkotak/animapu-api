@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-rod/rod"
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
@@ -107,26 +108,30 @@ func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryPara
 		}}}
 	})
 
-	c.OnHTML(`body > div:nth-child(4) > div > div > div > div.w-\[100\%\].float-left.min-\[882px\]\:w-\[68\.5\%\].min-\[1030px\]\:w-\[70\%\].max-\[600px\]\:w-\[100\%\] > div > div.space-y-7 > div.bg-\[\#222222\]`, func(e *colly.HTMLElement) {
-		e.ForEach(`div.pl-4.py-2.border`, func(i int, h *colly.HTMLElement) {
-			chapterLink := h.ChildAttr(`h3.text-sm.text-white.font-medium > a`, "href")
+	c.OnHTML(`div.bg-\[\#222222\] > div > div > div`, func(e *colly.HTMLElement) {
+		chapterLink := e.ChildAttr(`a`, "href")
 
-			if chapterLink == "" {
-				return
-			}
+		if chapterLink == "" {
+			return
+		}
 
-			chapterLinkSplitted := strings.Split(chapterLink, "/")
-			chapterID := chapterLinkSplitted[len(chapterLinkSplitted)-1]
+		chapterLinkSplitted := strings.Split(chapterLink, "/")
+		chapterID := chapterLinkSplitted[len(chapterLinkSplitted)-1]
 
-			manga.Chapters = append(manga.Chapters, models.Chapter{
-				ID:       chapterID,
-				Source:   "asura_nacm",
-				SourceID: chapterID,
-				Title:    h.ChildText("h3.text-sm.text-white.font-medium > a"),
-				Index:    int64(i),
-				Number:   utils.ForceSanitizeStringToFloat(h.ChildText("h3.text-sm.text-white.font-medium > a")),
-			})
-		})
+		chapter := models.Chapter{
+			ID:       chapterID,
+			Source:   "asura_nacm",
+			SourceID: chapterID,
+			Title:    e.ChildText("a > h3.text-sm.text-white.font-medium.flex.flex-row"),
+			Index:    int64(0),
+			Number:   utils.ForceSanitizeStringToFloat(e.ChildText("a > h3.text-sm.text-white.font-medium.flex.flex-row")),
+		}
+
+		if chapter.Title == "" {
+			return
+		}
+
+		manga.Chapters = append(manga.Chapters, chapter)
 	})
 
 	targetUrl := fmt.Sprintf("%v/series/%v", t.Host, queryParams.SourceID)
@@ -216,19 +221,50 @@ func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryPar
 		ChapterImages: []models.ChapterImage{},
 	}
 
-	c.OnHTML(`body > div:nth-child(4) > div > div > div > div.py-8.-mx-5.md\:mx-0.flex.flex-col.items-center.justify-center > div`, func(e *colly.HTMLElement) {
+	c.OnHTML(`body > div > div > div > div > div > div > div`, func(e *colly.HTMLElement) {
 		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
-				e.ChildAttr("img", "src"),
+				"https://gg.asuracomic.net/storage/media/267218/conversions/00-kopya-optimized.webp",
 			},
 		})
 	})
 
-	err := c.Visit(targetLink)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return chapter, err
+	// err := c.Visit(targetLink)
+	// if err != nil {
+	// 	logrus.WithContext(ctx).Error(err)
+	// 	return chapter, err
+	// }
+
+	page := rod.New().MustConnect().MustPage(targetLink)
+
+	el := page.MustElement("div.w-full.mx-auto.center > img")
+	el.Attribute("src")
+	// rod_utils.OutputFile(fmt.Sprintf("hello-%v.png", 9000), el.MustResource())
+
+	els := page.MustElements("div.w-full.mx-auto.center > img")
+
+	for _, el := range els {
+		// rod_utils.OutputFile(fmt.Sprintf("hello-%v.png", i), el.MustResource())
+
+		res, err := el.Attribute("src")
+
+		if err != nil {
+			logrus.WithContext(ctx).Error(err)
+			continue
+		}
+
+		empty := ""
+		if res == nil || res == &empty {
+			continue
+		}
+
+		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+			Index: 0,
+			ImageUrls: []string{
+				*res,
+			},
+		})
 	}
 
 	return chapter, nil
