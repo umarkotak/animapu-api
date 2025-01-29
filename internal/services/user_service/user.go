@@ -28,6 +28,8 @@ func UpsertAndGetUser(ctx context.Context, user models.User) (models.User, error
 			return existingUser, nil
 		}
 
+		user.Guid = sql.NullString{"", false}
+		user.Email = sql.NullString{"", false}
 		user.ID, err = user_repository.Insert(ctx, nil, user)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
