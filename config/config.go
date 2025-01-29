@@ -2,51 +2,34 @@ package config
 
 import (
 	"os"
-	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 )
 
 type (
 	Config struct {
-		Port                            string
-		CacheObj                        *cache.Cache
-		AnimapuOnlineHost               string
-		AnimapuLocalHost                string
-		AnimapuGoogleServiceAccount     string
-		AnimapuFirebaseUrl              string
-		ScrapeNinjaConfig               ScrapeNinjaConfig
-		RedisConfig                     RedisConfig
-		MangameeApiHost                 string
-		SriFirebaseGoogleServiceAccount string
-		SriFirebaseUrl                  string
-		CollyTimeout                    time.Duration
-	}
-	ScrapeNinjaConfig struct {
-		Host         string
-		RapidApiHost string
-		RapidApiKeys []string
-	}
-	RedisConfig struct {
-		DbName   string
-		Endpoint string
-		Username string
-		Password string
+		Port                        string
+		AnimapuOnlineHost           string
+		AnimapuLocalHost            string
+		AnimapuGoogleServiceAccount string
+		AnimapuFirebaseUrl          string
+		MangameeApiHost             string
+		CollyTimeout                time.Duration
+		DbUrl                       string
 	}
 )
 
-var config Config
+var (
+	config Config
+)
 
 func Initialize() error {
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Errorf("Error load env", err)
 	}
-
-	cacheObj := cache.New(5*time.Minute, 10*time.Minute)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -56,28 +39,12 @@ func Initialize() error {
 	config = Config{
 		Port:                        port,
 		AnimapuOnlineHost:           os.Getenv("ANIMAPU_API_HOST"),
-		CacheObj:                    cacheObj,
 		AnimapuLocalHost:            "http://localhost:6001",
 		AnimapuGoogleServiceAccount: os.Getenv("ANIMAPU_GOOGLE_SERVICE_ACCOUNT"),
 		AnimapuFirebaseUrl:          os.Getenv("ANIMAPU_FIREBASE_URL"),
 		MangameeApiHost:             os.Getenv("MANGAMEE_API_HOST"),
 		CollyTimeout:                5 * time.Minute,
-
-		ScrapeNinjaConfig: ScrapeNinjaConfig{
-			Host:         "https://scrapeninja.p.rapidapi.com",
-			RapidApiHost: "scrapeninja.p.rapidapi.com",
-			RapidApiKeys: strings.Split(os.Getenv("RAPID_API_KEYS"), ","),
-		},
-
-		RedisConfig: RedisConfig{
-			DbName:   "coding-free-db",
-			Endpoint: "redis-19453.c292.ap-southeast-1-1.ec2.cloud.redislabs.com:19453",
-			Username: "default",
-			Password: os.Getenv("REDIS_PASSWORD"),
-		},
-
-		SriFirebaseGoogleServiceAccount: os.Getenv("SRI_FIREBASE_GOOGLE_SERVICE_ACCOUNT"),
-		SriFirebaseUrl:                  os.Getenv("SRI_FIREBASE_URL"),
+		DbUrl:                       os.Getenv("DB_URL"),
 	}
 
 	if config.AnimapuFirebaseUrl == "" {

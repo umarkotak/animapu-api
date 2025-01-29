@@ -10,6 +10,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -25,8 +26,8 @@ func NewMangabat() Mangabat {
 	}
 }
 
-func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	mangas := []models.Manga{}
+func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
+	mangas := []contract.Manga{}
 
 	if queryParams.Page <= 0 {
 		queryParams.Page = 1
@@ -64,7 +65,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 			}
 		}
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  sourceID,
 			Source:              "mangabat",
 			SourceID:            sourceID,
@@ -76,8 +77,8 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 			LatestChapterID:     latestChapterID,
 			LatestChapterNumber: latestChapterNumber,
 			LatestChapterTitle:  latestChapterText,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -98,14 +99,14 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 	return mangas, nil
 }
 
-func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
-	manga := models.Manga{
+func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Manga, error) {
+	manga := contract.Manga{
 		Source:      "mangabat",
 		SourceID:    queryParams.SourceID,
 		Status:      "Ongoing",
-		Chapters:    []models.Chapter{},
+		Chapters:    []contract.Chapter{},
 		Description: "Description unavailable",
-		CoverImages: []models.CoverImage{{ImageUrls: []string{""}}},
+		CoverImages: []contract.CoverImage{{ImageUrls: []string{""}}},
 	}
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
@@ -115,7 +116,7 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 	})
 
 	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-left > span.info-image > img", func(e *colly.HTMLElement) {
-		manga.CoverImages = []models.CoverImage{
+		manga.CoverImages = []contract.CoverImage{
 			{
 				Index:     1,
 				ImageUrls: []string{e.Attr("src")},
@@ -134,7 +135,7 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 		chapterNumber, _ := strconv.ParseFloat(splittedLink[len(splittedLink)-1], 64)
 		id := fmt.Sprintf("chap-%v", splittedLink[len(splittedLink)-1])
 
-		manga.Chapters = append(manga.Chapters, models.Chapter{
+		manga.Chapters = append(manga.Chapters, contract.Chapter{
 			ID:       id,
 			Source:   "mangabat",
 			SourceID: id,
@@ -159,8 +160,8 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 	return manga, nil
 }
 
-func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
-	mangas := []models.Manga{}
+func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
+	mangas := []contract.Manga{}
 
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
@@ -180,7 +181,7 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 		latestChapterID := latestChapterTitleSplitted[len(latestChapterTitleSplitted)-1]
 		latestChapterNumber, _ := strconv.ParseFloat(latestChapterID, 64)
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  sourceID,
 			SourceID:            sourceID,
 			Source:              "mangabat",
@@ -192,8 +193,8 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 			LatestChapterID:     latestChapterID,
 			LatestChapterNumber: latestChapterNumber,
 			LatestChapterTitle:  latestChapterTitle,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -215,22 +216,22 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 	return mangas, nil
 }
 
-func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
 	c := colly.NewCollector()
 
 	chapterNumberSplitted := strings.Split(queryParams.ChapterID, "-")
 	chapterNumber, _ := strconv.ParseFloat(chapterNumberSplitted[1], 64)
 
-	chapter := models.Chapter{
+	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        "mangabat",
 		Number:        chapterNumber,
-		ChapterImages: []models.ChapterImage{},
+		ChapterImages: []contract.ChapterImage{},
 	}
 
 	c.OnHTML("body > div.body-site > div.container-chapter-reader > img", func(e *colly.HTMLElement) {
-		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+		chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
 				fmt.Sprintf("%v/image_proxy?referer=%v&target=%v", config.Get().AnimapuOnlineHost, "https://m.mangabat.com/", e.Attr("src")),

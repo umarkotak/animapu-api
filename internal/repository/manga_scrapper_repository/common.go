@@ -3,14 +3,14 @@ package manga_scrapper_repository
 import (
 	"strings"
 
-	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/contract"
 )
 
-func mangasPaginate(mangas []models.Manga, page, perpage int64) []models.Manga {
+func mangasPaginate(mangas []contract.Manga, page, perpage int64) []contract.Manga {
 	startIndex := (page - 1) * perpage
 	endIndex := startIndex + perpage
 	if startIndex >= int64(len(mangas)) {
-		return []models.Manga{}
+		return []contract.Manga{}
 	}
 	if endIndex >= int64(len(mangas)) {
 		endIndex = int64(len(mangas) - 1)

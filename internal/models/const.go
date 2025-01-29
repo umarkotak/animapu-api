@@ -1,44 +1,47 @@
 package models
 
-type MangaSource struct {
-	ID       string `json:"id"`
-	Language string `json:"language"`
-	Title    string `json:"title"`
-	WebLink  string `json:"web_link"`
-	Active   bool   `json:"active"`
-	Status   string `json:"status"`
-}
+type (
+	MangaSource struct {
+		ID       string `json:"id"`
+		Language string `json:"language"`
+		Title    string `json:"title"`
+		WebLink  string `json:"web_link"`
+		Active   bool   `json:"active"`
+		Status   string `json:"status"`
+	}
+
+	AnimeSource struct {
+		ID       string `json:"id"`
+		Language string `json:"language"`
+		Title    string `json:"title"`
+		WebLink  string `json:"web_link"`
+		Active   bool   `json:"active"`
+		Status   string `json:"status"`
+	}
+)
 
 const (
+	// indonesia
+	SOURCE_KOMIKINDO = "komikindo"
+	SOURCE_KOMIKU    = "komiku"
+	SOURCE_KOMIKCAST = "komikcast"
+
+	// english
 	SOURCE_MANGABAT     = "mangabat"
 	SOURCE_ASURA_NACM   = "asura_nacm"
-	SOURCE_KOMIKINDO    = "komikindo"
-	SOURCE_KOMIKU       = "komiku"
-	SOURCE_KOMIKCAST    = "komikcast"
 	SOURCE_MANGASEE     = "mangasee"
 	SOURCE_WEEB_CENTRAL = "weeb_central"
 
-	// powered by mangamee
-	SOURCE_M_MANGABAT  = "m_mangabat"
-	SOURCE_MAIDMY      = "maidmy"
-	SOURCE_MANGAREAD   = "mangaread"
-	SOURCE_MANGATOWN   = "mangatown"
-	SOURCE_ASURA_COMIC = "m_asura"
-	SOURCE_MANGANATO   = "manganato"
-	SOURCE_MANGANELO   = "manganelo"
-	SOURCE_M_MANGASEE  = "m_mangasee"
+	// indonesia
+	ANIME_SOURCE_OTAKUDESU     = "otakudesu"
+	ANIME_SOURCE_ANIMEINDO     = "animeindo"     // TODO: https://anime-indo.lol
+	ANIME_SOURCE_SAMEHADAKU_AC = "samehadaku_ac" // TODO: https://samehadaku.ac
 
-	SOURCE_MANGAHUB   = "mangahub"
-	SOURCE_KLIKMANGA  = "klikmanga"
-	SOURCE_WEBTOONSID = "webtoonsid"
-	SOURCE_MANGADEX   = "mangadex"
-
-	ANIME_SOURCE_OTAKUDESU        = "otakudesu"
-	ANIME_SOURCE_ANIMEINDO        = "animeindo"
-	ANIME_SOURCE_GOGO_ANIME       = "gogo_anime"
-	ANIME_SOURCE_GOGO_ANIME_NEW   = "gogo_anime_new"
-	ANIME_SOURCE_ANIMENSION       = "animension"
-	ANIME_SOURCE_ANIMENSION_LOCAL = "animension_local"
+	// english
+	ANIME_SOURCE_GOGO_ANIME     = "gogo_anime"
+	ANIME_SOURCE_GOGO_ANIME_NEW = "gogo_anime_new"
+	ANIME_SOURCE_GOGO_ANIME_VC  = "gogo_anime_vc" // TODO: https://gogoanime.org.vc
+	ANIME_SOURCE_GOGO_ANIME_CZ  = "gogo_anime_cz" // TODO: https://gogoanime.co.cz
 )
 
 var (
@@ -99,104 +102,32 @@ var (
 			Active:   true,
 			Status:   "stable",
 		},
+	}
 
-		// mangamee
+	AnimeSources = []AnimeSource{
 		{
-			ID:       SOURCE_M_MANGABAT,
-			Language: "en",
-			Title:    "Mangabat",
-			WebLink:  "https://m.mangabat.com/m",
-			Active:   true,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MAIDMY,
+			ID:       ANIME_SOURCE_OTAKUDESU,
 			Language: "id",
-			Title:    "Maid My",
-			WebLink:  "https://www.maid.my.id/",
+			Title:    "Otakudesu",
+			WebLink:  "https://otakudesu.cloud",
 			Active:   true,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MANGAREAD,
-			Language: "en",
-			Title:    "Manga Read",
-			WebLink:  "https://www.mangaread.org/",
-			Active:   false,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MANGATOWN,
-			Language: "en",
-			Title:    "Manga Town",
-			WebLink:  "https://apkpure.com/id/manga-town-manga-reader/com.mangatown.app1/",
-			Active:   false,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_ASURA_COMIC,
-			Language: "en",
-			Title:    "Asura",
-			WebLink:  "https://asura.nacm.xyz",
-			Active:   false,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MANGANATO,
-			Language: "en",
-			Title:    "Manga Nato",
-			WebLink:  "https://manganato.com/index.php",
-			Active:   true,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_MANGANELO,
-			Language: "en",
-			Title:    "Manga Nelo",
-			WebLink:  "https://ww6.manganelo.tv/home",
-			Active:   true,
-			Status:   "stable - from mangamee",
-		},
-		{
-			ID:       SOURCE_M_MANGASEE,
-			Language: "en",
-			Title:    "Mangasee",
-			WebLink:  "https://www.mangasee123.com",
-			Active:   true,
-			Status:   "stable - from mangamee",
-		},
-
-		{
-			ID:       SOURCE_MANGAHUB,
-			Language: "en",
-			Title:    "Manga Hub",
-			WebLink:  "https://www.mangahub.io/",
-			Active:   false,
-			Status:   "not-stable",
-		},
-		{
-			ID:       SOURCE_KLIKMANGA,
-			Language: "id",
-			Title:    "Klik Manga",
-			WebLink:  "https://klikmanga.id/",
-			Active:   false,
 			Status:   "stable",
 		},
 		{
-			ID:       SOURCE_WEBTOONSID,
+			ID:       ANIME_SOURCE_GOGO_ANIME,
 			Language: "id",
-			Title:    "WebToon ID",
-			WebLink:  "https://www.webtoons.com/id/",
-			Active:   false,
+			Title:    "Gogo Anime Old",
+			WebLink:  "https://ww10.gogoanimes.org",
+			Active:   true,
 			Status:   "stable",
 		},
 		{
-			ID:       SOURCE_MANGADEX,
-			Language: "mix",
-			Title:    "Manga Dex",
-			WebLink:  "https://mangadex.org/",
-			Active:   false,
-			Status:   "unavailable",
+			ID:       ANIME_SOURCE_GOGO_ANIME_NEW,
+			Language: "id",
+			Title:    "Gogo Anime New",
+			WebLink:  "https://gogoanime.by", // https://gogoanime.by,
+			Active:   true,
+			Status:   "stable",
 		},
 	}
 )

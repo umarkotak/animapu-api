@@ -4,15 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
+	"github.com/umarkotak/animapu-api/datastore"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
+	"github.com/umarkotak/animapu-api/internal/controllers/migration_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
-	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/repository"
-	"github.com/umarkotak/animapu-api/internal/singelton"
+	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
 
@@ -24,8 +25,9 @@ func Initialize() {
 
 	config.Initialize()
 	repository.Initialize()
-	local_db.Initialize()
-	singelton.Initialize()
+	datastore.Initialize()
+
+	user_repository.Initialize()
 }
 
 func Start() {
@@ -34,6 +36,10 @@ func Start() {
 	r.Use(CORSMiddleware())
 	r.Use(LogRequest())
 	r.Use(LogVisitor())
+	r.Use(CommonCtx())
+	r.Use(RegisterUser())
+
+	r.GET("/migrate_up", migration_controller.MigrateUp)
 
 	r.GET("/health", health_controller.GetHealth)
 	r.GET("/logs", health_controller.GetLogs)
@@ -46,13 +52,9 @@ func Start() {
 	r.GET("/mangas/:manga_source/read/:manga_id/:chapter_id", manga_controller.ReadManga)
 	r.GET("/mangas/:manga_source/search", manga_controller.SearchManga)
 
-	r.GET("/mangas/popular", manga_controller.GetMangaPopular)
-	r.POST("/mangas/upvote", manga_controller.PostMangaUpvote)
-	r.POST("/mangas/follow", manga_controller.PostMangaFollower)
-	r.GET("/mangas/comments/disqus", manga_controller.GetMangaCommentsDisqus)
-
-	r.GET("/users/mangas/histories", user_controller.GetHistories)
-	r.POST("/users/mangas/histories", user_controller.PostHistories)
+	r.GET("/users/mangas/histories", user_controller.FirebaseGetHistories)
+	r.GET("/users/mangas/histories_v2", user_controller.FirebaseGetHistories)
+	r.POST("/users/mangas/histories", user_controller.FirebasePostHistories)
 
 	r.POST("/users/mangas/libraries", user_controller.PostLibrary)
 	r.POST("/users/mangas/libraries/:source/:source_id/remove", user_controller.DeleteLibrary)
@@ -60,11 +62,8 @@ func Start() {
 	r.POST("/users/mangas/libraries/sync", user_controller.SyncLibraries)
 
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
-	r.GET("/mangas/webtoons/image_proxy/*url", proxy_controller.WebtoonsImage)
-	r.GET("/mangas/fizmanga/image_proxy/*url", proxy_controller.FizmangaImage)
 	r.GET("/mangas/klikmanga/image_proxy/*url", proxy_controller.KlikmangaImage)
 	r.GET("/mangas/komikindo/image_proxy/*url", proxy_controller.KomikindoImage)
-	r.GET("/animes/animension/image_proxy/*url", proxy_controller.AnimensionImage)
 	r.GET("/image_proxy", proxy_controller.GenericImage)
 
 	r.GET("/animes/:anime_source/latest", anime_controller.GetLatest)

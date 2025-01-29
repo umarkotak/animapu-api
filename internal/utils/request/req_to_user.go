@@ -6,12 +6,12 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func ReqToUser(req *http.Request) (models.User, error) {
+func ReqToUser(req *http.Request) (models.UserFirebase, error) {
 	if len(req.Header["Animapu-User-Uid"]) < 1 {
-		return models.User{}, models.ErrNotFound
+		return models.UserFirebase{}, models.ErrNotFound
 	}
 
-	return models.User{
+	return models.UserFirebase{
 		Uid: req.Header["Animapu-User-Uid"][0],
 	}, nil
 }

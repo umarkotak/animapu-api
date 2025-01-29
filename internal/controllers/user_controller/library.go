@@ -3,6 +3,7 @@ package user_controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/request"
@@ -10,11 +11,11 @@ import (
 
 type (
 	SyncLibrariesParams struct {
-		Mangas []models.Manga `json:"mangas"`
+		Mangas []contract.Manga `json:"mangas"`
 	}
 
 	PostLibraryParams struct {
-		Manga models.Manga `json:"manga"`
+		Manga contract.Manga `json:"manga"`
 	}
 )
 
@@ -33,7 +34,7 @@ func GetLibraries(c *gin.Context) {
 	}
 
 	// TODO: Implement logic
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	render.Response(c.Request.Context(), c, mangas, nil, 200)
 }

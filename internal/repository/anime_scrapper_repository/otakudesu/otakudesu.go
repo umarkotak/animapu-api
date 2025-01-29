@@ -8,12 +8,10 @@ import (
 	"net/url"
 	"regexp"
 	"slices"
-	"sort"
 	"strings"
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/local_db"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/anime_utils"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
@@ -491,26 +489,6 @@ func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQu
 		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
 		Animes:      []models.Anime{},
 	}
-
-	otakudesuDB := local_db.AnimeLinkToDetailMap
-
-	for _, oneAnime := range otakudesuDB {
-		if oneAnime.ReleaseYear != queryParams.ReleaseYear {
-			continue
-		}
-
-		if oneAnime.ReleaseSeason != queryParams.ReleaseSeason {
-			continue
-		}
-
-		oneAnime.LatestEpisode = 0
-
-		animePerSeason.Animes = append(animePerSeason.Animes, oneAnime)
-	}
-
-	sort.Slice(animePerSeason.Animes, func(i, j int) bool {
-		return animePerSeason.Animes[i].Score < animePerSeason.Animes[j].Score
-	})
 
 	return animePerSeason, nil
 }

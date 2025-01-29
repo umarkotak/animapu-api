@@ -10,6 +10,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -24,11 +25,11 @@ func NewAsuraComic() AsuraComic {
 	}
 }
 
-func (t *AsuraComic) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (t *AsuraComic) GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	c.OnHTML(`body > div:nth-child(4) > div > div > div > div.w-\[100\%\].float-left.min-\[882px\]\:w-\[68\.5\%\].min-\[1030px\]\:w-\[70\%\].max-\[600px\]\:w-\[100\%\] > div > div.grid.grid-cols-2.sm\:grid-cols-2.md\:grid-cols-5.gap-3.p-4 > a`, func(e *colly.HTMLElement) {
 		latestChapterTitle := e.ChildText(`div > div > div.block.w-\[100\%\].h-auto.items-center > span.text-\[13px\].text-\[\#999\]`)
@@ -42,7 +43,7 @@ func (t *AsuraComic) GetHome(ctx context.Context, queryParams models.QueryParams
 		mangaID := splitted[1]
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              "asura_nacm",
@@ -51,8 +52,8 @@ func (t *AsuraComic) GetHome(ctx context.Context, queryParams models.QueryParams
 			LatestChapterID:     "",
 			LatestChapterNumber: latestChapter,
 			LatestChapterTitle:  latestChapterTitle,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -71,12 +72,12 @@ func (t *AsuraComic) GetHome(ctx context.Context, queryParams models.QueryParams
 	return mangas, nil
 }
 
-func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
-	manga := models.Manga{
+	manga := contract.Manga{
 		ID:          queryParams.SourceID,
 		Source:      "asura_nacm",
 		SourceID:    queryParams.SourceID,
@@ -84,8 +85,8 @@ func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryPara
 		Description: "Description unavailable",
 		Genres:      []string{},
 		Status:      "Ongoing",
-		CoverImages: []models.CoverImage{{Index: 0, ImageUrls: []string{""}}},
-		Chapters:    []models.Chapter{},
+		CoverImages: []contract.CoverImage{{Index: 0, ImageUrls: []string{""}}},
+		Chapters:    []contract.Chapter{},
 	}
 
 	c.OnHTML(`body > div:nth-child(4) > div > div > div > div.w-\[100\%\].float-left.min-\[882px\]\:w-\[68\.5\%\].min-\[1030px\]\:w-\[70\%\].max-\[600px\]\:w-\[100\%\] > div > div.space-y-7 > div.space-y-4 > div:nth-child(2) > div.relative.z-10.grid.grid-cols-12.gap-4.pt-4.pl-4.pr-4.pb-12 > div.col-span-12.sm\:col-span-9 > div.text-center.sm\:text-left > span`, func(e *colly.HTMLElement) {
@@ -103,7 +104,7 @@ func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryPara
 		if e.Attr("src") == "" {
 			return
 		}
-		manga.CoverImages = []models.CoverImage{{ImageUrls: []string{
+		manga.CoverImages = []contract.CoverImage{{ImageUrls: []string{
 			e.Attr("src"),
 		}}}
 	})
@@ -118,7 +119,7 @@ func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryPara
 		chapterLinkSplitted := strings.Split(chapterLink, "/")
 		chapterID := chapterLinkSplitted[len(chapterLinkSplitted)-1]
 
-		chapter := models.Chapter{
+		chapter := contract.Chapter{
 			ID:       chapterID,
 			Source:   "asura_nacm",
 			SourceID: chapterID,
@@ -148,11 +149,11 @@ func (t *AsuraComic) GetDetail(ctx context.Context, queryParams models.QueryPara
 	return manga, nil
 }
 
-func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	c.OnHTML(`body > div:nth-child(4) > div > div > div > div.w-\[100\%\].float-left.min-\[882px\]\:w-\[68\.5\%\].min-\[1030px\]\:w-\[70\%\].max-\[600px\]\:w-\[100\%\] > div > div.grid.grid-cols-2.sm\:grid-cols-2.md\:grid-cols-5.gap-3.p-4 > a`, func(e *colly.HTMLElement) {
 		latestChapterTitle := e.ChildText(`div > div > div.block.w-\[100\%\].h-auto.items-center > span.text-\[13px\].text-\[\#999\]`)
@@ -166,7 +167,7 @@ func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryPara
 		mangaID := splitted[1]
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              "asura_nacm",
@@ -175,8 +176,8 @@ func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryPara
 			LatestChapterID:     "",
 			LatestChapterNumber: latestChapter,
 			LatestChapterTitle:  latestChapterTitle,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -204,7 +205,7 @@ func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryPara
 	return mangas, nil
 }
 
-func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
@@ -212,17 +213,17 @@ func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryPar
 
 	targetLink := fmt.Sprintf("%v/series/%v/chapter/%v", t.Host, queryParams.SourceID, queryParams.ChapterID)
 
-	chapter := models.Chapter{
+	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        "asura_nacm",
 		SourceLink:    targetLink,
 		Number:        chapterNumber,
-		ChapterImages: []models.ChapterImage{},
+		ChapterImages: []contract.ChapterImage{},
 	}
 
 	c.OnHTML(`body > div > div > div > div > div > div > div`, func(e *colly.HTMLElement) {
-		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+		chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
 				"https://gg.asuracomic.net/storage/media/267218/conversions/00-kopya-optimized.webp",
@@ -259,7 +260,7 @@ func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryPar
 			continue
 		}
 
-		chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+		chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
 				*res,

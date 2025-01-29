@@ -8,6 +8,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -26,11 +27,11 @@ func NewKomikcast() Komikcast {
 	}
 }
 
-func (sc *Komikcast) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (sc *Komikcast) GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	c.OnHTML("#content > div > div > div.komiklist_filter > div > div > div.list-update_items-wrapper > div.list-update_item", func(e *colly.HTMLElement) {
 		mangaID := e.ChildAttr("a", "href")
@@ -38,7 +39,7 @@ func (sc *Komikcast) GetHome(ctx context.Context, queryParams models.QueryParams
 		mangaID = strings.ReplaceAll(mangaID, "/komik/", "")
 		mangaID = strings.TrimSuffix(mangaID, "/")
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              sc.Source,
@@ -47,8 +48,8 @@ func (sc *Komikcast) GetHome(ctx context.Context, queryParams models.QueryParams
 			LatestChapterID:     "",
 			LatestChapterNumber: utils.ForceSanitizeStringToFloat(strings.ReplaceAll(e.ChildText("a > div.list-update_item-info > div > div.chapter"), "Ch.", "")),
 			LatestChapterTitle:  "",
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -67,12 +68,12 @@ func (sc *Komikcast) GetHome(ctx context.Context, queryParams models.QueryParams
 	return mangas, nil
 }
 
-func (sc *Komikcast) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (sc *Komikcast) GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
-	manga := models.Manga{
+	manga := contract.Manga{
 		ID:          queryParams.SourceID,
 		Source:      sc.Source,
 		SourceID:    queryParams.SourceID,
@@ -80,8 +81,8 @@ func (sc *Komikcast) GetDetail(ctx context.Context, queryParams models.QueryPara
 		Description: "Description unavailable",
 		Genres:      []string{},
 		Status:      "Ongoing",
-		CoverImages: []models.CoverImage{{ImageUrls: []string{}}},
-		Chapters:    []models.Chapter{},
+		CoverImages: []contract.CoverImage{{ImageUrls: []string{}}},
+		Chapters:    []contract.Chapter{},
 	}
 
 	c.OnHTML("h1.komik_info-content-body-title", func(e *colly.HTMLElement) {
@@ -102,7 +103,7 @@ func (sc *Komikcast) GetDetail(ctx context.Context, queryParams models.QueryPara
 		if e.Attr("src") == "" {
 			return
 		}
-		manga.CoverImages = []models.CoverImage{{ImageUrls: []string{
+		manga.CoverImages = []contract.CoverImage{{ImageUrls: []string{
 			e.Attr("src"),
 		}}}
 	})
@@ -118,7 +119,7 @@ func (sc *Komikcast) GetDetail(ctx context.Context, queryParams models.QueryPara
 			return
 		}
 
-		manga.Chapters = append(manga.Chapters, models.Chapter{
+		manga.Chapters = append(manga.Chapters, contract.Chapter{
 			ID:       chapterID,
 			Source:   sc.Source,
 			SourceID: chapterID,
@@ -142,11 +143,11 @@ func (sc *Komikcast) GetDetail(ctx context.Context, queryParams models.QueryPara
 	return manga, nil
 }
 
-func (sc *Komikcast) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (sc *Komikcast) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	c.OnHTML("div.list-update_item", func(e *colly.HTMLElement) {
 		mangaID := e.ChildAttr("a", "href")
@@ -154,7 +155,7 @@ func (sc *Komikcast) GetSearch(ctx context.Context, queryParams models.QueryPara
 		mangaID = strings.ReplaceAll(mangaID, "/komik/", "")
 		mangaID = strings.TrimSuffix(mangaID, "/")
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              sc.Source,
@@ -163,8 +164,8 @@ func (sc *Komikcast) GetSearch(ctx context.Context, queryParams models.QueryPara
 			LatestChapterID:     "",
 			LatestChapterNumber: utils.ForceSanitizeStringToFloat(strings.ReplaceAll(e.ChildText("a > div.list-update_item-info > div > div.chapter"), "Ch.", "")),
 			LatestChapterTitle:  "",
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -187,19 +188,19 @@ func (sc *Komikcast) GetSearch(ctx context.Context, queryParams models.QueryPara
 	return mangas, nil
 }
 
-func (sc *Komikcast) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (sc *Komikcast) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
 	targetLink := fmt.Sprintf("%v/chapter/%v", sc.Host, queryParams.ChapterID)
 
-	chapter := models.Chapter{
+	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        sc.Source,
 		SourceLink:    targetLink,
 		Number:        0,
-		ChapterImages: []models.ChapterImage{},
+		ChapterImages: []contract.ChapterImage{},
 	}
 
 	c.OnHTML("#content > div > div > div.chapter_headpost > h1", func(e *colly.HTMLElement) {
@@ -207,7 +208,7 @@ func (sc *Komikcast) GetChapter(ctx context.Context, queryParams models.QueryPar
 	})
 
 	c.OnHTML("#chapter_body > div.main-reading-area > img", func(e *colly.HTMLElement) {
-		chapterImage := models.ChapterImage{
+		chapterImage := contract.ChapterImage{
 			Index: 0,
 			ImageUrls: []string{
 				e.Attr("src"),

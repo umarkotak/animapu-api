@@ -4,17 +4,18 @@ import (
 	"context"
 
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func RecordUserReadHistory(ctx context.Context, user models.User, manga models.Manga) error {
+func FirebaseRecordUserReadHistory(ctx context.Context, user models.UserFirebase, manga contract.Manga) error {
 	var err error
 
 	oneUser := usersRef.Child(user.Uid)
 
 	if oneUser == nil {
-		user.ReadHistories = []models.Manga{manga}
-		user.ReadHistoriesMap = map[string]models.Manga{manga.GetFbUniqueKey(): manga}
+		user.ReadHistories = []contract.Manga{manga}
+		user.ReadHistoriesMap = map[string]contract.Manga{manga.GetFbUniqueKey(): manga}
 
 		err = oneUser.Set(ctx, user)
 		if err != nil {
@@ -37,16 +38,16 @@ func RecordUserReadHistory(ctx context.Context, user models.User, manga models.M
 		return err
 	}
 
-	tempReadHistories := []models.Manga{}
+	tempReadHistories := []contract.Manga{}
 	for _, historyManga := range user.ReadHistories {
 		if historyManga.GetFbUniqueKey() != manga.GetFbUniqueKey() {
-			historyManga.Chapters = []models.Chapter{}
+			historyManga.Chapters = []contract.Chapter{}
 			tempReadHistories = append(tempReadHistories, historyManga)
 		}
 	}
 	user.ReadHistories = tempReadHistories
 
-	user.ReadHistories = append([]models.Manga{manga}, user.ReadHistories...)
+	user.ReadHistories = append([]contract.Manga{manga}, user.ReadHistories...)
 	err = oneUser.Child("read_histories").Set(ctx, user.ReadHistories)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -56,9 +57,9 @@ func RecordUserReadHistory(ctx context.Context, user models.User, manga models.M
 	return nil
 }
 
-func GetUserReadHistories(ctx context.Context, user models.User) ([]models.Manga, map[string]models.Manga, error) {
-	mangaHistories := []models.Manga{}
-	mangaHistoriesMap := map[string]models.Manga{}
+func FirebaseGetUserReadHistories(ctx context.Context, user models.UserFirebase) ([]contract.Manga, map[string]contract.Manga, error) {
+	mangaHistories := []contract.Manga{}
+	mangaHistoriesMap := map[string]contract.Manga{}
 
 	oneUser := usersRef.Child(user.Uid)
 	if oneUser == nil {

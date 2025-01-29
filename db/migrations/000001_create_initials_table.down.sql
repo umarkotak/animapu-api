@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS manga_libraries;
+DROP TABLE IF EXISTS anime_libraries;
+DROP TABLE IF EXISTS manga_histories;
+DROP TABLE IF EXISTS anime_histories;
+DROP TABLE IF EXISTS manga_chapters;
+DROP TABLE IF EXISTS mangas;
+DROP TABLE IF EXISTS animes;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS schema_migrations;

@@ -6,15 +6,16 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/datastore"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/repository"
 )
 
-func GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, models.Meta, error) {
-	mangas := []models.Manga{}
+func GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, models.Meta, error) {
+	mangas := []contract.Manga{}
 	var err error
 
-	cachedMangas, found := repository.GoCache().Get(queryParams.ToKey("page_latest"))
+	cachedMangas, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_latest"))
 	if found {
 		cachedMangasByte, err := json.Marshal(cachedMangas)
 		if err == nil {
@@ -47,17 +48,18 @@ func GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Mang
 	}
 
 	if len(mangas) > 0 {
-		go repository.GoCache().Set(queryParams.ToKey("page_latest"), mangas, 10*time.Minute)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("page_latest"), mangas, 10*time.Minute)
+		go MangaSync(ctx, mangas)
 	}
 
 	return mangas, models.Meta{}, nil
 }
 
-func GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, models.Meta, error) {
-	manga := models.Manga{}
+func GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Manga, models.Meta, error) {
+	manga := contract.Manga{}
 	var err error
 
-	cachedManga, found := repository.GoCache().Get(queryParams.ToKey("page_detail"))
+	cachedManga, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_detail"))
 	if found {
 		cachedMangaByte, err := json.Marshal(cachedManga)
 		if err == nil {
@@ -86,18 +88,18 @@ func GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Mang
 	}
 
 	if len(manga.Chapters) > 0 {
-		go repository.GoCache().Set(queryParams.ToKey("page_detail"), manga, 15*time.Hour)
-		// go cacheManga(context.Background(), queryParams.ToKey("page_detail"), manga)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("page_detail"), manga, 15*time.Hour)
+		go MangaSync(ctx, []contract.Manga{manga})
 	}
 
 	return manga, models.Meta{}, nil
 }
 
-func GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, models.Meta, error) {
-	mangas := []models.Manga{}
+func GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, models.Meta, error) {
+	mangas := []contract.Manga{}
 	var err error
 
-	cachedMangas, found := repository.GoCache().Get(queryParams.ToKey("page_search"))
+	cachedMangas, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_search"))
 	if found {
 		cachedMangasByte, err := json.Marshal(cachedMangas)
 		if err == nil {
@@ -121,15 +123,16 @@ func GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Ma
 	}
 
 	if len(mangas) > 0 {
-		go repository.GoCache().Set(queryParams.ToKey("page_search"), mangas, 30*24*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("page_search"), mangas, 30*24*time.Hour)
+		go MangaSync(ctx, mangas)
 	}
 
 	return mangas, models.Meta{}, nil
 }
 
-func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, models.Meta, error) {
+func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, models.Meta, error) {
 	var err error
-	chapter := models.Chapter{}
+	chapter := contract.Chapter{}
 
 	// _, chapterJsonByte, err := repository.FbGet(ctx, queryParams.ToFbKey("page_read"))
 	// if err == nil {
@@ -139,7 +142,7 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Cha
 	// 	}
 	// }
 
-	cachedChapter, found := repository.GoCache().Get(queryParams.ToKey("page_read"))
+	cachedChapter, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_read"))
 	if found {
 		cachedChapterByte, err := json.Marshal(cachedChapter)
 		if err == nil {
@@ -175,7 +178,7 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Cha
 		// if err != nil {
 		// 	logrus.WithContext(ctx).Error(err)
 		// }
-		go repository.GoCache().Set(queryParams.ToKey("page_read"), chapter, 30*24*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("page_read"), chapter, 30*24*time.Hour)
 	}
 
 	return chapter, models.Meta{}, nil

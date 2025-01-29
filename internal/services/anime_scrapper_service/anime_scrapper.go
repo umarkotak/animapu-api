@@ -7,15 +7,15 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/datastore"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/repository/mal_api"
 )
 
 func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
 	animes := []models.Anime{}
 
-	cachedAnimes, found := repository.GoCache().Get(queryParams.ToKey("GetLatest"))
+	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetLatest"))
 	if found {
 		cachedAnimesByte, err := json.Marshal(cachedAnimes)
 		if err == nil {
@@ -46,7 +46,7 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 	}
 
 	if len(animes) > 0 {
-		repository.GoCache().Set(queryParams.ToKey("GetLatest"), animes, 24*time.Hour)
+		datastore.Get().GoCache.Set(queryParams.ToKey("GetLatest"), animes, 24*time.Hour)
 	}
 
 	return animes, models.Meta{}, nil
@@ -59,7 +59,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
 	}
 
-	cachedAnimePerSeason, found := repository.GoCache().Get(queryParams.ToKey("GetPerSeason"))
+	cachedAnimePerSeason, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetPerSeason"))
 	if found {
 		cachedAnimesByte, err := json.Marshal(cachedAnimePerSeason)
 		if err == nil {
@@ -119,7 +119,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 	animePerSeason.Animes = animes
 
 	if len(animePerSeason.Animes) > 0 {
-		repository.GoCache().Set(queryParams.ToKey("GetPerSeason"), animes, 7*24*time.Hour)
+		datastore.Get().GoCache.Set(queryParams.ToKey("GetPerSeason"), animes, 7*24*time.Hour)
 	}
 
 	return animePerSeason, models.Meta{}, nil
@@ -128,7 +128,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, models.Meta, error) {
 	anime := models.Anime{}
 
-	cachedAnime, found := repository.GoCache().Get(queryParams.ToKey("GetDetail"))
+	cachedAnime, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetDetail"))
 	if found {
 		cachedAnimeByte, err := json.Marshal(cachedAnime)
 		if err == nil {
@@ -159,7 +159,7 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models
 	}
 
 	if anime.ID != "" {
-		repository.GoCache().Set(queryParams.ToKey("GetDetail"), anime, 24*time.Hour)
+		datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 24*time.Hour)
 	}
 
 	return anime, models.Meta{}, nil
@@ -168,7 +168,7 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models
 func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, models.Meta, error) {
 	episodeWatch := models.EpisodeWatch{}
 
-	cachedEpisodeWatch, found := repository.GoCache().Get(queryParams.ToKey("Watch"))
+	cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
 	if found {
 		cachedEpisodeWatchByte, err := json.Marshal(cachedEpisodeWatch)
 		if err == nil {
@@ -199,7 +199,7 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 	}
 
 	// if episodeWatch.RawStreamUrl != "" || episodeWatch.IframeUrl != "" {
-	// 	repository.GoCache().Set(queryParams.ToKey("Watch"), episodeWatch, 24*time.Hour)
+	// 	datastore.Get().GoCache.Set(queryParams.ToKey("Watch"), episodeWatch, 24*time.Hour)
 	// }
 
 	return episodeWatch, models.Meta{}, nil
@@ -208,7 +208,7 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
 	animes := []models.Anime{}
 
-	cachedAnimes, found := repository.GoCache().Get(queryParams.ToKey("GetSearch"))
+	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetSearch"))
 	if found {
 		cachedAnimesByte, err := json.Marshal(cachedAnimes)
 		if err == nil {
@@ -239,7 +239,7 @@ func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 	}
 
 	if len(animes) > 0 {
-		repository.GoCache().Set(queryParams.ToKey("GetSearch"), animes, 24*time.Hour)
+		datastore.Get().GoCache.Set(queryParams.ToKey("GetSearch"), animes, 24*time.Hour)
 	}
 
 	return animes, models.Meta{}, nil

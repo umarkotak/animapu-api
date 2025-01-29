@@ -2,12 +2,9 @@ package repository
 
 import (
 	"context"
-	"time"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/db"
-	"github.com/go-redis/redis/v8"
-	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
@@ -21,22 +18,11 @@ var (
 	popularMangaRef   *db.Ref
 	genericCacheRef   *db.Ref
 	usersRef          *db.Ref
-	rdb               *redis.Client
-	goCache           *cache.Cache
 )
 
 func Initialize() {
 	var err error
 	ctx := context.Background()
-
-	goCache = cache.New(5*time.Minute, 10*time.Minute)
-
-	// Init Redis
-	rdb = redis.NewClient(&redis.Options{
-		Addr:     config.Get().RedisConfig.Endpoint,
-		Password: config.Get().RedisConfig.Password,
-		DB:       0,
-	})
 
 	// Init FB app
 	firebaseConfig := &firebase.Config{

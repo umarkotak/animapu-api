@@ -10,6 +10,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -26,11 +27,11 @@ func NewKomikindo() Komikindo {
 	}
 }
 
-func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	c.OnHTML("#content > div.postbody > section.whites > div.widget-body > div > div > div.listupd > div.animepost", func(e *colly.HTMLElement) {
 		latestChapterTitle := e.ChildText("div.animposx > div.bigor > div > div > a")
@@ -43,7 +44,7 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 		mangaID := splitted[1]
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              sc.Source,
@@ -52,8 +53,8 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 			LatestChapterID:     "",
 			LatestChapterNumber: latestChapter,
 			LatestChapterTitle:  latestChapterTitle,
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -72,12 +73,12 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 	return mangas, nil
 }
 
-func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryParams) (models.Manga, error) {
+func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
-	manga := models.Manga{
+	manga := contract.Manga{
 		ID:          queryParams.SourceID,
 		Source:      sc.Source,
 		SourceID:    queryParams.SourceID,
@@ -85,8 +86,8 @@ func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryPara
 		Description: "Description unavailable",
 		Genres:      []string{},
 		Status:      "Ongoing",
-		CoverImages: []models.CoverImage{{ImageUrls: []string{}}},
-		Chapters:    []models.Chapter{},
+		CoverImages: []contract.CoverImage{{ImageUrls: []string{}}},
+		Chapters:    []contract.Chapter{},
 	}
 
 	c.OnHTML("div.infoanime > h1.entry-title", func(e *colly.HTMLElement) {
@@ -104,7 +105,7 @@ func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryPara
 		if e.Attr("src") == "" {
 			return
 		}
-		manga.CoverImages = []models.CoverImage{{ImageUrls: []string{
+		manga.CoverImages = []contract.CoverImage{{ImageUrls: []string{
 			fmt.Sprintf("%v/mangas/komikindo/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
 		}}}
 	})
@@ -116,7 +117,7 @@ func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryPara
 			chapterID := chapterUrl.Path
 			chapterID = strings.ReplaceAll(chapterID, "/", "")
 
-			manga.Chapters = append(manga.Chapters, models.Chapter{
+			manga.Chapters = append(manga.Chapters, contract.Chapter{
 				ID:       chapterID,
 				Source:   sc.Source,
 				SourceID: chapterID,
@@ -141,11 +142,11 @@ func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryPara
 	return manga, nil
 }
 
-func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]models.Manga, error) {
+func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	mangas := []models.Manga{}
+	mangas := []contract.Manga{}
 
 	c.OnHTML("#content > div.postbody > section > div.film-list > div.animepost", func(e *colly.HTMLElement) {
 		mangaLink := e.ChildAttr("div.animposx > a", "href")
@@ -154,7 +155,7 @@ func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryPara
 		mangaID := splitted[1]
 		mangaID = strings.ReplaceAll(mangaID, "/", "")
 
-		mangas = append(mangas, models.Manga{
+		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              sc.Source,
@@ -163,8 +164,8 @@ func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryPara
 			LatestChapterID:     "",
 			LatestChapterNumber: 0,
 			LatestChapterTitle:  "",
-			Chapters:            []models.Chapter{},
-			CoverImages: []models.CoverImage{
+			Chapters:            []contract.Chapter{},
+			CoverImages: []contract.CoverImage{
 				{
 					Index: 1,
 					ImageUrls: []string{
@@ -186,7 +187,7 @@ func (sc *Komikindo) GetSearch(ctx context.Context, queryParams models.QueryPara
 	return mangas, nil
 }
 
-func (sc *Komikindo) GetChapter(ctx context.Context, queryParams models.QueryParams) (models.Chapter, error) {
+func (sc *Komikindo) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
@@ -199,18 +200,18 @@ func (sc *Komikindo) GetChapter(ctx context.Context, queryParams models.QueryPar
 
 	targetLink := fmt.Sprintf("%v/%v", sc.Host, queryParams.ChapterID)
 
-	chapter := models.Chapter{
+	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        sc.Source,
 		SourceLink:    targetLink,
 		Number:        chapterNumber,
-		ChapterImages: []models.ChapterImage{},
+		ChapterImages: []contract.ChapterImage{},
 	}
 
 	c.OnHTML("#chimg-auh", func(e *colly.HTMLElement) {
 		e.ForEach("img", func(i int, h *colly.HTMLElement) {
-			chapter.ChapterImages = append(chapter.ChapterImages, models.ChapterImage{
+			chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
 				Index: 0,
 				ImageUrls: []string{
 					fmt.Sprintf("%v/mangas/komikindo/image_proxy/%v", config.Get().AnimapuOnlineHost, h.Attr("src")),
