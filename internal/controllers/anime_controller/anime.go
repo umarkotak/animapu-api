@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
@@ -41,14 +42,14 @@ func GetSearch(c *gin.Context) {
 		SearchAll: c.Query("search_all") == "true",
 	}
 
-	var animes []models.Anime
+	var animes []contract.Anime
 	var meta models.Meta
 	var err error
 	if queryParams.SearchAll {
 		sources := []string{"otakudesu", "gogo_anime", "gogo_anime_new"}
 
 		for _, source := range sources {
-			var tmpAnimes []models.Anime
+			var tmpAnimes []contract.Anime
 			queryParams.Source = source
 			tmpAnimes, meta, err = anime_scrapper_service.GetSearch(ctx, queryParams)
 			if err != nil {

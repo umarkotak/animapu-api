@@ -12,6 +12,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/anime_utils"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
@@ -40,8 +41,8 @@ func NewOtakudesu() Otakudesu {
 	}
 }
 
-func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	c := colly.NewCollector()
 
@@ -59,7 +60,7 @@ func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 			return
 		}
 
-		animes = append(animes, models.Anime{
+		animes = append(animes, contract.Anime{
 			ID:            id,
 			Source:        s.Source,
 			Title:         e.ChildText("div > div.thumb > a > div > h2"),
@@ -90,8 +91,8 @@ func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 	return animes, nil
 }
 
-func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	c := colly.NewCollector()
 
@@ -109,7 +110,7 @@ func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQuery
 			return
 		}
 
-		animes = append(animes, models.Anime{
+		animes = append(animes, contract.Anime{
 			ID:            id,
 			Source:        s.Source,
 			Title:         e.ChildText("h2 > a"),
@@ -130,15 +131,15 @@ func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQuery
 	return animes, nil
 }
 
-func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
+func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, error) {
 	targetUrl := fmt.Sprintf("%v/anime/%v", s.OtakudesuHost, queryParams.SourceID)
-	anime := models.Anime{
+	anime := contract.Anime{
 		ID:             queryParams.SourceID,
 		Source:         s.AnimapuSource,
 		Title:          "",
 		LatestEpisode:  0,          // done
 		CoverUrls:      []string{}, // done
-		Episodes:       []models.Episode{},
+		Episodes:       []contract.Episode{},
 		OriginalLink:   targetUrl,
 		MultipleServer: true,
 	}
@@ -205,7 +206,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 				}
 			}
 
-			episode := models.Episode{
+			episode := contract.Episode{
 				AnimeID:      queryParams.SourceID,
 				Source:       s.Source,
 				ID:           id,
@@ -236,14 +237,14 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	return anime, nil
 }
 
-func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
+func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
 	if queryParams.Resolution == "" {
 		queryParams.Resolution = "720p"
 	}
 
-	streamOptions := []models.StreamOption{}
+	streamOptions := []contract.StreamOption{}
 
-	episodeWatch := models.EpisodeWatch{}
+	episodeWatch := contract.EpisodeWatch{}
 
 	c := colly.NewCollector()
 
@@ -269,7 +270,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 				Name: h.Text,
 				Idx:  fmt.Sprint(i),
 			})
-			streamOptions = append(streamOptions, models.StreamOption{
+			streamOptions = append(streamOptions, contract.StreamOption{
 				Resolution: "720p",
 				Index:      fmt.Sprint(i),
 				Name:       h.Text,
@@ -282,7 +283,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 				Name: h.Text,
 				Idx:  fmt.Sprint(i),
 			})
-			streamOptions = append(streamOptions, models.StreamOption{
+			streamOptions = append(streamOptions, contract.StreamOption{
 				Resolution: "480p",
 				Index:      fmt.Sprint(i),
 				Name:       h.Text,
@@ -295,7 +296,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 				Name: h.Text,
 				Idx:  fmt.Sprint(i),
 			})
-			streamOptions = append(streamOptions, models.StreamOption{
+			streamOptions = append(streamOptions, contract.StreamOption{
 				Resolution: "360p",
 				Index:      fmt.Sprint(i),
 				Name:       h.Text,
@@ -372,7 +373,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		})
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
-			return models.EpisodeWatch{}, err
+			return contract.EpisodeWatch{}, err
 		}
 
 		iframeBase64Data := map[string]string{}
@@ -381,13 +382,13 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		if iframeBase64 == "" {
 			err = fmt.Errorf("missing iframe data")
 			logrus.WithContext(ctx).Error(err)
-			return models.EpisodeWatch{}, err
+			return contract.EpisodeWatch{}, err
 		}
 
 		iframeBase64Decoded, err := base64.StdEncoding.DecodeString(iframeBase64)
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)
-			return models.EpisodeWatch{}, err
+			return contract.EpisodeWatch{}, err
 		}
 
 		re := regexp.MustCompile(`src="([^"]+)"`)
@@ -400,7 +401,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 
 		if iframeFinalUrl != "" {
-			episodeWatch = models.EpisodeWatch{
+			episodeWatch = contract.EpisodeWatch{
 				StreamType:    "iframe",
 				IframeUrl:     iframeFinalUrl,
 				OriginalUrl:   targetUrl,
@@ -467,10 +468,10 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 
 	if iframeFinalUrl == "" {
 		err = fmt.Errorf("final iframe url not found at all")
-		return models.EpisodeWatch{}, err
+		return contract.EpisodeWatch{}, err
 	}
 
-	episodeWatch = models.EpisodeWatch{
+	episodeWatch = contract.EpisodeWatch{
 		StreamType:    "iframe",
 		IframeUrl:     iframeFinalUrl,
 		OriginalUrl:   targetUrl,
@@ -482,17 +483,17 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	return episodeWatch, nil
 }
 
-func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, error) {
-	animePerSeason := models.AnimePerSeason{
+func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (contract.AnimePerSeason, error) {
+	animePerSeason := contract.AnimePerSeason{
 		ReleaseYear: queryParams.ReleaseYear,
 		SeasonName:  queryParams.ReleaseSeason,
 		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
-		Animes:      []models.Anime{},
+		Animes:      []contract.Anime{},
 	}
 
 	return animePerSeason, nil
 }
 
-func (s *Otakudesu) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	return []models.Anime{}, nil
+func (s *Otakudesu) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	return []contract.Anime{}, nil
 }

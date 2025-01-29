@@ -7,6 +7,7 @@ import (
 
 type (
 	QueryParams struct {
+		User              User   `json:"-"`
 		Source            string `json:"source"`
 		SourceID          string `json:"source_id"`
 		SecondarySourceID string `json:"secondary_source_id"`

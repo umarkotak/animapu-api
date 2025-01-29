@@ -5,7 +5,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/services/manga_history_service"
 	"github.com/umarkotak/animapu-api/internal/services/user_history_service"
+	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/request"
 )
@@ -17,7 +19,7 @@ type (
 	}
 )
 
-func FirebaseGetHistories(c *gin.Context) {
+func GetHistories(c *gin.Context) {
 	user, err := request.ReqToUser(c.Request)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
@@ -48,21 +50,10 @@ func FirebaseGetHistories(c *gin.Context) {
 	)
 }
 
-func FirebaseGetHistoriesV2(c *gin.Context) {
-	user, err := request.ReqToUser(c.Request)
-	if err != nil {
-		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err, false)
-		return
-	}
+func GetHistoriesV2(c *gin.Context) {
+	commonCtx := common_ctx.GetFromGinCtx(c)
 
-	if user.Uid == "" {
-		err = models.ErrUnauthorized
-		render.ErrorResponse(c.Request.Context(), c, err, false)
-		return
-	}
-
-	mangaHistories, mangaHistoriesMap, err := user_history_service.FirebaseGetReadHistories(c.Request.Context(), user)
+	mangaHistories, err := manga_history_service.GetHistories(c.Request.Context(), commonCtx.User, 1000, 0)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)
@@ -71,9 +62,8 @@ func FirebaseGetHistoriesV2(c *gin.Context) {
 
 	render.Response(
 		c.Request.Context(), c,
-		map[string]interface{}{
-			"manga_histories":     mangaHistories,
-			"manga_histories_map": mangaHistoriesMap,
+		map[string]any{
+			"manga_histories": mangaHistories,
 		},
 		nil, 200,
 	)

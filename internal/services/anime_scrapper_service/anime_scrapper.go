@@ -8,12 +8,13 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/datastore"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/mal_api"
 )
 
-func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
-	animes := []models.Anime{}
+func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	animes := []contract.Anime{}
 
 	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetLatest"))
 	if found {
@@ -52,8 +53,8 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 	return animes, models.Meta{}, nil
 }
 
-func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, models.Meta, error) {
-	animePerSeason := models.AnimePerSeason{
+func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (contract.AnimePerSeason, models.Meta, error) {
+	animePerSeason := contract.AnimePerSeason{
 		ReleaseYear: queryParams.ReleaseYear,
 		SeasonName:  queryParams.ReleaseSeason,
 		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
@@ -76,7 +77,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 		return animePerSeason, models.Meta{}, err
 	}
 
-	animes := []models.Anime{}
+	animes := []contract.Anime{}
 	for _, malAnime := range malAnimes {
 		altTitles := []string{}
 
@@ -92,7 +93,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 			altTitles = append(altTitles, malAnime.AlternativeTitles.Synonyms...)
 		}
 
-		anime := models.Anime{
+		anime := contract.Anime{
 			ID:                 fmt.Sprint(malAnime.ID),
 			Source:             "mal",
 			Title:              malAnime.Title,
@@ -101,7 +102,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 			LatestEpisode:      float64(malAnime.NumEpisodes),
 			CoverUrls:          []string{malAnime.MainPicture.Medium},
 			Genres:             []string{},
-			Episodes:           []models.Episode{},
+			Episodes:           []contract.Episode{},
 			OriginalLink:       "",
 			ReleaseMonth:       "",
 			ReleaseSeason:      queryParams.ReleaseSeason,
@@ -109,7 +110,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 			ReleaseYear:        queryParams.ReleaseYear,
 			ReleaseDate:        "",
 			Score:              float64(malAnime.MyListStatus.Score),
-			Relations:          []models.Anime{},
+			Relations:          []contract.Anime{},
 			Relationship:       "",
 			MultipleServer:     false,
 			SearchTitle:        "",
@@ -125,8 +126,8 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (mod
 	return animePerSeason, models.Meta{}, nil
 }
 
-func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, models.Meta, error) {
-	anime := models.Anime{}
+func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, models.Meta, error) {
+	anime := contract.Anime{}
 
 	cachedAnime, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetDetail"))
 	if found {
@@ -165,8 +166,8 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models
 	return anime, models.Meta{}, nil
 }
 
-func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, models.Meta, error) {
-	episodeWatch := models.EpisodeWatch{}
+func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, models.Meta, error) {
+	episodeWatch := contract.EpisodeWatch{}
 
 	cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
 	if found {
@@ -205,8 +206,8 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.Epi
 	return episodeWatch, models.Meta{}, nil
 }
 
-func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
-	animes := []models.Anime{}
+func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	animes := []contract.Anime{}
 
 	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetSearch"))
 	if found {
@@ -245,8 +246,8 @@ func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]mode
 	return animes, models.Meta{}, nil
 }
 
-func GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, models.Meta, error) {
-	animes := []models.Anime{}
+func GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	animes := []contract.Anime{}
 
 	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
 	if err != nil {

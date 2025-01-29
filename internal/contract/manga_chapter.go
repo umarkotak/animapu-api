@@ -1,4 +1,4 @@
-package models
+package contract
 
 type (
 	Chapter struct {
@@ -20,3 +20,13 @@ type (
 		ImageUrls    []string `json:"image_urls"`
 	}
 )
+
+func (m *Chapter) ImageURLs() []string {
+	imageURLs := []string{}
+
+	for _, coverImage := range m.ChapterImages {
+		imageURLs = append(imageURLs, coverImage.ImageUrls...)
+	}
+
+	return imageURLs
+}

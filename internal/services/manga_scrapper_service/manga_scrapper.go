@@ -49,7 +49,7 @@ func GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Ma
 
 	if len(mangas) > 0 {
 		go datastore.Get().GoCache.Set(queryParams.ToKey("page_latest"), mangas, 10*time.Minute)
-		go MangaSync(ctx, mangas)
+		go MangaSync(context.Background(), mangas)
 	}
 
 	return mangas, models.Meta{}, nil
@@ -89,7 +89,11 @@ func GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Ma
 
 	if len(manga.Chapters) > 0 {
 		go datastore.Get().GoCache.Set(queryParams.ToKey("page_detail"), manga, 15*time.Hour)
-		go MangaSync(ctx, []contract.Manga{manga})
+	}
+
+	err = MangaSync(ctx, []contract.Manga{manga})
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
 	}
 
 	return manga, models.Meta{}, nil
@@ -124,7 +128,7 @@ func GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.
 
 	if len(mangas) > 0 {
 		go datastore.Get().GoCache.Set(queryParams.ToKey("page_search"), mangas, 30*24*time.Hour)
-		go MangaSync(ctx, mangas)
+		go MangaSync(context.Background(), mangas)
 	}
 
 	return mangas, models.Meta{}, nil
@@ -133,14 +137,6 @@ func GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.
 func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, models.Meta, error) {
 	var err error
 	chapter := contract.Chapter{}
-
-	// _, chapterJsonByte, err := repository.FbGet(ctx, queryParams.ToFbKey("page_read"))
-	// if err == nil {
-	// 	err = json.Unmarshal(chapterJsonByte, &chapter)
-	// 	if err == nil {
-	// 		return chapter, nil
-	// 	}
-	// }
 
 	cachedChapter, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_read"))
 	if found {
@@ -174,12 +170,10 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.C
 	}
 
 	if err == nil && len(chapter.ChapterImages) > 5 {
-		// err = repository.FbSet(ctx, queryParams.ToFbKey("page_read"), chapter, time.Now().UTC().Add(30*24*time.Hour))
-		// if err != nil {
-		// 	logrus.WithContext(ctx).Error(err)
-		// }
 		go datastore.Get().GoCache.Set(queryParams.ToKey("page_read"), chapter, 30*24*time.Hour)
 	}
+
+	MangaChapterSync(ctx, queryParams, chapter)
 
 	return chapter, models.Meta{}, nil
 }

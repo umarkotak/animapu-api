@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -66,12 +65,10 @@ func RegisterUser() gin.HandlerFunc {
 		if exists {
 			commonCtx := commonCtxInterface.(common_ctx.CommonCtx)
 
-			logrus.WithContext(c.Request.Context()).Infof("USER DATA: %+v", commonCtx.User)
-
 			user, err := user_service.UpsertAndGetUser(c.Request.Context(), models.User{
 				VisitorId: commonCtx.User.VisitorId,
-				Guid:      sql.NullString{commonCtx.User.Guid, true},
-				Email:     sql.NullString{commonCtx.User.Email, true},
+				Guid:      commonCtx.User.Guid,
+				Email:     commonCtx.User.Email,
 			})
 			if err != nil {
 				render.ErrorResponse(c.Request.Context(), c, err, true)

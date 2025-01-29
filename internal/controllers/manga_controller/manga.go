@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
+	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
@@ -55,6 +56,7 @@ func ReadManga(c *gin.Context) {
 		SourceID:          c.Param("manga_id"),
 		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
 		ChapterID:         c.Param("chapter_id"),
+		User:              common_ctx.GetFromGinCtx(c).User,
 	}
 
 	chapter, meta, err := manga_scrapper_service.GetChapter(ctx, queryParams)

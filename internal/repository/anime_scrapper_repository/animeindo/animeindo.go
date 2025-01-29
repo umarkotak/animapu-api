@@ -7,6 +7,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -25,8 +26,8 @@ func NewAnimeindo() Animeindo {
 	}
 }
 
-func (s *Animeindo) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *Animeindo) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	c := colly.NewCollector()
 
@@ -41,7 +42,7 @@ func (s *Animeindo) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 		}
 		animeID = splitted[0]
 
-		animes = append(animes, models.Anime{
+		animes = append(animes, contract.Anime{
 			ID:            animeID,
 			Source:        s.Source,
 			Title:         e.ChildText("div > p"),
@@ -62,22 +63,22 @@ func (s *Animeindo) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 	return animes, nil
 }
 
-func (s *Animeindo) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *Animeindo) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	return animes, nil
 }
 
-func (s *Animeindo) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
+func (s *Animeindo) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, error) {
 	targetUrl := fmt.Sprintf("%v/anime/%v/", s.Host, queryParams.SourceID)
 
-	anime := models.Anime{
+	anime := contract.Anime{
 		ID:             queryParams.SourceID,
 		Source:         s.AnimapuSource,
 		Title:          "",
 		LatestEpisode:  0,          // done
 		CoverUrls:      []string{}, // done
-		Episodes:       []models.Episode{},
+		Episodes:       []contract.Episode{},
 		OriginalLink:   targetUrl,
 		MultipleServer: true,
 	}
@@ -100,20 +101,20 @@ func (s *Animeindo) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	return anime, nil
 }
 
-func (s *Animeindo) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
-	episode := models.EpisodeWatch{}
+func (s *Animeindo) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
+	episode := contract.EpisodeWatch{}
 
 	return episode, nil
 }
 
-func (s *Animeindo) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, error) {
-	animePerSeason := models.AnimePerSeason{}
+func (s *Animeindo) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (contract.AnimePerSeason, error) {
+	animePerSeason := contract.AnimePerSeason{}
 
 	return animePerSeason, nil
 }
 
-func (s *Animeindo) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *Animeindo) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	return animes, nil
 }

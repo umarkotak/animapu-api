@@ -30,6 +30,16 @@ type (
 		FollowCount         int64        `json:"follow_count"`
 	}
 
+	MangaHistory struct {
+		Source              string       `json:"source"`
+		SourceID            string       `json:"source_id"`
+		Title               string       `json:"title"`
+		LatestChapterNumber float64      `json:"latest_chapter_number"`
+		CoverImages         []CoverImage `json:"cover_image"`
+		LastChapterRead     float64      `json:"last_chapter_read"`
+		LastLink            string       `json:"last_link"`
+	}
+
 	CoverImage struct {
 		Index     int64    `json:"index"`
 		ImageUrls []string `json:"image_urls"`
@@ -54,4 +64,14 @@ func (m *Manga) GenerateLatestChapter() {
 		m.LatestChapterNumber = m.Chapters[0].Number
 		m.LatestChapterTitle = m.Chapters[0].Title
 	}
+}
+
+func (m *Manga) ImageURLs() []string {
+	imageURLs := []string{}
+
+	for _, coverImage := range m.CoverImages {
+		imageURLs = append(imageURLs, coverImage.ImageUrls...)
+	}
+
+	return imageURLs
 }

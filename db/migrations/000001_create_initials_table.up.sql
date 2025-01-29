@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS animes (
   source_id TEXT NOT NULL,
   title TEXT NOT NULL,
   cover_urls TEXT [] NOT NULL DEFAULT '{}',
-  latest_episode BIGINT NOT NULL
+  latest_episode BIGINT NOT NULL,
+
+  UNIQUE (source, source_id)
 );
 ALTER SEQUENCE animes_id_seq RESTART WITH 1;
 
@@ -36,7 +38,9 @@ CREATE TABLE IF NOT EXISTS mangas (
   source_id TEXT NOT NULL,
   title TEXT NOT NULL,
   cover_urls TEXT [] NOT NULL DEFAULT '{}',
-  latest_chapter FLOAT NOT NULL
+  latest_chapter FLOAT NOT NULL,
+
+  UNIQUE (source, source_id)
 );
 ALTER SEQUENCE mangas_id_seq RESTART WITH 1;
 
@@ -47,10 +51,12 @@ CREATE TABLE IF NOT EXISTS manga_chapters (
   deleted_at TIMESTAMP WITH TIME ZONE,
 
   manga_id BIGINT NOT NULL,
-  chapter FLOAT NOT NULL,
+  source_chapter_id TEXT NOT NULL,
+  chapter_number FLOAT NOT NULL,
   image_urls TEXT [] NOT NULL DEFAULT '{}',
 
-  CONSTRAINT fk_manga_id FOREIGN KEY (manga_id) REFERENCES mangas(id)
+  CONSTRAINT fk_manga_id FOREIGN KEY (manga_id) REFERENCES mangas(id),
+  UNIQUE (manga_id, source_chapter_id)
 );
 ALTER SEQUENCE manga_chapters_id_seq RESTART WITH 1;
 
@@ -62,9 +68,11 @@ CREATE TABLE IF NOT EXISTS anime_histories (
 
   user_id BIGINT NOT NULL,
   anime_id BIGINT NOT NULL,
+  episode_number FLOAT NOT NULL,
+  source_episode_id TEXT NOT NULL,
+  frontend_path TEXT NOT NULL,
 
-  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT fk_anime_id FOREIGN KEY (anime_id) REFERENCES animes(id)
+  UNIQUE (user_id, anime_id)
 );
 ALTER SEQUENCE anime_histories_id_seq RESTART WITH 1;
 
@@ -76,9 +84,11 @@ CREATE TABLE IF NOT EXISTS manga_histories (
 
   user_id BIGINT NOT NULL,
   manga_id BIGINT NOT NULL,
+  chapter_number FLOAT NOT NULL,
+  source_chapter_id TEXT NOT NULL,
+  frontend_path TEXT NOT NULL,
 
-  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT fk_manga_id FOREIGN KEY (manga_id) REFERENCES mangas(id)
+  UNIQUE (user_id, manga_id)
 );
 ALTER SEQUENCE manga_histories_id_seq RESTART WITH 1;
 

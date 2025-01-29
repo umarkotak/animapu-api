@@ -13,6 +13,9 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
 	"github.com/umarkotak/animapu-api/internal/repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_chapter_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
@@ -28,6 +31,9 @@ func Initialize() {
 	datastore.Initialize()
 
 	user_repository.Initialize()
+	manga_repository.Initialize()
+	manga_chapter_repository.Initialize()
+	manga_history_repository.Initialize()
 }
 
 func Start() {
@@ -52,8 +58,8 @@ func Start() {
 	r.GET("/mangas/:manga_source/read/:manga_id/:chapter_id", manga_controller.ReadManga)
 	r.GET("/mangas/:manga_source/search", manga_controller.SearchManga)
 
-	r.GET("/users/mangas/histories", user_controller.FirebaseGetHistories)
-	r.GET("/users/mangas/histories_v2", user_controller.FirebaseGetHistories)
+	r.GET("/users/mangas/histories", user_controller.GetHistories)
+	r.GET("/users/mangas/histories_v2", user_controller.GetHistoriesV2)
 	r.POST("/users/mangas/histories", user_controller.FirebasePostHistories)
 
 	r.POST("/users/mangas/libraries", user_controller.PostLibrary)

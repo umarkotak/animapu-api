@@ -10,6 +10,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -28,8 +29,8 @@ func NewGogoAnimeNew() GogoAnimeNew {
 	}
 }
 
-func (s *GogoAnimeNew) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *GogoAnimeNew) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	c := colly.NewCollector()
 
@@ -41,7 +42,7 @@ func (s *GogoAnimeNew) GetLatest(ctx context.Context, queryParams models.AnimeQu
 		animeID = strings.ReplaceAll(animeID, "/series/", "")
 		animeID = strings.TrimSuffix(animeID, "/")
 
-		animes = append(animes, models.Anime{
+		animes = append(animes, contract.Anime{
 			ID:            animeID,
 			Source:        s.Source,
 			Title:         e.ChildText("div > a > div.tt.tts > h2"),
@@ -62,8 +63,8 @@ func (s *GogoAnimeNew) GetLatest(ctx context.Context, queryParams models.AnimeQu
 	return animes, nil
 }
 
-func (s *GogoAnimeNew) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *GogoAnimeNew) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	c := colly.NewCollector()
 
@@ -75,7 +76,7 @@ func (s *GogoAnimeNew) GetSearch(ctx context.Context, queryParams models.AnimeQu
 		animeID = strings.ReplaceAll(animeID, "/series/", "")
 		animeID = strings.TrimSuffix(animeID, "/")
 
-		animes = append(animes, models.Anime{
+		animes = append(animes, contract.Anime{
 			ID:            animeID,
 			Source:        s.Source,
 			Title:         e.ChildText("div > a > div.tt.tts > h2"),
@@ -96,16 +97,16 @@ func (s *GogoAnimeNew) GetSearch(ctx context.Context, queryParams models.AnimeQu
 	return animes, nil
 }
 
-func (s *GogoAnimeNew) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (models.Anime, error) {
+func (s *GogoAnimeNew) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, error) {
 	targetUrl := fmt.Sprintf("%v/series/%v/", s.Host, queryParams.SourceID)
 
-	anime := models.Anime{
+	anime := contract.Anime{
 		ID:             queryParams.SourceID,
 		Source:         s.AnimapuSource,
 		Title:          "",
 		LatestEpisode:  0,          // done
 		CoverUrls:      []string{}, // done
-		Episodes:       []models.Episode{},
+		Episodes:       []contract.Episode{},
 		OriginalLink:   targetUrl,
 		MultipleServer: true,
 	}
@@ -129,7 +130,7 @@ func (s *GogoAnimeNew) GetDetail(ctx context.Context, queryParams models.AnimeQu
 		episodeID := strings.ReplaceAll(episodeLink, s.Host, "")
 		episodeID = strings.Trim(episodeID, "/")
 
-		episode := models.Episode{
+		episode := contract.Episode{
 			AnimeID:      queryParams.SourceID,
 			Source:       s.Source,
 			ID:           episodeID,
@@ -154,13 +155,13 @@ func (s *GogoAnimeNew) GetDetail(ctx context.Context, queryParams models.AnimeQu
 	return anime, nil
 }
 
-func (s *GogoAnimeNew) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (models.EpisodeWatch, error) {
-	episode := models.EpisodeWatch{
+func (s *GogoAnimeNew) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
+	episode := contract.EpisodeWatch{
 		StreamType:    "iframe",
 		IframeUrl:     "",
 		IframeUrls:    map[string]string{},
 		OriginalUrl:   "",
-		StreamOptions: []models.StreamOption{},
+		StreamOptions: []contract.StreamOption{},
 	}
 
 	serverParams := []GogoAnimeServerParams{}
@@ -184,7 +185,7 @@ func (s *GogoAnimeNew) Watch(ctx context.Context, queryParams models.AnimeQueryP
 			}
 			serverParams = append(serverParams, gogoAnimeServerParams)
 
-			episode.StreamOptions = append(episode.StreamOptions, models.StreamOption{
+			episode.StreamOptions = append(episode.StreamOptions, contract.StreamOption{
 				Resolution: "",
 				Index:      gogoAnimeServerParams.DataType,
 				Name:       gogoAnimeServerParams.DataType,
@@ -244,14 +245,14 @@ func (s *GogoAnimeNew) Watch(ctx context.Context, queryParams models.AnimeQueryP
 	return episode, nil
 }
 
-func (s *GogoAnimeNew) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (models.AnimePerSeason, error) {
-	animePerSeason := models.AnimePerSeason{}
+func (s *GogoAnimeNew) GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (contract.AnimePerSeason, error) {
+	animePerSeason := contract.AnimePerSeason{}
 
 	return animePerSeason, nil
 }
 
-func (s *GogoAnimeNew) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]models.Anime, error) {
-	animes := []models.Anime{}
+func (s *GogoAnimeNew) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	animes := []contract.Anime{}
 
 	return animes, nil
 }
