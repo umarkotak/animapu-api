@@ -5,11 +5,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
-	"github.com/umarkotak/animapu-api/internal/controllers/animension_legacy_controller"
-	"github.com/umarkotak/animapu-api/internal/controllers/dummy_cookie_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
-	"github.com/umarkotak/animapu-api/internal/controllers/otakudesu_legacy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
@@ -23,18 +20,7 @@ func Initialize() {
 	logger.Initialize()
 	logrus.AddHook(&logger.AnimapuHook{})
 	logrus.SetReportCaller(true)
-	// logrus.SetFormatter(&logrus.TextFormatter{
-	// 	CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
-	// 		// frame.File: For exact path
-	// 		return "", fmt.Sprintf("[%v:%v]:", frame.File, frame.Line)
-	// 	},
-	// })
 	logrus.SetFormatter(&logger.Formatter{})
-	// f, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE, 0755)
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-	// logrus.SetOutput(f)
 
 	config.Initialize()
 	repository.Initialize()
@@ -87,16 +73,6 @@ func Start() {
 	r.GET("/animes/:anime_source/season/:release_year/:release_season", anime_controller.GetPerSeason)
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
-
-	r.POST("/animension/quick_scrap/:anime_id", animension_legacy_controller.HandlerAnimensionQuickScrap)
-	r.POST("/animension/quick_scrap/season/:season_id", animension_legacy_controller.HandlerAnimensionQuickScrapSeason)
-	r.POST("/animension/quick_scrap/season/sync_multi_seasons", animension_legacy_controller.HandlerAnimensionSyncMultiSeasons)
-	r.POST("/animension/sync_season", animension_legacy_controller.HandlerSyncSeason)
-
-	r.POST("/otakudesu/scrap_otakudesu_all_animes", otakudesu_legacy_controller.HandlerAnimensionQuickScrap)
-
-	r.GET("/dummy-cookie", dummy_cookie_controller.HandlerDummyCookie)
-	r.POST("/dummy-cookie", dummy_cookie_controller.HandlerDummyCookie)
 
 	r.Run(":" + config.Get().Port)
 }
