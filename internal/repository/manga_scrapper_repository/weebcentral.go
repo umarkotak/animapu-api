@@ -2,10 +2,8 @@ package manga_scrapper_repository
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"log"
 	"strings"
 	"time"
 
@@ -185,43 +183,37 @@ func (sc *WeebCentral) GetDetail(ctx context.Context, queryParams models.QueryPa
 }
 
 func (sc *WeebCentral) GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.Manga, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/_search.php", sc.Host), nil)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return []contract.Manga{}, err
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return []contract.Manga{}, err
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return []contract.Manga{}, err
-	}
-
-	mangaseeSearchDatas := []MangaseeSearchManga{}
-	err = json.Unmarshal(body, &mangaseeSearchDatas)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return []contract.Manga{}, err
-	}
-
 	mangas := []contract.Manga{}
-	for _, oneMangaseeSearch := range mangaseeSearchDatas {
-		if !strings.Contains(strings.ToLower(oneMangaseeSearch.SeriesName), strings.ToLower(queryParams.Title)) {
-			continue
-		}
+
+	// Create a new collector
+	c := colly.NewCollector()
+
+	// Set up the headers
+	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("HX-Trigger", "quick-search-input")
+		r.Headers.Set("HX-Trigger-Name", "text")
+		r.Headers.Set("sec-ch-ua-platform", "macOS")
+		r.Headers.Set("Referer", "https://weebcentral.com/")
+		r.Headers.Set("HX-Target", "quick-search-result")
+		r.Headers.Set("HX-Current-URL", "https://weebcentral.com/")
+		r.Headers.Set("sec-ch-ua", `"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"`)
+		r.Headers.Set("sec-ch-ua-mobile", "?0")
+		r.Headers.Set("HX-Request", "true")
+		r.Headers.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36")
+		r.Headers.Set("Content-Type", "application/x-www-form-urlencoded")
+	})
+
+	c.OnHTML("#quick-search-result > div.w-full.join.join-vertical.flex.absolute.inset-x-0.z-10.mt-4.rounded-none > a", func(e *colly.HTMLElement) {
+		mangaLink := e.Attr("href")
+		mangaID := strings.ReplaceAll(mangaLink, sc.Host, "")
+		mangaID = strings.TrimPrefix(mangaID, "/series/")
+		mangaID = strings.ReplaceAll(mangaID, "/", "---")
 
 		mangas = append(mangas, contract.Manga{
-			ID:                  oneMangaseeSearch.IndexName,
-			SourceID:            oneMangaseeSearch.IndexName,
+			ID:                  mangaID,
 			Source:              sc.Source,
-			Title:               oneMangaseeSearch.SeriesName,
+			SourceID:            mangaID,
+			Title:               e.ChildText("div.flex-1.overflow-hidden.text-left.text-ellipsis.leading-normal.line-clamp-2"),
 			Genres:              []string{},
 			LatestChapterID:     "",
 			LatestChapterNumber: 0,
@@ -231,11 +223,23 @@ func (sc *WeebCentral) GetSearch(ctx context.Context, queryParams models.QueryPa
 				{
 					Index: 1,
 					ImageUrls: []string{
-						fmt.Sprintf("%v/cover/%v.jpg", sc.ImgHost, oneMangaseeSearch.IndexName),
+						e.ChildAttr("div > picture > source", "srcset"),
+						e.ChildAttr("div > picture > img", "src"),
 					},
 				},
 			},
 		})
+	})
+
+	// Prepare the form data
+	formData := map[string]string{
+		"text": queryParams.Title,
+	}
+
+	// Send the POST request
+	err := c.Post(fmt.Sprintf("%v/search/simple?location=main", sc.Host), formData)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return mangas, nil
