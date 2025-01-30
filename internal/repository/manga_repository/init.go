@@ -41,6 +41,16 @@ var (
 			AND m.deleted_at IS NULL
 	`, allColumns)
 
+	queryGetBySourceAndSourceIDs = fmt.Sprintf(`
+		SELECT
+			%s
+		FROM mangas m
+		WHERE
+			m.source = :source
+			AND m.source_id = ANY(:source_ids)
+			AND m.deleted_at IS NULL
+	`, allColumns)
+
 	queryInsert = `
 		INSERT INTO mangas (
 			source,
@@ -88,6 +98,7 @@ var (
 var (
 	stmtGetByID                   *sqlx.NamedStmt
 	stmtGetBySourceAndSourceID    *sqlx.NamedStmt
+	stmtGetBySourceAndSourceIDs   *sqlx.NamedStmt
 	stmtInsert                    *sqlx.NamedStmt
 	stmtUpdate                    *sqlx.NamedStmt
 	stmtUpdateBySourceAndSourceID *sqlx.NamedStmt
@@ -102,6 +113,11 @@ func Initialize() {
 	}
 
 	stmtGetBySourceAndSourceID, err = datastore.Get().Db.PrepareNamed(queryGetBySourceAndSourceID)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtGetBySourceAndSourceIDs, err = datastore.Get().Db.PrepareNamed(queryGetBySourceAndSourceIDs)
 	if err != nil {
 		logrus.Fatal(err)
 	}

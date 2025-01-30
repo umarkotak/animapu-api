@@ -6,6 +6,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/manga_history_service"
+	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/services/user_history_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
@@ -60,11 +61,11 @@ func GetHistoriesV2(c *gin.Context) {
 		return
 	}
 
+	mangaHistories = manga_scrapper_service.MultiInjectLibraryAndHistoryForHistory(c.Request.Context(), commonCtx.User, mangaHistories)
+
 	render.Response(
 		c.Request.Context(), c,
-		map[string]any{
-			"manga_histories": mangaHistories,
-		},
+		mangaHistories,
 		nil, 200,
 	)
 }

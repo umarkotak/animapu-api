@@ -66,6 +66,22 @@ var (
 		ORDER BY mh.updated_at DESC
 	`, allColumns)
 
+	queryGetByUserAndSourceDetail = fmt.Sprintf(`
+		SELECT
+			%s,
+			m.source AS manga_source,
+			m.source_id AS manga_source_id,
+			m.title AS manga_title,
+			m.cover_urls AS manga_cover_urls,
+			m.latest_chapter AS manga_latest_chapter
+		FROM manga_histories mh
+		INNER JOIN mangas m ON m.id = mh.manga_id
+		WHERE
+			mh.user_id = :user_id
+			AND m.source = ANY(:sources)
+			AND m.source_id = ANY(:source_ids)
+	`, allColumns)
+
 	queryInsert = `
 		INSERT INTO manga_histories (
 			user_id,
@@ -118,6 +134,7 @@ var (
 	stmtGetByMangaIDAndUserID    *sqlx.NamedStmt
 	stmtGetByUserID              *sqlx.NamedStmt
 	stmtGetByUserIDDetailed      *sqlx.NamedStmt
+	stmtGetByUserAndSourceDetail *sqlx.NamedStmt
 	stmtInsert                   *sqlx.NamedStmt
 	stmtUpdate                   *sqlx.NamedStmt
 	stmtUpdateByMangaIDAndUserID *sqlx.NamedStmt
@@ -142,6 +159,11 @@ func Initialize() {
 	}
 
 	stmtGetByUserIDDetailed, err = datastore.Get().Db.PrepareNamed(queryGetByUserIDDetailed)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtGetByUserAndSourceDetail, err = datastore.Get().Db.PrepareNamed(queryGetByUserAndSourceDetail)
 	if err != nil {
 		logrus.Fatal(err)
 	}

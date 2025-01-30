@@ -1,4 +1,4 @@
-package manga_history_repository
+package manga_library_repository
 
 import (
 	"context"
@@ -74,10 +74,10 @@ func GetByUserIDDetailed(ctx context.Context, userID int64) ([]models.MangaHisto
 	return mangaHistories, nil
 }
 
-func GetByUserAndSourceDetail(ctx context.Context, userID int64, sources, sourceIDs pq.StringArray) ([]models.MangaHistoryDetailed, error) {
-	mangaHistories := []models.MangaHistoryDetailed{}
+func GetByUserAndSourceDetail(ctx context.Context, userID int64, sources, sourceIDs pq.StringArray) ([]string, error) {
+	mangaSourceIDs := []string{}
 
-	err := stmtGetByUserAndSourceDetail.SelectContext(ctx, &mangaHistories, map[string]any{
+	err := stmtGetByUserAndSourceDetail.SelectContext(ctx, &mangaSourceIDs, map[string]any{
 		"user_id":    userID,
 		"sources":    sources,
 		"source_ids": sourceIDs,
@@ -86,8 +86,8 @@ func GetByUserAndSourceDetail(ctx context.Context, userID int64, sources, source
 		logrus.WithContext(ctx).WithFields(logrus.Fields{
 			"user_id": userID,
 		}).Error(err)
-		return mangaHistories, err
+		return mangaSourceIDs, err
 	}
 
-	return mangaHistories, nil
+	return mangaSourceIDs, nil
 }

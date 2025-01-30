@@ -13,6 +13,8 @@ import (
 )
 
 func GetMangaLatest(c *gin.Context) {
+	commonCtx := common_ctx.GetFromGinCtx(c)
+
 	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
 	queryParams := models.QueryParams{
 		Source: c.Param("manga_source"),
@@ -25,6 +27,8 @@ func GetMangaLatest(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
+
+	mangas = manga_scrapper_service.MultiInjectLibraryAndHistory(c.Request.Context(), commonCtx.User, mangas)
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(c.Request.Context(), c, mangas, nil, 200)
@@ -71,6 +75,8 @@ func ReadManga(c *gin.Context) {
 }
 
 func SearchManga(c *gin.Context) {
+	commonCtx := common_ctx.GetFromGinCtx(c)
+
 	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
 	queryParams := models.QueryParams{
 		Source: c.Param("manga_source"),
@@ -84,6 +90,8 @@ func SearchManga(c *gin.Context) {
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
+
+	mangas = manga_scrapper_service.MultiInjectLibraryAndHistory(c.Request.Context(), commonCtx.User, mangas)
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(c.Request.Context(), c, mangas, nil, 200)

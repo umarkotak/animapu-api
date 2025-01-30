@@ -101,8 +101,7 @@ CREATE TABLE IF NOT EXISTS anime_libraries (
   user_id BIGINT NOT NULL,
   anime_id BIGINT NOT NULL,
 
-  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT fk_anime_id FOREIGN KEY (anime_id) REFERENCES animes(id)
+  UNIQUE (user_id, anime_id)
 );
 ALTER SEQUENCE anime_libraries_id_seq RESTART WITH 1;
 
@@ -115,7 +114,6 @@ CREATE TABLE IF NOT EXISTS manga_libraries (
   user_id BIGINT NOT NULL,
   manga_id BIGINT NOT NULL,
 
-  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT fk_manga_id FOREIGN KEY (manga_id) REFERENCES mangas(id)
+  UNIQUE (user_id, manga_id)
 );
 ALTER SEQUENCE manga_libraries_id_seq RESTART WITH 1;

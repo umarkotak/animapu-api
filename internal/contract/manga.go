@@ -25,7 +25,8 @@ type (
 		ReadCount           int64        `json:"read_count"`
 		Star                bool         `json:"star"`
 		LastChapterRead     float64      `json:"last_chapter_read"`
-		LastLink            string       `json:"last_link"`
+		LastLink            string       `json:"last_link,omitempty"`
+		IsInLibrary         bool         `json:"is_in_library"`
 		Weight              int64        `json:"weight"`
 		FollowCount         int64        `json:"follow_count"`
 	}
@@ -38,6 +39,18 @@ type (
 		CoverImages         []CoverImage `json:"cover_image"`
 		LastChapterRead     float64      `json:"last_chapter_read"`
 		LastLink            string       `json:"last_link"`
+		IsInLibrary         bool         `json:"is_in_library"`
+	}
+
+	MangaLibrary struct {
+		Source              string       `json:"source"`
+		SourceID            string       `json:"source_id"`
+		Title               string       `json:"title"`
+		LatestChapterNumber float64      `json:"latest_chapter_number"`
+		CoverImages         []CoverImage `json:"cover_image"`
+		LastChapterRead     float64      `json:"last_chapter_read"`
+		LastLink            string       `json:"last_link"`
+		IsInLibrary         bool         `json:"is_in_library"`
 	}
 
 	CoverImage struct {

@@ -15,6 +15,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_chapter_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
@@ -34,6 +35,7 @@ func Initialize() {
 	manga_repository.Initialize()
 	manga_chapter_repository.Initialize()
 	manga_history_repository.Initialize()
+	manga_library_repository.Initialize()
 }
 
 func Start() {
@@ -62,10 +64,9 @@ func Start() {
 	r.GET("/users/mangas/histories_v2", user_controller.GetHistoriesV2)
 	r.POST("/users/mangas/histories", user_controller.FirebasePostHistories)
 
-	r.POST("/users/mangas/libraries", user_controller.PostLibrary)
+	r.POST("/users/mangas/libraries/:source/:source_id/add", user_controller.AddLibrary)
 	r.POST("/users/mangas/libraries/:source/:source_id/remove", user_controller.DeleteLibrary)
 	r.GET("/users/mangas/libraries", user_controller.GetLibraries)
-	r.POST("/users/mangas/libraries/sync", user_controller.SyncLibraries)
 
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
 	r.GET("/mangas/klikmanga/image_proxy/*url", proxy_controller.KlikmangaImage)

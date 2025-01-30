@@ -2,11 +2,14 @@ package user_controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
+	"github.com/umarkotak/animapu-api/internal/services/manga_library_service"
+	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
+	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
-	"github.com/umarkotak/animapu-api/internal/utils/request"
 )
 
 type (
@@ -15,51 +18,59 @@ type (
 	}
 
 	PostLibraryParams struct {
-		Manga contract.Manga `json:"manga"`
+		User     models.User `json:"-"`
+		Source   string      `json:"-"`
+		SourceID string      `json:"-"`
 	}
 )
 
 func GetLibraries(c *gin.Context) {
-	user, err := request.ReqToUser(c.Request)
+	ctx := c.Request.Context()
+
+	user := common_ctx.GetFromGinCtx(c).User
+
+	mangas, err := manga_library_service.GetLibraries(ctx, user, 1000, 1)
 	if err != nil {
-		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
-	if user.Uid == "" {
-		err = models.ErrUnauthorized
-		render.ErrorResponse(c.Request.Context(), c, err, false)
-		return
-	}
+	mangas = manga_scrapper_service.MultiInjectLibraryAndHistoryForLibrary(ctx, user, mangas)
 
-	// TODO: Implement logic
-	mangas := []contract.Manga{}
-
-	render.Response(c.Request.Context(), c, mangas, nil, 200)
+	render.Response(ctx, c, mangas, nil, 200)
 }
 
-func PostLibrary(c *gin.Context) {
-	var postLibraryParams PostLibraryParams
-	c.BindJSON(&postLibraryParams)
+func AddLibrary(c *gin.Context) {
+	ctx := c.Request.Context()
 
-	user, err := request.ReqToUser(c.Request)
+	postLibraryParams := PostLibraryParams{
+		User:     common_ctx.GetFromGinCtx(c).User,
+		Source:   c.Param("source"),
+		SourceID: c.Param("source_id"),
+	}
+
+	manga_scrapper_service.GetDetail(ctx, models.QueryParams{
+		Source:   postLibraryParams.Source,
+		SourceID: postLibraryParams.SourceID,
+	})
+
+	manga, err := manga_repository.GetBySourceAndSourceID(ctx, postLibraryParams.Source, postLibraryParams.SourceID)
 	if err != nil {
-		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
-	if user.Uid == "" {
-		err = models.ErrUnauthorized
-		render.ErrorResponse(c.Request.Context(), c, err, false)
+	_, err = manga_library_repository.Insert(ctx, nil, models.MangaHistory{
+		UserID:  postLibraryParams.User.ID,
+		MangaID: manga.ID,
+	})
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
-
-	// TODO: Implement logic
 
 	render.Response(
-		c.Request.Context(), c,
+		ctx, c,
 		map[string]string{
 			"library_saved": "success",
 		},
@@ -68,69 +79,30 @@ func PostLibrary(c *gin.Context) {
 }
 
 func DeleteLibrary(c *gin.Context) {
-	user, err := request.ReqToUser(c.Request)
+	ctx := c.Request.Context()
+
+	postLibraryParams := PostLibraryParams{
+		User:     common_ctx.GetFromGinCtx(c).User,
+		Source:   c.Param("source"),
+		SourceID: c.Param("source_id"),
+	}
+
+	manga, err := manga_repository.GetBySourceAndSourceID(ctx, postLibraryParams.Source, postLibraryParams.SourceID)
 	if err != nil {
-		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
-	if user.Uid == "" {
-		err = models.ErrUnauthorized
-		render.ErrorResponse(c.Request.Context(), c, err, false)
-		return
-	}
-
-	// TODO: Implement logic
-
-	render.Response(
-		c.Request.Context(), c,
-		map[string]string{
-			"library_deleted": "success",
-		},
-		nil, 200,
-	)
-}
-
-func SyncLibraries(c *gin.Context) {
-	var syncLibrariesParams SyncLibrariesParams
-	c.BindJSON(&syncLibrariesParams)
-
-	user, err := request.ReqToUser(c.Request)
+	err = manga_library_repository.Delete(ctx, nil, postLibraryParams.User.ID, manga.ID)
 	if err != nil {
-		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err, false)
-		return
-	}
-
-	if user.Uid == "" {
-		err = models.ErrUnauthorized
-		render.ErrorResponse(c.Request.Context(), c, err, false)
-		return
-	}
-
-	if len(syncLibrariesParams.Mangas) == 0 {
-		render.Response(
-			c.Request.Context(), c,
-			map[string]string{
-				"synced": "success",
-			},
-			nil, 200,
-		)
-	}
-
-	// TODO: Implement sync library services
-	// err = user_library_service.Sync(c.Request.Context(), user, syncLibrariesParams.Mangas)
-	if err != nil {
-		logrus.WithContext(c.Request.Context()).Error(err)
-		render.ErrorResponse(c.Request.Context(), c, err, false)
+		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
 
 	render.Response(
 		c.Request.Context(), c,
 		map[string]string{
-			"synced": "success",
+			"library_deleted": "success",
 		},
 		nil, 200,
 	)
