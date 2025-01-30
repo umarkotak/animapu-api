@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -73,11 +71,12 @@ func (sc *WeebCentral) GetHome(ctx context.Context, queryParams models.QueryPara
 		mangaLink := e.ChildAttr("a.aspect-square.overflow-hidden", "href")
 		mangaID := strings.ReplaceAll(mangaLink, sc.Host, "")
 		mangaID = strings.TrimPrefix(mangaID, "/series/")
+		mangaID = strings.ReplaceAll(mangaID, "/", "---")
 
 		mangas = append(mangas, contract.Manga{
 			ID:                  mangaID,
-			SourceID:            sc.Source,
 			Source:              sc.Source,
+			SourceID:            mangaID,
 			Title:               e.ChildText("a.min-w-0.flex.flex-col.justify-center.pe-4 > div:nth-child(1) > div"),
 			Genres:              []string{},
 			LatestChapterID:     "",
@@ -117,16 +116,19 @@ func (sc *WeebCentral) GetDetail(ctx context.Context, queryParams models.QueryPa
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 	c.AllowURLRevisit = true
 
+	newMangaIDSplit := strings.Split(queryParams.SourceID, "---")
+	newMangaID := newMangaIDSplit[0]
+
 	manga := contract.Manga{
 		ID:          queryParams.SourceID,
 		Source:      sc.Source,
 		SourceID:    queryParams.SourceID,
-		Title:       strings.ReplaceAll(queryParams.SourceID, "-", " "),
+		Title:       "",
 		Description: "Description unavailable",
 		Genres:      []string{},
 		Status:      "Ongoing",
 		CoverImages: []contract.CoverImage{{ImageUrls: []string{
-			fmt.Sprintf("%v/cover/%v.jpg", sc.ImgHost, queryParams.SourceID),
+			fmt.Sprintf("https://temp.compsci88.com/cover/normal/%s.webp", newMangaID),
 		}}},
 		Chapters: []contract.Chapter{},
 	}
@@ -135,58 +137,46 @@ func (sc *WeebCentral) GetDetail(ctx context.Context, queryParams models.QueryPa
 		r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 	})
 
-	c.OnHTML("div.top-5.Content", func(e *colly.HTMLElement) {
+	c.OnHTML("#top > section.flex.flex-col > section.flex.flex-col.gap-4 > h1", func(e *colly.HTMLElement) {
+		manga.Title = e.Text
+	})
+
+	c.OnHTML("#top > section.flex.flex-col > section.flex.flex-col.gap-4 > section:nth-child(3) > ul > li > p", func(e *colly.HTMLElement) {
 		manga.Description = e.Text
 	})
 
-	c.OnHTML("body > script:nth-child(16)", func(e *colly.HTMLElement) {
-		footerContent := e.Text
-		splitted := strings.Split(footerContent, "vm.Chapters = ")
-		if len(splitted) <= 0 {
-			return
-		}
-
-		splitted = strings.Split(splitted[1], "vm.NumSubs")
-		dataJson := splitted[0]
-		dataJson = strings.ReplaceAll(dataJson, ";", "")
-		dataJson = strings.TrimSpace(dataJson)
-
-		mangaseeChapters := []MangaseeChapter{}
-		json.Unmarshal([]byte(dataJson), &mangaseeChapters)
-
-		for i, oneMangaseeChapter := range mangaseeChapters {
-			firstNum := oneMangaseeChapter.Chapter[0:1]
-			lastNum := oneMangaseeChapter.Chapter[len(oneMangaseeChapter.Chapter)-1:]
-			chNumberS := mangaseeDecodeCh(oneMangaseeChapter.Chapter)
-			if lastNum != "0" {
-				chNumberS = fmt.Sprintf("%v.%v", chNumberS, lastNum)
-			}
-
-			chNumer := utils.ForceSanitizeStringToFloat(chNumberS)
-
-			manga.Chapters = append(manga.Chapters, contract.Chapter{
-				ID:                fmt.Sprint(chNumer),
-				Source:            sc.Source,
-				SourceID:          fmt.Sprint(chNumer),
-				SecondarySourceID: fmt.Sprint(firstNum),
-				Title:             fmt.Sprintf("%v %v", oneMangaseeChapter.Type, chNumer),
-				Index:             int64(i),
-				Number:            chNumer,
-			})
-		}
+	c.OnHTML("#top > section.flex.flex-col.md:flex-row.gap-4.md:gap-8 > section.md:w-4/12.flex.flex-col.gap-4 > section:nth-child(3) > picture > img", func(e *colly.HTMLElement) {
+		manga.CoverImages = []contract.CoverImage{{ImageUrls: []string{
+			e.Attr("src"),
+		}}}
 	})
 
+	c.OnHTML("body > div > a", func(e *colly.HTMLElement) {
+		chapterUrl := e.Attr("href")
+		chapterID := strings.ReplaceAll(chapterUrl, sc.Host, "")
+		chapterID = strings.TrimPrefix(chapterID, "/chapters/")
+
+		chText := e.ChildText("span.grow.flex.items-center.gap-2 > span:nth-child(1)")
+		chNumer := utils.ForceSanitizeStringToFloat(chText)
+
+		manga.Chapters = append(manga.Chapters, contract.Chapter{
+			ID:                chapterID,
+			Source:            sc.Source,
+			SourceID:          chapterID,
+			SecondarySourceID: "",
+			Title:             chText,
+			Index:             int64(chNumer),
+			Number:            chNumer,
+		})
+	})
+
+	queryParams.SourceID = strings.ReplaceAll(queryParams.SourceID, "---", "/")
 	targetLinks := []string{
-		fmt.Sprintf("%v/manga/%v", sc.Host, queryParams.SourceID),
+		fmt.Sprintf("%v/series/%v", sc.Host, queryParams.SourceID),
+		fmt.Sprintf("%v/series/%v/full-chapter-list", sc.Host, newMangaID),
 	}
 	for _, targetLink := range targetLinks {
-		err := c.Visit(targetLink)
-		c.Wait()
-		if err != nil || len(manga.Chapters) <= 0 {
-			logrus.WithContext(ctx).Error(err)
-			continue
-		}
-		break
+		c.Visit(targetLink)
 	}
 
 	manga.GenerateLatestChapter()
@@ -252,114 +242,67 @@ func (sc *WeebCentral) GetSearch(ctx context.Context, queryParams models.QueryPa
 }
 
 func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
+	var err error
 	c := colly.NewCollector()
 	c.SetRequestTimeout(10 * time.Minute)
-	// t := &http.Transport{
-	// 	Dial: (&net.Dialer{
-	// 		Timeout:   60 * time.Second,
-	// 		KeepAlive: 30 * time.Second,
-	// 	}).Dial,
-	// 	TLSHandshakeTimeout: 60 * time.Second,
-	// }
-	// c.WithTransport(t)
 
 	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        sc.Source,
-		Number:        utils.ForceSanitizeStringToFloat(queryParams.ChapterID),
+		Number:        0,
 		ChapterImages: []contract.ChapterImage{},
 	}
 
-	c.OnHTML("body > script:nth-child(19)", func(e *colly.HTMLElement) {
-		re := regexp.MustCompile(`vm\.CurPathName\s*=\s*("[^"]+")`)
+	// sample link: https://scans-hot.planeptune.us/manga/Kingdom/0825-001.png
+	c.OnHTML("head > link:nth-child(18)", func(e *colly.HTMLElement) {
+		firstImageLink := e.Attr("href")
+		imageLinkSplit := strings.Split(firstImageLink, "/")
 
-		// Find the first match of the pattern
-		imageHost := re.FindStringSubmatch(e.Text)
-
-		chFloat := utils.ForceSanitizeStringToFloat(queryParams.ChapterID)
-		chInt := int(chFloat)
-		modifier := ""
-		if (chFloat - float64(chInt)) > 0 {
-			splitted := strings.Split(queryParams.ChapterID, ".")
-			modifier = fmt.Sprintf(".%v", splitted[1])
+		if len(imageLinkSplit) == 0 {
+			return
 		}
 
-		currChString := ""
-		splittedCurrCh := strings.Split(e.Text, "vm.CurChapter = ")
-		if len(splittedCurrCh) >= 2 {
-			splittedCurrCh = strings.Split(splittedCurrCh[1], ";")
-			if len(splittedCurrCh) > 0 {
-				currChString = splittedCurrCh[0]
-			}
-		}
-		type MangaseeChapter struct {
-			Chapter     string  `json:"Chapter"`
-			Type        string  `json:"Type"`
-			Page        string  `json:"Page"`
-			Directory   string  `json:"Directory"`
-			Date        string  `json:"Date"`
-			ChapterName *string `json:"ChapterName"`
-		}
-		mangaseeChapter := MangaseeChapter{}
-		json.Unmarshal([]byte(currChString), &mangaseeChapter)
-		pageInt, _ := strconv.ParseInt(mangaseeChapter.Page, 10, 54)
-		if pageInt == 0 {
-			pageInt = 150
+		chapterAndImageIdx := imageLinkSplit[len(imageLinkSplit)-1]
+		chapterAndImageIdxSplit := strings.Split(chapterAndImageIdx, "-")
+		if len(chapterAndImageIdxSplit) != 2 {
+			return
 		}
 
-		dir := ""
-		if mangaseeChapter.Directory != "" {
-			dir = fmt.Sprintf("%s/", dir)
+		chapterNoStr := chapterAndImageIdxSplit[0]
+		chapter.Number = utils.ForceSanitizeStringToFloat(chapterNoStr)
+
+		imageNoAndExtensionSplit := strings.Split(chapterAndImageIdxSplit[1], ".")
+		if len(imageNoAndExtensionSplit) != 2 {
+			return
 		}
 
-		// https://{{vm.CurPathName}}/manga/Dandadan/{{vm.CurChapter.Directory == '' ? '' : vm.CurChapter.Directory+'/'}}{{vm.ChapterImage(vm.CurChapter.Chapter)}}-{{vm.PageImage(Page)}}.png
+		// imageNoStr := imageNoAndExtensionSplit[0]
+		extension := imageNoAndExtensionSplit[1]
 
-		for i := 1; i <= int(pageInt); i++ {
+		// https://scans-hot.planeptune.us/manga/Kingdom
+		imageLinkPrefix := strings.TrimSuffix(firstImageLink, chapterAndImageIdx)
+
+		for i := 1; i <= 150; i++ {
+			imageUrl := fmt.Sprintf("%s%s-%03d.%s", imageLinkPrefix, chapterNoStr, i, extension)
+
+			// _, err = http.Head(imageUrl)
+			// if err != nil {
+			// 	break
+			// }
+
 			chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
-				Index: 0,
-				ImageUrls: []string{
-					fmt.Sprintf(
-						"https://%v/manga/%v/%v%04d%v-%03d.png",
-						strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, dir, chInt, modifier, i,
-					),
-					// fmt.Sprintf(
-					// 	"https://%v/manga/%v/%04d%v-%03d.png",
-					// 	strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
-					// ),
-					// fmt.Sprintf(
-					// 	"https://%v/manga/%v/Mag-Official/%04d%v-%03d.png",
-					// 	strings.ReplaceAll(imageHost[1], `"`, ""), queryParams.SourceID, chInt, modifier, i,
-					// ),
-				},
+				Index:     int64(i),
+				ImageUrls: []string{imageUrl},
 			})
 		}
 	})
 
-	var err error
-	modifier := ""
-	if queryParams.SecondarySourceID == "2" {
-		modifier = "-index-2"
-	}
 	targetLinks := []string{
-		fmt.Sprintf("%v/read-online/%v-chapter-%v%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID, modifier),
+		fmt.Sprintf("%v/chapters/%v", sc.Host, queryParams.ChapterID),
 	}
 	for _, targetLink := range targetLinks {
-		for i := 0; i < 2; i++ {
-			err = c.Visit(targetLink)
-			c.Wait()
-			if err != nil {
-				logrus.WithContext(ctx).Error(err)
-				time.Sleep(1 * time.Second)
-				continue
-			}
-			break
-		}
-
-		if len(chapter.ChapterImages) > 0 {
-			chapter.SourceLink = targetLink
-			break
-		}
+		c.Visit(targetLink)
 	}
 
 	return chapter, err
