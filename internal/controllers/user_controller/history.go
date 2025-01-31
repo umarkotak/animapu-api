@@ -11,6 +11,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/request"
+	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
 type (
@@ -54,7 +55,13 @@ func GetHistories(c *gin.Context) {
 func GetHistoriesV2(c *gin.Context) {
 	commonCtx := common_ctx.GetFromGinCtx(c)
 
-	mangaHistories, err := manga_history_service.GetHistories(c.Request.Context(), commonCtx.User, 1000, 0)
+	pagination := models.Pagination{
+		Limit: utils.StringMustInt64(c.Query("limit")),
+		Page:  utils.StringMustInt64(c.Query("page")),
+	}
+	pagination.SetDefault(10000)
+
+	mangaHistories, err := manga_history_service.GetHistories(c.Request.Context(), commonCtx.User, pagination)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
 		render.ErrorResponse(c.Request.Context(), c, err, false)

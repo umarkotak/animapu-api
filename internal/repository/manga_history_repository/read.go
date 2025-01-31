@@ -58,11 +58,13 @@ func GetByUserID(ctx context.Context, userID int64) ([]models.MangaHistory, erro
 	return mangaHistories, nil
 }
 
-func GetByUserIDDetailed(ctx context.Context, userID int64) ([]models.MangaHistoryDetailed, error) {
+func GetByUserIDDetailed(ctx context.Context, userID int64, pagination models.Pagination) ([]models.MangaHistoryDetailed, error) {
 	mangaHistories := []models.MangaHistoryDetailed{}
 
 	err := stmtGetByUserIDDetailed.SelectContext(ctx, &mangaHistories, map[string]any{
 		"user_id": userID,
+		"limit":   pagination.Limit,
+		"offset":  pagination.Offset,
 	})
 	if err != nil {
 		logrus.WithContext(ctx).WithFields(logrus.Fields{

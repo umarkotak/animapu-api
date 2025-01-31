@@ -64,6 +64,7 @@ var (
 			mh.user_id = :user_id
 			AND mh.deleted_at IS NULL
 		ORDER BY mh.updated_at DESC
+		LIMIT :limit OFFSET :offset
 	`, allColumns)
 
 	queryGetByUserAndSourceDetail = fmt.Sprintf(`

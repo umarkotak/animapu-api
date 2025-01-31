@@ -57,6 +57,7 @@ func Start() {
 	r.GET("/visitor_logs", health_controller.GetVisitorLogs)
 
 	r.GET("/mangas/sources", setting_controller.GetAvailableSource)
+	r.GET("/animes/sources", setting_controller.GetAnimeAvailableSource)
 
 	r.GET("/mangas/:manga_source/latest", manga_controller.GetMangaLatest)
 	r.GET("/mangas/:manga_source/detail/:manga_id", manga_controller.GetMangaDetail)

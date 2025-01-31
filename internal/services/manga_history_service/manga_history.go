@@ -9,8 +9,8 @@ import (
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 )
 
-func GetHistories(ctx context.Context, user models.User, limit, page int64) ([]contract.MangaHistory, error) {
-	mangaHistories, err := manga_history_repository.GetByUserIDDetailed(ctx, user.ID)
+func GetHistories(ctx context.Context, user models.User, pagination models.Pagination) ([]contract.MangaHistory, error) {
+	mangaHistories, err := manga_history_repository.GetByUserIDDetailed(ctx, user.ID, pagination)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return []contract.MangaHistory{}, err

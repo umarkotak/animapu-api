@@ -15,3 +15,13 @@ func GetAvailableSource(c *gin.Context) {
 		200,
 	)
 }
+
+func GetAnimeAvailableSource(c *gin.Context) {
+	render.Response(
+		c.Request.Context(),
+		c,
+		models.AnimeSources,
+		nil,
+		200,
+	)
+}
