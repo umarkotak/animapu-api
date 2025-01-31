@@ -85,6 +85,7 @@ func Start() {
 
 	r.POST("/affiliate_links/tokopedia/add", affiliate_link_controller.AddTokopediaAffiliateLink)
 	r.GET("/affiliate_links/random", affiliate_link_controller.GetRandom)
+	r.GET("/affiliate_links", affiliate_link_controller.GetList)
 
 	r.Run(":" + config.Get().Port)
 }

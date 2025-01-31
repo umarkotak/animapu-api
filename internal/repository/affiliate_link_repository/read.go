@@ -39,16 +39,24 @@ func GetByShortLink(ctx context.Context, shortLink string) (models.AffiliateLink
 	return obj, nil
 }
 
-func GetRandom(ctx context.Context, limit int64) ([]models.AffiliateLink, error) {
+func GetRandom(ctx context.Context, pagination models.Pagination) ([]models.AffiliateLink, error) {
 	objs := []models.AffiliateLink{}
 
-	err := stmtGetRandom.SelectContext(ctx, &objs, map[string]any{
-		"limit": limit,
-	})
+	err := stmtGetRandom.SelectContext(ctx, &objs, pagination)
 	if err != nil {
-		logrus.WithContext(ctx).WithFields(logrus.Fields{
-			"limit": limit,
-		}).Error(err)
+		logrus.WithContext(ctx).Error(err)
+		return objs, err
+	}
+
+	return objs, nil
+}
+
+func GetList(ctx context.Context, pagination models.Pagination) ([]models.AffiliateLink, error) {
+	objs := []models.AffiliateLink{}
+
+	err := stmtGetList.SelectContext(ctx, &objs, pagination)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
 		return objs, err
 	}
 

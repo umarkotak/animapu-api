@@ -49,6 +49,16 @@ var (
 		LIMIT :limit
 	`, allColumns)
 
+	queryGetList = fmt.Sprintf(`
+		SELECT
+			%s
+		FROM affiliate_links al
+		WHERE
+			al.deleted_at IS NULL
+		ORDER BY al.id DESC
+		LIMIT :limit OFFSET :offset
+	`, allColumns)
+
 	queryInsert = `
 		INSERT INTO affiliate_links (
 			short_link,
@@ -69,6 +79,7 @@ var (
 	stmtGetByID        *sqlx.NamedStmt
 	stmtGetByShortLink *sqlx.NamedStmt
 	stmtGetRandom      *sqlx.NamedStmt
+	stmtGetList        *sqlx.NamedStmt
 	stmtInsert         *sqlx.NamedStmt
 )
 
@@ -86,6 +97,11 @@ func Initialize() {
 	}
 
 	stmtGetRandom, err = datastore.Get().Db.PrepareNamed(queryGetRandom)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtGetList, err = datastore.Get().Db.PrepareNamed(queryGetList)
 	if err != nil {
 		logrus.Fatal(err)
 	}
