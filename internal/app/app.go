@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/datastore"
+	"github.com/umarkotak/animapu-api/internal/controllers/affiliate_link_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
@@ -13,6 +14,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
 	"github.com/umarkotak/animapu-api/internal/repository"
+	"github.com/umarkotak/animapu-api/internal/repository/affiliate_link_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_chapter_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
@@ -36,6 +38,7 @@ func Initialize() {
 	manga_chapter_repository.Initialize()
 	manga_history_repository.Initialize()
 	manga_library_repository.Initialize()
+	affiliate_link_repository.Initialize()
 }
 
 func Start() {
@@ -79,6 +82,9 @@ func Start() {
 	r.GET("/animes/:anime_source/season/:release_year/:release_season", anime_controller.GetPerSeason)
 	r.GET("/animes/:anime_source/detail/:anime_id", anime_controller.GetDetail)
 	r.GET("/animes/:anime_source/watch/:anime_id/:episode_id", anime_controller.GetWatch)
+
+	r.POST("/affiliate_links/tokopedia/add", affiliate_link_controller.AddTokopediaAffiliateLink)
+	r.GET("/affiliate_links/random", affiliate_link_controller.GetRandom)
 
 	r.Run(":" + config.Get().Port)
 }
