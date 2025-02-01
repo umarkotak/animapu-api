@@ -3,6 +3,7 @@ package contract
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 type (
@@ -29,6 +30,7 @@ type (
 		IsInLibrary         bool         `json:"is_in_library"`
 		Weight              int64        `json:"weight"`
 		FollowCount         int64        `json:"follow_count"`
+		LastReadAt          time.Time    `json:"last_read_at"`
 	}
 
 	MangaHistory struct {
@@ -40,6 +42,7 @@ type (
 		LastChapterRead     float64      `json:"last_chapter_read"`
 		LastLink            string       `json:"last_link"`
 		IsInLibrary         bool         `json:"is_in_library"`
+		LastReadAt          time.Time    `json:"last_read_at"`
 	}
 
 	MangaLibrary struct {
@@ -51,6 +54,7 @@ type (
 		LastChapterRead     float64      `json:"last_chapter_read"`
 		LastLink            string       `json:"last_link"`
 		IsInLibrary         bool         `json:"is_in_library"`
+		LastReadAt          time.Time    `json:"last_read_at"`
 	}
 
 	CoverImage struct {

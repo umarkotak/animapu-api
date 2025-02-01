@@ -50,6 +50,7 @@ func MultiInjectLibraryAndHistory(ctx context.Context, user models.User, mangas 
 		if found {
 			mangas[idx].LastChapterRead = mangaHistory.ChapterNumber
 			mangas[idx].LastLink = mangaHistory.FrontendPath
+			mangas[idx].LastReadAt = mangaHistory.UpdatedAt
 		}
 	}
 
@@ -94,6 +95,7 @@ func MultiInjectLibraryAndHistoryForLibrary(ctx context.Context, user models.Use
 		if found {
 			mangas[idx].LastChapterRead = mangaHistory.ChapterNumber
 			mangas[idx].LastLink = mangaHistory.FrontendPath
+			mangas[idx].LastReadAt = mangaHistory.UpdatedAt
 		}
 	}
 
@@ -138,6 +140,7 @@ func MultiInjectLibraryAndHistoryForHistory(ctx context.Context, user models.Use
 		if found {
 			mangas[idx].LastChapterRead = mangaHistory.ChapterNumber
 			mangas[idx].LastLink = mangaHistory.FrontendPath
+			mangas[idx].LastReadAt = mangaHistory.UpdatedAt
 		}
 	}
 

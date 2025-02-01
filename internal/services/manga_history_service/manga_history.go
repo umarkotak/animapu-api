@@ -86,6 +86,7 @@ func GetUserMangaActivities(ctx context.Context, pagination models.Pagination) (
 			CoverImages:         []contract.CoverImage{coverImage},
 			LastChapterRead:     mangaHistory.ChapterNumber,
 			LastLink:            mangaHistory.FrontendPath,
+			LastReadAt:          mangaHistory.UpdatedAt,
 		}
 
 		targetIdx := userMangaActivityIdx[mangaHistory.UserID]
