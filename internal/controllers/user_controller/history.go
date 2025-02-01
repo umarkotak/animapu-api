@@ -1,6 +1,8 @@
 package user_controller
 
 import (
+	"slices"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
@@ -113,4 +115,29 @@ func FirebasePostHistories(c *gin.Context) {
 		},
 		nil, 200,
 	)
+}
+
+func GetUserMangaActivities(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	user := common_ctx.GetFromGinCtx(c).User
+
+	if !slices.Contains(models.AdminEmails, user.Email.String) {
+		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
+		return
+	}
+
+	pagination := models.Pagination{
+		Limit: utils.StringMustInt64(c.Query("limit")),
+		Page:  utils.StringMustInt64(c.Query("page")),
+	}
+	pagination.SetDefault(100)
+
+	data, err := manga_history_service.GetUserMangaActivities(ctx, pagination)
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+
+	render.Response(ctx, c, data, nil, 200)
 }

@@ -3,6 +3,7 @@ package user_repository
 import (
 	"context"
 
+	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
@@ -21,6 +22,20 @@ func GetByID(ctx context.Context, userID int64) (models.User, error) {
 	}
 
 	return user, nil
+}
+
+func GetByIDs(ctx context.Context, userIDs pq.Int64Array) ([]models.User, error) {
+	users := []models.User{}
+
+	err := stmtGetByIDs.SelectContext(ctx, &users, map[string]any{
+		"ids": userIDs,
+	})
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return users, err
+	}
+
+	return users, nil
 }
 
 func GetByGuid(ctx context.Context, userGuid string) (models.User, error) {

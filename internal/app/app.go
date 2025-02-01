@@ -67,6 +67,7 @@ func Start() {
 	r.GET("/users/mangas/histories", user_controller.GetHistories)
 	r.GET("/users/mangas/histories_v2", user_controller.GetHistoriesV2)
 	r.POST("/users/mangas/histories", user_controller.FirebasePostHistories)
+	r.GET("/users/mangas/activities", user_controller.GetUserMangaActivities)
 
 	r.POST("/users/mangas/libraries/:source/:source_id/add", user_controller.AddLibrary)
 	r.POST("/users/mangas/libraries/:source/:source_id/remove", user_controller.DeleteLibrary)

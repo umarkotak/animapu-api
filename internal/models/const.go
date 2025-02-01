@@ -130,6 +130,10 @@ var (
 			Status:   "stable",
 		},
 	}
+
+	AdminEmails = []string{
+		"umarkotak@gmail.com",
+	}
 )
 
 type Season struct {

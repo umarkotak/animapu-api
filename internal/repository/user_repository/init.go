@@ -38,6 +38,15 @@ var (
 			AND u.deleted_at IS NULL
 	`, allColumns)
 
+	queryGetByIDs = fmt.Sprintf(`
+		SELECT
+			%s
+		FROM users u
+		WHERE
+			u.id = ANY(:ids)
+			AND u.deleted_at IS NULL
+	`, allColumns)
+
 	queryGetByGuid = fmt.Sprintf(`
 		SELECT
 			%s
@@ -87,6 +96,7 @@ var (
 var (
 	stmtGetByEmail     *sqlx.NamedStmt
 	stmtGetByID        *sqlx.NamedStmt
+	stmtGetByIDs       *sqlx.NamedStmt
 	stmtGetByGuid      *sqlx.NamedStmt
 	stmtGetByVisitorID *sqlx.NamedStmt
 	stmtInsert         *sqlx.NamedStmt
@@ -102,6 +112,11 @@ func Initialize() {
 	}
 
 	stmtGetByID, err = datastore.Get().Db.PrepareNamed(queryGetByID)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtGetByIDs, err = datastore.Get().Db.PrepareNamed(queryGetByIDs)
 	if err != nil {
 		logrus.Fatal(err)
 	}
