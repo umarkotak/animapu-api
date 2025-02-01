@@ -155,7 +155,7 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.C
 		return chapter, models.Meta{}, err
 	}
 
-	iterator := 5
+	iterator := 0
 	for i := 0; i <= iterator; i++ {
 		chapter, err = mangaScrapper.GetChapter(ctx, queryParams)
 		if err != nil {
@@ -163,6 +163,8 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.C
 			time.Sleep(200 * time.Millisecond)
 			continue
 		}
+
+		break
 	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)

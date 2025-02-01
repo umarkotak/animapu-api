@@ -359,11 +359,13 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 		fmt.Sprintf("%v/read-online/%v-chapter-%v%v.html", sc.Host, queryParams.SourceID, queryParams.ChapterID, modifier),
 	}
 	for _, targetLink := range targetLinks {
-		for i := 0; i < 2; i++ {
+		for i := 0; i < 1; i++ {
 			err = c.Visit(targetLink)
 			c.Wait()
 			if err != nil {
-				logrus.WithContext(ctx).Error(err)
+				logrus.WithContext(ctx).WithFields(logrus.Fields{
+					"url": targetLink,
+				}).Error(err)
 				time.Sleep(1 * time.Second)
 				continue
 			}
