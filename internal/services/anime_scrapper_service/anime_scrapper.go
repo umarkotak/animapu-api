@@ -10,7 +10,7 @@ import (
 	"github.com/umarkotak/animapu-api/datastore"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/repository/mal_api"
+	"github.com/umarkotak/animapu-api/internal/repository/anichart_api.go"
 )
 
 func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
@@ -71,36 +71,36 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 		}
 	}
 
-	malAnimes, err := mal_api.GetSeasonalAnime(ctx, int(queryParams.ReleaseYear), queryParams.ReleaseSeason)
+	anichartAnimes, err := anichart_api.GetSeasonalAnime(ctx, int(queryParams.ReleaseYear), queryParams.ReleaseSeason)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return animePerSeason, models.Meta{}, err
 	}
 
 	animes := []contract.Anime{}
-	for _, malAnime := range malAnimes {
+	for _, anichartAnime := range anichartAnimes {
 		altTitles := []string{}
 
-		if malAnime.AlternativeTitles.En != "" {
-			altTitles = append(altTitles, malAnime.AlternativeTitles.En)
+		if anichartAnime.Title.English != "" {
+			altTitles = append(altTitles, anichartAnime.Title.English)
 		}
 
-		if malAnime.AlternativeTitles.Ja != "" {
-			altTitles = append(altTitles, malAnime.AlternativeTitles.Ja)
+		if anichartAnime.Title.Native != "" {
+			altTitles = append(altTitles, anichartAnime.Title.Native)
 		}
 
-		if malAnime.AlternativeTitles.Synonyms != nil {
-			altTitles = append(altTitles, malAnime.AlternativeTitles.Synonyms...)
+		if anichartAnime.Title.Romaji != "" {
+			altTitles = append(altTitles, anichartAnime.Title.Romaji)
 		}
 
 		anime := contract.Anime{
-			ID:                 fmt.Sprint(malAnime.ID),
+			ID:                 fmt.Sprint(anichartAnime.ID),
 			Source:             "mal",
-			Title:              malAnime.Title,
+			Title:              anichartAnime.Title.Romaji,
 			AltTitles:          altTitles,
-			Description:        malAnime.Synopsis,
-			LatestEpisode:      float64(malAnime.NumEpisodes),
-			CoverUrls:          []string{malAnime.MainPicture.Medium},
+			Description:        anichartAnime.Title.English,
+			LatestEpisode:      float64(anichartAnime.Episodes),
+			CoverUrls:          []string{anichartAnime.CoverImage.Large},
 			Genres:             []string{},
 			Episodes:           []contract.Episode{},
 			OriginalLink:       "",
@@ -109,7 +109,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 			ReleaseSeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
 			ReleaseYear:        queryParams.ReleaseYear,
 			ReleaseDate:        "",
-			Score:              float64(malAnime.MyListStatus.Score),
+			Score:              float64(anichartAnime.AverageScore),
 			Relations:          []contract.Anime{},
 			Relationship:       "",
 			MultipleServer:     false,
