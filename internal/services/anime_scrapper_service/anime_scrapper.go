@@ -98,7 +98,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 			Source:             "mal",
 			Title:              anichartAnime.Title.Romaji,
 			AltTitles:          altTitles,
-			Description:        anichartAnime.Title.English,
+			Description:        anichartAnime.Description,
 			LatestEpisode:      float64(anichartAnime.Episodes),
 			CoverUrls:          []string{anichartAnime.CoverImage.Large},
 			Genres:             []string{},

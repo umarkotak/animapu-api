@@ -33,6 +33,7 @@ const (
 				coverImage {
 					large
 				}
+				description
 			}
 		}
 	}`
@@ -68,6 +69,7 @@ type (
 		CoverImage   struct {
 			Large string `json:"large"`
 		} `json:"coverImage"`
+		Description string `json:"description"`
 	}
 )
 
