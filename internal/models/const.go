@@ -42,6 +42,7 @@ const (
 	ANIME_SOURCE_GOGO_ANIME_NEW = "gogo_anime_new"
 	ANIME_SOURCE_GOGO_ANIME_VC  = "gogo_anime_vc" // TODO: https://gogoanime.org.vc
 	ANIME_SOURCE_GOGO_ANIME_CZ  = "gogo_anime_cz" // TODO: https://gogoanime.co.cz
+	// TODO: https://hianime.to, https://theindex.moe/collection/self-hosted-streaming-sites
 )
 
 var (
