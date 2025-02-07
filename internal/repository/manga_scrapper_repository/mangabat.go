@@ -235,8 +235,8 @@ func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParam
 			Index: 0,
 			ImageUrls: []string{
 				fmt.Sprintf("%v/image_proxy?referer=%v&target=%v", config.Get().AnimapuOnlineHost, "https://m.mangabat.com/", e.Attr("src")),
-				fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
-				e.Attr("src"),
+				// fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
+				// e.Attr("src"),
 			},
 		})
 	})
