@@ -15,8 +15,21 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
-type AsuraComic struct {
-	Host string
+type (
+	AsuraComic struct {
+		Host string
+	}
+
+	AsuraConfig struct {
+	}
+)
+
+var (
+	asuraConfig = AsuraConfig{}
+)
+
+func Initialize() {
+	asuraConfig = AsuraConfig{}
 }
 
 func NewAsuraComic() AsuraComic {
@@ -206,9 +219,6 @@ func (t *AsuraComic) GetSearch(ctx context.Context, queryParams models.QueryPara
 }
 
 func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
-	c := colly.NewCollector()
-	c.SetRequestTimeout(config.Get().CollyTimeout)
-
 	chapterNumber := utils.ForceSanitizeStringToFloat(queryParams.ChapterID)
 
 	targetLink := fmt.Sprintf("%v/series/%v/chapter/%v", t.Host, queryParams.SourceID, queryParams.ChapterID)
@@ -222,22 +232,11 @@ func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryPar
 		ChapterImages: []contract.ChapterImage{},
 	}
 
-	c.OnHTML(`body > div > div > div > div > div > div > div`, func(e *colly.HTMLElement) {
-		chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
-			Index: 0,
-			ImageUrls: []string{
-				"https://gg.asuracomic.net/storage/media/267218/conversions/00-kopya-optimized.webp",
-			},
-		})
-	})
+	browser := rod.New().MustConnect()
+	defer browser.Close()
 
-	// err := c.Visit(targetLink)
-	// if err != nil {
-	// 	logrus.WithContext(ctx).Error(err)
-	// 	return chapter, err
-	// }
-
-	page := rod.New().MustConnect().MustPage(targetLink)
+	page := browser.MustPage(targetLink)
+	defer page.Close()
 
 	el := page.MustElement("div.w-full.mx-auto.center > img")
 	el.Attribute("src")
@@ -246,8 +245,6 @@ func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryPar
 	els := page.MustElements("div.w-full.mx-auto.center > img")
 
 	for _, el := range els {
-		// rod_utils.OutputFile(fmt.Sprintf("hello-%v.png", i), el.MustResource())
-
 		res, err := el.Attribute("src")
 
 		if err != nil {
