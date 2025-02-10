@@ -186,7 +186,8 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 		return episodeWatch, models.Meta{}, err
 	}
 
-	for i := 1; i <= 3; i++ {
+	iter := 1
+	for i := 1; i <= iter; i++ {
 		episodeWatch, err = animeScrapper.Watch(ctx, queryParams)
 		if err == nil {
 			break

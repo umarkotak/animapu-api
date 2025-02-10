@@ -264,7 +264,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		"480p": {},
 		"360p": {},
 	}
-	c.OnHTML("#embed_holder > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
+	c.OnHTML("#venkonten > div.venser > div.venutama > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
 			streams["720p"] = append(streams["720p"], serverOpt{
 				Name: h.Text,
@@ -277,7 +277,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 			})
 		})
 	})
-	c.OnHTML("#embed_holder > div.mirrorstream > ul.m480p", func(e *colly.HTMLElement) {
+	c.OnHTML("#venkonten > div.venser > div.venutama > div.mirrorstream > ul.m480p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
 			streams["480p"] = append(streams["480p"], serverOpt{
 				Name: h.Text,
@@ -290,7 +290,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 			})
 		})
 	})
-	c.OnHTML("#embed_holder > div.mirrorstream > ul.m360p", func(e *colly.HTMLElement) {
+	c.OnHTML("#venkonten > div.venser > div.venutama > div.mirrorstream > ul.m360p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
 			streams["360p"] = append(streams["360p"], serverOpt{
 				Name: h.Text,
@@ -311,6 +311,8 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		return episodeWatch, err
 	}
 	c.Wait()
+
+	// logrus.Infof("STREAM SERVER: %+v", streams)
 
 	if len(streams[queryParams.Resolution]) <= 0 {
 		backupFound := false

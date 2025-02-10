@@ -116,18 +116,18 @@ var (
 		},
 		{
 			ID:       ANIME_SOURCE_GOGO_ANIME,
-			Language: "id",
+			Language: "en",
 			Title:    "Gogo Anime Old",
 			WebLink:  "https://ww10.gogoanimes.org",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
 			ID:       ANIME_SOURCE_GOGO_ANIME_NEW,
-			Language: "id",
+			Language: "en",
 			Title:    "Gogo Anime New",
 			WebLink:  "https://gogoanime.by", // https://gogoanime.by,
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 	}
