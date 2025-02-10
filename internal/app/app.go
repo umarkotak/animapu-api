@@ -19,6 +19,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
@@ -39,6 +40,7 @@ func Initialize() {
 	manga_history_repository.Initialize()
 	manga_library_repository.Initialize()
 	affiliate_link_repository.Initialize()
+	manga_scrapper_repository.InitializeAsuraComic()
 }
 
 func Start() {
@@ -89,5 +91,6 @@ func Start() {
 	r.GET("/affiliate_links/random", affiliate_link_controller.GetRandom)
 	r.GET("/affiliate_links", affiliate_link_controller.GetList)
 
+	defer manga_scrapper_repository.DeferAsuraComic()
 	r.Run(":" + config.Get().Port)
 }

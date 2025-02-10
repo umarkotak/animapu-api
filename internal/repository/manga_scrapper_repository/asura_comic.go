@@ -21,6 +21,7 @@ type (
 	}
 
 	AsuraConfig struct {
+		Browser *rod.Browser
 	}
 )
 
@@ -28,8 +29,14 @@ var (
 	asuraConfig = AsuraConfig{}
 )
 
-func Initialize() {
-	asuraConfig = AsuraConfig{}
+func InitializeAsuraComic() {
+	asuraConfig = AsuraConfig{
+		Browser: rod.New().MustConnect(),
+	}
+}
+
+func DeferAsuraComic() {
+	asuraConfig.Browser.Close()
 }
 
 func NewAsuraComic() AsuraComic {
@@ -232,10 +239,7 @@ func (t *AsuraComic) GetChapter(ctx context.Context, queryParams models.QueryPar
 		ChapterImages: []contract.ChapterImage{},
 	}
 
-	browser := rod.New().MustConnect()
-	defer browser.Close()
-
-	page := browser.MustPage(targetLink)
+	page := asuraConfig.Browser.MustPage(targetLink)
 	defer page.Close()
 
 	el := page.MustElement("div.w-full.mx-auto.center > img")
