@@ -42,6 +42,9 @@ func mangaScrapperGenerator(mangaSource string) (MangaScrapper, error) {
 	case models.SOURCE_WEEB_CENTRAL:
 		mangaScrapper := manga_scrapper_repository.NewWeebCentral()
 		return &mangaScrapper, nil
+	case models.SOURCE_MANGADEX:
+		mangaScrapper := manga_scrapper_repository.NewMangadex()
+		return &mangaScrapper, nil
 	}
 
 	return mangaScrapper, models.ErrMangaSourceNotFound

@@ -31,6 +31,7 @@ const (
 	SOURCE_ASURA_NACM   = "asura_nacm"
 	SOURCE_MANGASEE     = "mangasee"
 	SOURCE_WEEB_CENTRAL = "weeb_central"
+	SOURCE_MANGADEX     = "mangadex"
 
 	// indonesia
 	ANIME_SOURCE_OTAKUDESU     = "otakudesu"
@@ -102,6 +103,14 @@ var (
 			WebLink:  "https://weebcentral.com",
 			Active:   true,
 			Status:   "stable",
+		},
+		{
+			ID:       SOURCE_MANGADEX,
+			Language: "en",
+			Title:    "Mangadex",
+			WebLink:  "https://mangadex.org",
+			Active:   false,
+			Status:   "wip",
 		},
 	}
 
