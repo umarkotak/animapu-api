@@ -256,6 +256,7 @@ func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryP
 		Source:        sc.Source,
 		Number:        0,
 		ChapterImages: []contract.ChapterImage{},
+		SourceLink:    "",
 	}
 
 	// sample link: https://scans-hot.planeptune.us/manga/Kingdom/0825-001.png
@@ -308,6 +309,8 @@ func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryP
 	for _, targetLink := range targetLinks {
 		c.Visit(targetLink)
 	}
+
+	chapter.SourceLink = targetLinks[0]
 
 	return chapter, err
 }

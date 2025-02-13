@@ -93,7 +93,7 @@ var (
 			Language: "en",
 			Title:    "Mangasee",
 			WebLink:  "https://www.mangasee123.com",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
