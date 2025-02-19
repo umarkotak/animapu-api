@@ -139,6 +139,10 @@ func (sc *Komikindo) GetDetail(ctx context.Context, queryParams models.QueryPara
 
 	manga.GenerateLatestChapter()
 
+	manga.Title = strings.TrimPrefix(manga.Title, "Komik")
+	manga.Title = strings.TrimPrefix(manga.Title, "komik")
+	manga.Title = strings.TrimSpace(manga.Title)
+
 	return manga, nil
 }
 

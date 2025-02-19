@@ -203,8 +203,10 @@ func DownloadMangaChapter(c *gin.Context) {
 	}
 	logrus.WithContext(ctx).Infof("Finish gen: %+v", time.Now())
 
+	chapterTitle := fmt.Sprintf("%s - chapter %v", manga.Title, chapter.Number)
+
 	c.Writer.Header().Set("Content-Type", "application/pdf")
-	c.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.pdf", fmt.Sprintf("%v - chapter %v", manga.Title, chapter.Number))) // Customize filename
+	c.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.pdf", chapterTitle)) // Customize filename
 	c.Writer.Header().Set("Content-Length", fmt.Sprint(len(document.GetBytes())))
 
 	c.Writer.Write(document.GetBytes())
