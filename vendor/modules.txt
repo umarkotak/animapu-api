@@ -56,6 +56,19 @@ github.com/antchfx/xmlquery
 # github.com/antchfx/xpath v1.2.0
 ## explicit; go 1.14
 github.com/antchfx/xpath
+# github.com/boombuler/barcode v1.0.1
+## explicit
+github.com/boombuler/barcode
+github.com/boombuler/barcode/code128
+github.com/boombuler/barcode/datamatrix
+github.com/boombuler/barcode/ean
+github.com/boombuler/barcode/qr
+github.com/boombuler/barcode/utils
+# github.com/f-amaral/go-async v0.3.0
+## explicit; go 1.21
+github.com/f-amaral/go-async/async
+github.com/f-amaral/go-async/pool
+github.com/f-amaral/go-async/sort
 # github.com/felixge/httpsnoop v1.0.4
 ## explicit; go 1.13
 github.com/felixge/httpsnoop
@@ -189,16 +202,62 @@ github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.1
 ## explicit; go 1.13
 github.com/hashicorp/go-multierror
+# github.com/hhrutter/lzw v1.0.0
+## explicit; go 1.19
+github.com/hhrutter/lzw
+# github.com/hhrutter/tiff v1.0.1
+## explicit; go 1.19
+github.com/hhrutter/tiff
 # github.com/jmoiron/sqlx v1.4.0
 ## explicit; go 1.10
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
+# github.com/johnfercher/go-tree v1.0.5
+## explicit; go 1.21.1
+github.com/johnfercher/go-tree/node
+# github.com/johnfercher/maroto/v2 v2.3.1
+## explicit; go 1.21.1
+github.com/johnfercher/maroto/v2
+github.com/johnfercher/maroto/v2/internal/cache
+github.com/johnfercher/maroto/v2/internal/code
+github.com/johnfercher/maroto/v2/internal/math
+github.com/johnfercher/maroto/v2/internal/merror
+github.com/johnfercher/maroto/v2/internal/providers/gofpdf
+github.com/johnfercher/maroto/v2/internal/providers/gofpdf/cellwriter
+github.com/johnfercher/maroto/v2/internal/providers/gofpdf/gofpdfwrapper
+github.com/johnfercher/maroto/v2/internal/time
+github.com/johnfercher/maroto/v2/pkg/components/col
+github.com/johnfercher/maroto/v2/pkg/components/image
+github.com/johnfercher/maroto/v2/pkg/components/page
+github.com/johnfercher/maroto/v2/pkg/components/row
+github.com/johnfercher/maroto/v2/pkg/config
+github.com/johnfercher/maroto/v2/pkg/consts/align
+github.com/johnfercher/maroto/v2/pkg/consts/barcode
+github.com/johnfercher/maroto/v2/pkg/consts/border
+github.com/johnfercher/maroto/v2/pkg/consts/breakline
+github.com/johnfercher/maroto/v2/pkg/consts/extension
+github.com/johnfercher/maroto/v2/pkg/consts/fontfamily
+github.com/johnfercher/maroto/v2/pkg/consts/fontstyle
+github.com/johnfercher/maroto/v2/pkg/consts/generation
+github.com/johnfercher/maroto/v2/pkg/consts/linestyle
+github.com/johnfercher/maroto/v2/pkg/consts/orientation
+github.com/johnfercher/maroto/v2/pkg/consts/pagesize
+github.com/johnfercher/maroto/v2/pkg/consts/protection
+github.com/johnfercher/maroto/v2/pkg/consts/provider
+github.com/johnfercher/maroto/v2/pkg/core
+github.com/johnfercher/maroto/v2/pkg/core/entity
+github.com/johnfercher/maroto/v2/pkg/merge
+github.com/johnfercher/maroto/v2/pkg/metrics
+github.com/johnfercher/maroto/v2/pkg/props
 # github.com/joho/godotenv v1.4.0
 ## explicit; go 1.12
 github.com/joho/godotenv
 # github.com/json-iterator/go v1.1.12
 ## explicit; go 1.12
 github.com/json-iterator/go
+# github.com/jung-kurt/gofpdf v1.16.2
+## explicit; go 1.12
+github.com/jung-kurt/gofpdf
 # github.com/kennygrant/sanitize v1.2.4
 ## explicit
 github.com/kennygrant/sanitize
@@ -214,32 +273,50 @@ github.com/lib/pq/scram
 # github.com/mattn/go-isatty v0.0.20
 ## explicit; go 1.15
 github.com/mattn/go-isatty
-# github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
-## explicit
-github.com/mitchellh/colorstring
+# github.com/mattn/go-runewidth v0.0.15
+## explicit; go 1.9
+github.com/mattn/go-runewidth
 # github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421
 ## explicit
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.2
 ## explicit; go 1.12
 github.com/modern-go/reflect2
-# github.com/mvdan/xurls v1.1.0
-## explicit
 # github.com/nstratos/go-myanimelist v0.9.5
 ## explicit; go 1.16
 github.com/nstratos/go-myanimelist/mal
 # github.com/patrickmn/go-cache v2.1.0+incompatible
 ## explicit
 github.com/patrickmn/go-cache
-# github.com/rivo/uniseg v0.4.7
+# github.com/pdfcpu/pdfcpu v0.6.0
+## explicit; go 1.20
+github.com/pdfcpu/pdfcpu/internal/corefont/metrics
+github.com/pdfcpu/pdfcpu/pkg/api
+github.com/pdfcpu/pdfcpu/pkg/filter
+github.com/pdfcpu/pdfcpu/pkg/font
+github.com/pdfcpu/pdfcpu/pkg/log
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/color
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/create
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/draw
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/font
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/form
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/format
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/matrix
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/primitives
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/scan
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/types
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/validate
+# github.com/pkg/errors v0.9.1
+## explicit
+github.com/pkg/errors
+# github.com/rivo/uniseg v0.4.4
 ## explicit; go 1.18
 github.com/rivo/uniseg
 # github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca
 ## explicit
 github.com/saintfish/chardet
-# github.com/schollz/progressbar/v3 v3.16.1
-## explicit; go 1.22
-github.com/schollz/progressbar/v3
 # github.com/sirupsen/logrus v1.9.3
 ## explicit; go 1.13
 github.com/sirupsen/logrus
@@ -331,6 +408,13 @@ golang.org/x/crypto/hkdf
 golang.org/x/crypto/internal/alias
 golang.org/x/crypto/internal/poly1305
 golang.org/x/crypto/sha3
+# golang.org/x/image v0.18.0
+## explicit; go 1.18
+golang.org/x/image/ccitt
+golang.org/x/image/riff
+golang.org/x/image/vp8
+golang.org/x/image/vp8l
+golang.org/x/image/webp
 # golang.org/x/net v0.33.0
 ## explicit; go 1.18
 golang.org/x/net/html
@@ -360,12 +444,8 @@ golang.org/x/sync/semaphore
 # golang.org/x/sys v0.28.0
 ## explicit; go 1.18
 golang.org/x/sys/cpu
-golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.27.0
-## explicit; go 1.18
-golang.org/x/term
 # golang.org/x/text v0.21.0
 ## explicit; go 1.18
 golang.org/x/text/encoding
@@ -557,6 +637,3 @@ google.golang.org/protobuf/types/known/wrapperspb
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit; go 1.15
 gopkg.in/yaml.v2
-# mvdan.cc/xurls v1.1.0
-## explicit
-mvdan.cc/xurls
