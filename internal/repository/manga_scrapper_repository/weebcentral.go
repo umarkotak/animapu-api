@@ -65,7 +65,7 @@ func (sc *WeebCentral) GetHome(ctx context.Context, queryParams models.QueryPara
 		r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 	})
 
-	c.OnHTML("body > article", func(e *colly.HTMLElement) {
+	c.OnHTML("body > abbr > article", func(e *colly.HTMLElement) {
 		mangaLink := e.ChildAttr("a.aspect-square.overflow-hidden", "href")
 		mangaID := strings.ReplaceAll(mangaLink, sc.Host, "")
 		mangaID = strings.TrimPrefix(mangaID, "/series/")
