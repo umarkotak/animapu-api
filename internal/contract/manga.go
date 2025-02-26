@@ -92,3 +92,13 @@ func (m *Manga) ImageURLs() []string {
 
 	return imageURLs
 }
+
+func (m *Manga) ImageURLsEqual(compareImageUrls []string) bool {
+	imageURLs := []string{}
+
+	for _, coverImage := range m.CoverImages {
+		imageURLs = append(imageURLs, coverImage.ImageUrls...)
+	}
+
+	return strings.Join(imageURLs, ",") == strings.Join(compareImageUrls, ",")
+}

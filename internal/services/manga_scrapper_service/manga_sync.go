@@ -22,11 +22,14 @@ func MangaSync(ctx context.Context, mangas []contract.Manga) error {
 		}
 
 		if existingManga.ID != 0 {
-			if manga.LatestChapterNumber > existingManga.LatestChapter {
-				existingManga.CoverUrls = manga.ImageURLs()
-				existingManga.LatestChapter = manga.LatestChapterNumber
-				err = manga_repository.Update(ctx, nil, existingManga)
+			if manga.LatestChapterNumber < existingManga.LatestChapter && manga.ImageURLsEqual(existingManga.CoverUrls) {
+				continue
 			}
+
+			existingManga.CoverUrls = manga.ImageURLs()
+			existingManga.LatestChapter = manga.LatestChapterNumber
+			err = manga_repository.Update(ctx, nil, existingManga)
+
 		} else {
 			existingManga := models.Manga{
 				Source:        manga.Source,
