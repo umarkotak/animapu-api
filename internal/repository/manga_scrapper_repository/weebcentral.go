@@ -260,7 +260,15 @@ func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryP
 	}
 
 	// sample link: https://scans-hot.planeptune.us/manga/Kingdom/0825-001.png
-	c.OnHTML("head > link:nth-child(18)", func(e *colly.HTMLElement) {
+	c.OnHTML("head > link", func(e *colly.HTMLElement) {
+		if e.Attr("as") != "image" {
+			return
+		}
+
+		if e.Attr("rel") != "preload" {
+			return
+		}
+
 		firstImageLink := e.Attr("href")
 		imageLinkSplit := strings.Split(firstImageLink, "/")
 

@@ -259,7 +259,9 @@ func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParam
 			},
 		)
 		if err != nil {
-			logrus.WithContext(ctx).Error(err)
+			logrus.WithContext(ctx).WithFields(logrus.Fields{
+				"target": targetLink,
+			}).Error(err)
 			continue
 		}
 		if len(chapter.ChapterImages) > 0 {
