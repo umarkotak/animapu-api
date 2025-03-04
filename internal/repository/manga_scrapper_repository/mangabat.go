@@ -12,6 +12,7 @@ import (
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
 type Mangabat struct {
@@ -21,7 +22,8 @@ type Mangabat struct {
 
 func NewMangabat() Mangabat {
 	return Mangabat{
-		Host:     "https://h.mangabat.com",
+		// Host:     "https://h.mangabat.com",
+		Host:     "https://www.mangabats.com",
 		ReadHost: "https://readmangabat.com",
 	}
 }
@@ -36,34 +38,26 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	c.OnHTML("body div.body-site div.container.container-main div.container-main-left div.panel-list-story .list-story-item", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div > div > div.list-truyen-item-wrap", func(e *colly.HTMLElement) {
 		sourceID := ""
-		mangaLink := e.ChildAttr("div > h3 > a", "href")
+		mangaLink := e.ChildAttr("a.cover", "href")
 		mangaLinkSplitted := strings.Split(mangaLink, "/")
 		if len(mangaLinkSplitted) > 0 {
 			sourceID = mangaLinkSplitted[len(mangaLinkSplitted)-1]
 		}
 
 		latestChapterID := ""
-		latestChapterLink := e.ChildAttr("div > a:nth-child(2)", "href")
+		latestChapterLink := e.ChildAttr("a.list-story-item-wrap-chapter", "href")
 		mangaLinkSplittedSplitted := strings.Split(latestChapterLink, "/")
 		if len(mangaLinkSplittedSplitted) > 0 {
 			latestChapterID = mangaLinkSplittedSplitted[len(mangaLinkSplittedSplitted)-1]
 		}
 
-		latestChapterText := e.ChildText("div > a:nth-child(2)")
-		latestChapterNumberString := strings.Replace(latestChapterText, "Chapter ", "", -1)
-		latestChapterNumber, _ := strconv.ParseFloat(latestChapterNumberString, 64)
+		latestChapterText := latestChapterID
+		latestChapterNumber := utils.StringMustFloat64(latestChapterText)
 
-		imageURL := e.ChildAttr("a > img", "src")
-
-		if latestChapterNumber == 0 {
-			latestChapterNumberSplitted := strings.Split(latestChapterID, "-")
-			if len(latestChapterNumberSplitted) > 0 {
-				latestChapterNumberString = latestChapterNumberSplitted[len(latestChapterNumberSplitted)-1]
-				latestChapterNumber, _ = strconv.ParseFloat(latestChapterNumberString, 64)
-			}
-		}
+		imageURL := e.ChildAttr("a.cover > img", "src")
+		imageURL = fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, imageURL)
 
 		mangas = append(mangas, contract.Manga{
 			ID:                  sourceID,
@@ -89,7 +83,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("%s/manga-list-all/%v", m.Host, queryParams.Page))
+	err := c.Visit(fmt.Sprintf("%v/manga-list/latest-manga?page=%v", m.Host, queryParams.Page))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
