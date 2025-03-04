@@ -22,7 +22,6 @@ type Mangabat struct {
 
 func NewMangabat() Mangabat {
 	return Mangabat{
-		// Host:     "https://h.mangabat.com",
 		Host:     "https://www.mangabats.com",
 		ReadHost: "https://readmangabat.com",
 	}

@@ -32,6 +32,8 @@ const (
 	SOURCE_MANGASEE     = "mangasee"
 	SOURCE_WEEB_CENTRAL = "weeb_central"
 	SOURCE_MANGADEX     = "mangadex"
+	SOURCE_MANGAKAKALOT = "manga_kakalot" // TODO
+	SOURCE_MANGANATO    = "manga_nato"    // TODO
 
 	// indonesia
 	ANIME_SOURCE_OTAKUDESU     = "otakudesu"
@@ -76,7 +78,7 @@ var (
 			ID:       SOURCE_MANGABAT,
 			Language: "en",
 			Title:    "Manga Bat",
-			WebLink:  "https://m.mangabat.com/m",
+			WebLink:  "https://www.mangabats.com",
 			Active:   true,
 			Status:   "stable",
 		},
@@ -109,6 +111,22 @@ var (
 			Language: "en",
 			Title:    "Mangadex",
 			WebLink:  "https://mangadex.org",
+			Active:   false,
+			Status:   "wip",
+		},
+		{
+			ID:       SOURCE_MANGAKAKALOT,
+			Language: "en",
+			Title:    "Manga Kakalot",
+			WebLink:  "https://www.mangakakalot.gg",
+			Active:   false,
+			Status:   "wip",
+		},
+		{
+			ID:       SOURCE_MANGANATO,
+			Language: "en",
+			Title:    "Manga Nato",
+			WebLink:  "https://manganato.info",
 			Active:   false,
 			Status:   "wip",
 		},
