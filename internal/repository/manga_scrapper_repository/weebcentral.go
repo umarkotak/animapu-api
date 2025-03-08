@@ -203,7 +203,7 @@ func (sc *WeebCentral) GetSearch(ctx context.Context, queryParams models.QueryPa
 		r.Headers.Set("Content-Type", "application/x-www-form-urlencoded")
 	})
 
-	c.OnHTML("#quick-search-result > div.w-full.join.join-vertical.flex.absolute.inset-x-0.z-10.mt-4.rounded-none > a", func(e *colly.HTMLElement) {
+	c.OnHTML("#quick-search-result > div.w-full.join.join-vertical.flex.absolute > a", func(e *colly.HTMLElement) {
 		mangaLink := e.Attr("href")
 		mangaID := strings.ReplaceAll(mangaLink, sc.Host, "")
 		mangaID = strings.TrimPrefix(mangaID, "/series/")

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -53,7 +52,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 		}
 
 		latestChapterText := latestChapterID
-		latestChapterNumber := utils.StringMustFloat64(latestChapterText)
+		latestChapterNumber := utils.ForceSanitizeStringToFloat(latestChapterText)
 
 		imageURL := e.ChildAttr("a.cover > img", "src")
 		imageURL = fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, imageURL)
@@ -82,7 +81,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("%v/manga-list/latest-manga?page=%v", m.Host, queryParams.Page))
+	err := c.Visit(fmt.Sprintf("%v/genre/all?page=%v", m.Host, queryParams.Page))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
@@ -104,43 +103,47 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-right > h1", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.manga-info-top > ul > li:nth-child(1) > h1", func(e *colly.HTMLElement) {
 		manga.Title = e.Text
 	})
 
-	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-left > span.info-image > img", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.manga-info-top > div > img", func(e *colly.HTMLElement) {
+		imageURL := e.Attr("src")
+		imageURL = fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, imageURL)
 		manga.CoverImages = []contract.CoverImage{
 			{
 				Index:     1,
-				ImageUrls: []string{e.Attr("src")},
+				ImageUrls: []string{imageURL},
 			},
 		}
 	})
 
-	c.OnHTML("#panel-story-info-description", func(e *colly.HTMLElement) {
+	c.OnHTML("#contentBox", func(e *colly.HTMLElement) {
 		manga.Description = e.Text
 	})
 
 	idx := int64(1)
-	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-chapter-list > ul > li", func(e *colly.HTMLElement) {
+	c.OnHTML("#chapter > div > div.chapter-list > div", func(e *colly.HTMLElement) {
 		chapterLink := e.ChildAttr("a", "href")
-		splittedLink := strings.Split(chapterLink, "-")
-		chapterNumber, _ := strconv.ParseFloat(splittedLink[len(splittedLink)-1], 64)
-		id := fmt.Sprintf("chap-%v", splittedLink[len(splittedLink)-1])
+		splittedLink := strings.Split(chapterLink, "/")
+		if len(splittedLink) == 0 {
+			return
+		}
+		chapterID := splittedLink[len(splittedLink)-1]
 
 		manga.Chapters = append(manga.Chapters, contract.Chapter{
-			ID:       id,
+			ID:       chapterID,
 			Source:   "mangabat",
-			SourceID: id,
+			SourceID: chapterID,
 			Title:    e.ChildText("a"),
 			Index:    idx,
-			Number:   chapterNumber,
+			Number:   utils.ForceSanitizeStringToFloat(chapterID),
 		})
 
 		idx += 1
 	})
 
-	err := c.Visit(fmt.Sprintf("%s/%v", m.ReadHost, queryParams.SourceID))
+	err := c.Visit(fmt.Sprintf("%s/manga/%s", m.Host, queryParams.SourceID))
 	c.Wait()
 
 	if err != nil {
@@ -159,9 +162,9 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	c.OnHTML("body > div.body-site > div.container.container-main > div.container-main-left > div.panel-list-story > div", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.daily-update > div > div", func(e *colly.HTMLElement) {
 		sourceID := ""
-		mangaLink := e.ChildAttr("a.item-img", "href")
+		mangaLink := e.ChildAttr("a", "href")
 		mangaLinkSplitted := strings.Split(mangaLink, "/")
 		if len(mangaLinkSplitted) > 0 {
 			sourceID = mangaLinkSplitted[len(mangaLinkSplitted)-1]
@@ -169,10 +172,15 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 
 		title := e.ChildText("div > h3 > a")
 
-		latestChapterTitle := e.ChildAttr("div > a:nth-child(2)", "href")
-		latestChapterTitleSplitted := strings.Split(latestChapterTitle, "-")
-		latestChapterID := latestChapterTitleSplitted[len(latestChapterTitleSplitted)-1]
-		latestChapterNumber, _ := strconv.ParseFloat(latestChapterID, 64)
+		latestChapterLink := e.ChildAttr("div > em:nth-child(2) > a", "href")
+		latestChapterLinkSplitted := strings.Split(latestChapterLink, "/")
+		latestChapterID := ""
+		if len(latestChapterLinkSplitted) > 0 {
+			latestChapterID = latestChapterLinkSplitted[len(latestChapterLinkSplitted)-1]
+		}
+
+		imageURL := e.ChildAttr("a > img", "src")
+		imageURL = fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, imageURL)
 
 		mangas = append(mangas, contract.Manga{
 			ID:                  sourceID,
@@ -184,22 +192,17 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 			Status:              "",
 			Rating:              "",
 			LatestChapterID:     latestChapterID,
-			LatestChapterNumber: latestChapterNumber,
-			LatestChapterTitle:  latestChapterTitle,
+			LatestChapterNumber: utils.ForceSanitizeStringToFloat(latestChapterID),
+			LatestChapterTitle:  latestChapterID,
 			Chapters:            []contract.Chapter{},
 			CoverImages: []contract.CoverImage{
-				{
-					Index: 1,
-					ImageUrls: []string{
-						e.ChildAttr("a > img", "src"),
-					},
-				},
+				{Index: 1, ImageUrls: []string{imageURL}},
 			},
 		})
 	})
 
 	query := strings.Replace(queryParams.Title, " ", "_", -1)
-	err := c.Visit(fmt.Sprintf("%s/search/manga/%v", m.Host, query))
+	err := c.Visit(fmt.Sprintf("%s/search/story/%s", m.Host, query))
 	c.Wait()
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
@@ -212,31 +215,27 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
 	c := colly.NewCollector()
 
-	chapterNumberSplitted := strings.Split(queryParams.ChapterID, "-")
-	chapterNumber, _ := strconv.ParseFloat(chapterNumberSplitted[1], 64)
-
 	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
 		SourceID:      queryParams.SourceID,
 		Source:        "mangabat",
-		Number:        chapterNumber,
+		Number:        utils.ForceSanitizeStringToFloat(queryParams.ChapterID),
 		ChapterImages: []contract.ChapterImage{},
 	}
 
-	c.OnHTML("body > div.body-site > div.container-chapter-reader > img", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container-chapter-reader > img", func(e *colly.HTMLElement) {
+		imageURL := e.Attr("src")
+		imageURL = fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, imageURL)
+
 		chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
-			Index: 0,
-			ImageUrls: []string{
-				fmt.Sprintf("%v/image_proxy?referer=%v&target=%v", config.Get().AnimapuOnlineHost, "https://m.mangabat.com/", e.Attr("src")),
-				// fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, e.Attr("src")),
-				// e.Attr("src"),
-			},
+			Index:     0,
+			ImageUrls: []string{imageURL},
 		})
 	})
 
 	var err error
 	targets := []string{
-		fmt.Sprintf("%s/%v-%v", m.ReadHost, queryParams.SourceID, queryParams.ChapterID),
+		fmt.Sprintf("%s/manga/%s/%s", m.Host, queryParams.SourceID, queryParams.ChapterID),
 	}
 
 	for _, targetLink := range targets {
@@ -246,17 +245,17 @@ func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParam
 			strings.NewReader("{}"),
 			colly.NewContext(),
 			http.Header{
-				"Authority":                 []string{strings.ReplaceAll(m.ReadHost, "https://", "")},
-				"Accept":                    []string{"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
-				"Accept-Language":           []string{"en-US,en;q=0.9,id;q=0.8"},
-				"Cache-Control":             []string{"max-age=0"},
-				"Sec-Fetch-Site":            []string{"same-origin"},
-				"Sec-Fetch-Mode":            []string{"navigate"},
-				"Sec-Fetch-Dest":            []string{"document"},
-				"Sec-Fetch-User":            []string{"?1"},
-				"Upgrade-Insecure-Requests": []string{"1"},
-				"User-Agent":                []string{"Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"},
-				"Referer":                   []string{targetLink},
+				// "Authority":                 []string{strings.ReplaceAll(m.ReadHost, "https://", "")},
+				// "Accept":                    []string{"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+				// "Accept-Language":           []string{"en-US,en;q=0.9,id;q=0.8"},
+				// "Cache-Control":             []string{"max-age=0"},
+				// "Sec-Fetch-Site":            []string{"same-origin"},
+				// "Sec-Fetch-Mode":            []string{"navigate"},
+				// "Sec-Fetch-Dest":            []string{"document"},
+				// "Sec-Fetch-User":            []string{"?1"},
+				// "Upgrade-Insecure-Requests": []string{"1"},
+				// "User-Agent":                []string{"Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"},
+				// "Referer":                   []string{targetLink},
 			},
 		)
 		if err != nil {
