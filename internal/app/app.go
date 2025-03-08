@@ -15,6 +15,8 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
 	"github.com/umarkotak/animapu-api/internal/repository"
 	"github.com/umarkotak/animapu-api/internal/repository/affiliate_link_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/anime_history_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/anime_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_chapter_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
@@ -41,6 +43,8 @@ func Initialize() {
 	manga_library_repository.Initialize()
 	affiliate_link_repository.Initialize()
 	manga_scrapper_repository.InitializeAsuraComic()
+	anime_repository.Initialize()
+	anime_history_repository.Initialize()
 }
 
 func Start() {
@@ -71,6 +75,7 @@ func Start() {
 	r.GET("/users/mangas/histories_v2", user_controller.GetHistoriesV2)
 	r.POST("/users/mangas/histories", user_controller.FirebasePostHistories)
 	r.GET("/users/mangas/activities", user_controller.GetUserMangaActivities)
+	r.GET("/users/animes/histories", user_controller.GetAnimeHistories)
 
 	r.POST("/users/mangas/libraries/:source/:source_id/add", user_controller.AddLibrary)
 	r.POST("/users/mangas/libraries/:source/:source_id/remove", user_controller.DeleteLibrary)

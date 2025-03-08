@@ -17,6 +17,7 @@ type (
 	}
 
 	AnimeQueryParams struct {
+		User            User   `json:"-"`                 //
 		Source          string `json:"source"`            //
 		SourceID        string `json:"source_id"`         //
 		Page            int64  `json:"page"`              //

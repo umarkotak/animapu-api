@@ -7,6 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/services/anime_history_service"
+	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/services/manga_history_service"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/services/user_history_service"
@@ -140,4 +142,29 @@ func GetUserMangaActivities(c *gin.Context) {
 	}
 
 	render.Response(ctx, c, data, nil, 200)
+}
+
+func GetAnimeHistories(c *gin.Context) {
+	commonCtx := common_ctx.GetFromGinCtx(c)
+
+	pagination := models.Pagination{
+		Limit: utils.StringMustInt64(c.Query("limit")),
+		Page:  utils.StringMustInt64(c.Query("page")),
+	}
+	pagination.SetDefault(10000)
+
+	animeHistories, err := anime_history_service.GetHistories(c.Request.Context(), commonCtx.User, pagination)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Error(err)
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	animeHistories = anime_scrapper_service.MultiInjectLibraryAndHistoryForHistory(c.Request.Context(), commonCtx.User, animeHistories)
+
+	render.Response(
+		c.Request.Context(), c,
+		animeHistories,
+		nil, 200,
+	)
 }

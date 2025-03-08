@@ -10,11 +10,14 @@ import (
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
+	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
 func GetLatest(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	commonCtx := common_ctx.GetFromGinCtx(c)
 
 	page, _ := strconv.ParseInt(c.Query("page"), 10, 64)
 	queryParams := models.AnimeQueryParams{
@@ -28,6 +31,8 @@ func GetLatest(c *gin.Context) {
 		render.ErrorResponse(ctx, c, err, true)
 		return
 	}
+
+	animes = anime_scrapper_service.MultiInjectLibraryAndHistoryForLatest(c.Request.Context(), commonCtx.User, animes)
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(ctx, c, animes, nil, 200)
@@ -123,6 +128,7 @@ func GetWatch(c *gin.Context) {
 		Resolution:      c.Request.URL.Query().Get("resolution"),
 		StreamIdx:       c.Request.URL.Query().Get("stream_idx"),
 		ManualServerOpt: c.Request.URL.Query().Get("manual_server_opt"),
+		User:            common_ctx.GetFromGinCtx(c).User,
 	}
 
 	episodeWatch, meta, err := anime_scrapper_service.Watch(ctx, queryParams)

@@ -29,6 +29,24 @@ type (
 		Relationship       string    `json:"relationship"`
 		MultipleServer     bool      `json:"multiple_server"`
 		SearchTitle        string    `json:"search_title"`
+
+		// history info
+		LastEpisodeWatch float64   `json:"last_episode_watch"`
+		LastLink         string    `json:"last_link"`
+		IsInLibrary      bool      `json:"is_in_library"`
+		LastWatchAt      time.Time `json:"last_watch_at"`
+	}
+
+	AnimeHistory struct {
+		ID               string    `json:"id"`
+		Source           string    `json:"source"`
+		Title            string    `json:"title"`
+		LatestEpisode    float64   `json:"latest_episode"`
+		CoverUrls        []string  `json:"cover_urls"`
+		LastEpisodeWatch float64   `json:"last_episode_watch"`
+		LastLink         string    `json:"last_link"`
+		IsInLibrary      bool      `json:"is_in_library"`
+		LastWatchAt      time.Time `json:"last_watch_at"`
 	}
 
 	AnimeDetail struct {

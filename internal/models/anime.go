@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"strings"
 	"time"
 
 	"github.com/lib/pq"
@@ -21,3 +22,7 @@ type (
 		LatestEpisode float64        `json:"latest_episode" db:"latest_episode"` //
 	}
 )
+
+func (m *Anime) ImageURLsEqual(compareImageUrls []string) bool {
+	return strings.Join(m.CoverUrls, ",") == strings.Join(compareImageUrls, ",")
+}

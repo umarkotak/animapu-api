@@ -31,14 +31,14 @@ func MangaSync(ctx context.Context, mangas []contract.Manga) error {
 			err = manga_repository.Update(ctx, nil, existingManga)
 
 		} else {
-			existingManga := models.Manga{
+			newManga := models.Manga{
 				Source:        manga.Source,
 				SourceID:      manga.SourceID,
 				Title:         manga.Title,
 				CoverUrls:     manga.ImageURLs(),
 				LatestChapter: manga.LatestChapterNumber,
 			}
-			existingManga.ID, err = manga_repository.Insert(ctx, nil, existingManga)
+			newManga.ID, err = manga_repository.Insert(ctx, nil, newManga)
 		}
 		if err != nil {
 			logrus.WithContext(ctx).Error(err)

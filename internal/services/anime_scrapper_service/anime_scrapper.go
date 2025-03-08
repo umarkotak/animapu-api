@@ -47,7 +47,8 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]cont
 	}
 
 	if len(animes) > 0 {
-		datastore.Get().GoCache.Set(queryParams.ToKey("GetLatest"), animes, 24*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("GetLatest"), animes, 24*time.Hour)
+		go AnimeSync(context.Background(), animes)
 	}
 
 	return animes, models.Meta{}, nil
@@ -160,7 +161,8 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 	}
 
 	if anime.ID != "" {
-		datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 24*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 24*time.Hour)
+		go AnimeSync(context.Background(), []contract.Anime{anime})
 	}
 
 	return anime, models.Meta{}, nil
@@ -203,6 +205,12 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 	// if episodeWatch.RawStreamUrl != "" || episodeWatch.IframeUrl != "" {
 	// 	datastore.Get().GoCache.Set(queryParams.ToKey("Watch"), episodeWatch, 24*time.Hour)
 	// }
+
+	go AnimeEpisodeSync(context.Background(), queryParams, contract.Episode{
+		AnimeID: queryParams.SourceID,
+		Source:  queryParams.Source,
+		ID:      queryParams.EpisodeID,
+	})
 
 	return episodeWatch, models.Meta{}, nil
 }
