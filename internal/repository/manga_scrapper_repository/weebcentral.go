@@ -298,6 +298,7 @@ func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryP
 
 		for i := 1; i <= 150; i++ {
 			imageUrl := fmt.Sprintf("%s%s-%03d.%s", imageLinkPrefix, chapterNoStr, i, extension)
+			imageUrl = fmt.Sprintf("%v/mangas/weeb_central/image_proxy/%v", config.Get().AnimapuOnlineHost, imageUrl)
 
 			// _, err = http.Head(imageUrl)
 			// if err != nil {

@@ -82,6 +82,7 @@ func Start() {
 	r.GET("/users/mangas/libraries", user_controller.GetLibraries)
 
 	r.GET("/mangas/mangabat/image_proxy/*url", proxy_controller.MangabatImage)
+	r.GET("/mangas/weeb_central/image_proxy/*url", proxy_controller.WeebCentralImage)
 	r.GET("/mangas/klikmanga/image_proxy/*url", proxy_controller.KlikmangaImage)
 	r.GET("/mangas/komikindo/image_proxy/*url", proxy_controller.KomikindoImage)
 	r.GET("/image_proxy", proxy_controller.GenericImage)
