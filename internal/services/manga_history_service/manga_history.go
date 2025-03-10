@@ -2,6 +2,7 @@ package manga_history_service
 
 import (
 	"context"
+	"sort"
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
@@ -93,6 +94,10 @@ func GetUserMangaActivities(ctx context.Context, pagination models.Pagination) (
 
 		userMangaActivityData.Users[targetIdx].MangaHistories = append(userMangaActivityData.Users[targetIdx].MangaHistories, resMangaHistory)
 	}
+
+	sort.Slice(userMangaActivityData.Users, func(i, j int) bool {
+		return userMangaActivityData.Users[i].MangaHistories[0].LastReadAt.After(userMangaActivityData.Users[j].MangaHistories[0].LastReadAt)
+	})
 
 	return userMangaActivityData, nil
 }
