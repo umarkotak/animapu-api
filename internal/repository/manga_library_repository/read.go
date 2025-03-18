@@ -2,9 +2,12 @@ package manga_library_repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/datastore"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
@@ -58,15 +61,44 @@ func GetByUserID(ctx context.Context, userID int64) ([]models.MangaHistory, erro
 	return mangaHistories, nil
 }
 
-func GetByUserIDDetailed(ctx context.Context, userID int64) ([]models.MangaHistoryDetailed, error) {
+func GetByUserIDDetailed(ctx context.Context, params contract.MangaLibraryParams) ([]models.MangaHistoryDetailed, error) {
 	mangaHistories := []models.MangaHistoryDetailed{}
 
-	err := stmtGetByUserIDDetailed.SelectContext(ctx, &mangaHistories, map[string]any{
-		"user_id": userID,
+	sort := "m.updated_at DESC"
+	switch params.Sort {
+	case "latest_update":
+		sort = "m.updated_at DESC"
+	case "recent_added":
+		sort = "ml.id DESC"
+	}
+
+	queryGetByUserIDDetailed := fmt.Sprintf(`
+		SELECT
+			%s,
+			m.source AS manga_source,
+			m.source_id AS manga_source_id,
+			m.title AS manga_title,
+			m.cover_urls AS manga_cover_urls,
+			m.latest_chapter AS manga_latest_chapter
+		FROM manga_libraries ml
+		INNER JOIN mangas m ON m.id = ml.manga_id
+		WHERE
+			ml.user_id = :user_id
+			AND ml.deleted_at IS NULL
+		ORDER BY %s
+	`, allColumns, sort)
+
+	stmtGetByUserIDDetailed, err := datastore.Get().Db.PrepareNamed(queryGetByUserIDDetailed)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	err = stmtGetByUserIDDetailed.SelectContext(ctx, &mangaHistories, map[string]any{
+		"user_id": params.UserID,
 	})
 	if err != nil {
 		logrus.WithContext(ctx).WithFields(logrus.Fields{
-			"user_id": userID,
+			"user_id": params.UserID,
 		}).Error(err)
 		return mangaHistories, err
 	}

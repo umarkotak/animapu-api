@@ -5,12 +5,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
-	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
 )
 
-func GetLibraries(ctx context.Context, user models.User, limit, page int64) ([]contract.MangaLibrary, error) {
-	mangaLibraries, err := manga_library_repository.GetByUserIDDetailed(ctx, user.ID)
+func GetLibraries(ctx context.Context, params contract.MangaLibraryParams) ([]contract.MangaLibrary, error) {
+	mangaLibraries, err := manga_library_repository.GetByUserIDDetailed(ctx, params)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return []contract.MangaLibrary{}, err

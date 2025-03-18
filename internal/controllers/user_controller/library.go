@@ -29,7 +29,16 @@ func GetLibraries(c *gin.Context) {
 
 	user := common_ctx.GetFromGinCtx(c).User
 
-	mangas, err := manga_library_service.GetLibraries(ctx, user, 1000, 1)
+	params := contract.MangaLibraryParams{
+		UserID: user.ID,
+		Sort:   c.GetString("sort"),
+		Pagination: models.Pagination{
+			Limit: 1000,
+			Page:  1,
+		},
+	}
+
+	mangas, err := manga_library_service.GetLibraries(ctx, params)
 	if err != nil {
 		render.ErrorResponse(ctx, c, err, true)
 		return

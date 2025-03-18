@@ -71,9 +71,7 @@ func Start() {
 	r.GET("/mangas/:manga_source/read/:manga_id/:chapter_id/manga_chapter.pdf", manga_controller.DownloadMangaChapter)
 	r.GET("/mangas/:manga_source/search", manga_controller.SearchManga)
 
-	r.GET("/users/mangas/histories", user_controller.GetHistories)
 	r.GET("/users/mangas/histories_v2", user_controller.GetHistoriesV2)
-	r.POST("/users/mangas/histories", user_controller.FirebasePostHistories)
 	r.GET("/users/mangas/activities", user_controller.GetUserMangaActivities)
 	r.GET("/users/animes/histories", user_controller.GetAnimeHistories)
 

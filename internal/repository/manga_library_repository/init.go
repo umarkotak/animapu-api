@@ -57,22 +57,6 @@ var (
 			AND ml.deleted_at IS NULL
 	`, allColumns)
 
-	queryGetByUserIDDetailed = fmt.Sprintf(`
-		SELECT
-			%s,
-			m.source AS manga_source,
-			m.source_id AS manga_source_id,
-			m.title AS manga_title,
-			m.cover_urls AS manga_cover_urls,
-			m.latest_chapter AS manga_latest_chapter
-		FROM manga_libraries ml
-		INNER JOIN mangas m ON m.id = ml.manga_id
-		WHERE
-			ml.user_id = :user_id
-			AND ml.deleted_at IS NULL
-		ORDER BY m.updated_at DESC
-	`, allColumns)
-
 	queryInsert = `
 		INSERT INTO manga_libraries (
 			user_id,
@@ -111,7 +95,6 @@ var (
 	stmtGetByMangaIDAndUserID    *sqlx.NamedStmt
 	stmtGetByMangaIDsAndUserID   *sqlx.NamedStmt
 	stmtGetByUserID              *sqlx.NamedStmt
-	stmtGetByUserIDDetailed      *sqlx.NamedStmt
 	stmtInsert                   *sqlx.NamedStmt
 	stmtDelete                   *sqlx.NamedStmt
 	stmtGetByUserAndSourceDetail *sqlx.NamedStmt
@@ -136,11 +119,6 @@ func Initialize() {
 	}
 
 	stmtGetByUserID, err = datastore.Get().Db.PrepareNamed(queryGetByUserID)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	stmtGetByUserIDDetailed, err = datastore.Get().Db.PrepareNamed(queryGetByUserIDDetailed)
 	if err != nil {
 		logrus.Fatal(err)
 	}
