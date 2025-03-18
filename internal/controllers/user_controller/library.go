@@ -31,7 +31,7 @@ func GetLibraries(c *gin.Context) {
 
 	params := contract.MangaLibraryParams{
 		UserID: user.ID,
-		Sort:   c.GetString("sort"),
+		Sort:   c.Query("sort"),
 		Pagination: models.Pagination{
 			Limit: 1000,
 			Page:  1,
