@@ -30,6 +30,7 @@ func GetLibraries(ctx context.Context, params contract.MangaLibraryParams) ([]co
 			CoverImages:         []contract.CoverImage{coverImage},
 			LastChapterRead:     mangaLibrary.ChapterNumber,
 			LastLink:            mangaLibrary.FrontendPath,
+			UpdatedAt:           mangaLibrary.MangaUpdatedAt,
 		}
 
 		resMangaLibraries = append(resMangaLibraries, resMangaLibrary)

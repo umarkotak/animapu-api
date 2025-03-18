@@ -43,6 +43,7 @@ type (
 		LastLink            string       `json:"last_link"`
 		IsInLibrary         bool         `json:"is_in_library"`
 		LastReadAt          time.Time    `json:"last_read_at"`
+		UpdatedAt           time.Time    `json:"updated_at"`
 	}
 
 	MangaLibrary struct {
@@ -55,6 +56,7 @@ type (
 		LastLink            string       `json:"last_link"`
 		IsInLibrary         bool         `json:"is_in_library"`
 		LastReadAt          time.Time    `json:"last_read_at"`
+		UpdatedAt           time.Time    `json:"updated_at"`
 	}
 
 	CoverImage struct {

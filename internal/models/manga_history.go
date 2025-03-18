@@ -38,5 +38,6 @@ type (
 		MangaTitle         string         `json:"manga_title" db:"manga_title"`                   //
 		MangaCoverUrls     pq.StringArray `json:"manga_cover_urls" db:"manga_cover_urls"`         //
 		MangaLatestChapter float64        `json:"manga_latest_chapter" db:"manga_latest_chapter"` //
+		MangaUpdatedAt     time.Time      `json:"manga_updated_at" db:"manga_updated_at"`         //
 	}
 )

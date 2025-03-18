@@ -79,7 +79,8 @@ func GetByUserIDDetailed(ctx context.Context, params contract.MangaLibraryParams
 			m.source_id AS manga_source_id,
 			m.title AS manga_title,
 			m.cover_urls AS manga_cover_urls,
-			m.latest_chapter AS manga_latest_chapter
+			m.latest_chapter AS manga_latest_chapter,
+			m.updated_at AS manga_updated_at
 		FROM manga_libraries ml
 		INNER JOIN mangas m ON m.id = ml.manga_id
 		WHERE
