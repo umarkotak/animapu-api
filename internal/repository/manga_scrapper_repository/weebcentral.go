@@ -3,7 +3,6 @@ package manga_scrapper_repository
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -239,7 +238,8 @@ func (sc *WeebCentral) GetSearch(ctx context.Context, queryParams models.QueryPa
 	// Send the POST request
 	err := c.Post(fmt.Sprintf("%v/search/simple?location=main", sc.Host), formData)
 	if err != nil {
-		log.Fatal(err)
+		logrus.WithContext(ctx).Error(err)
+		return mangas, err
 	}
 
 	return mangas, nil

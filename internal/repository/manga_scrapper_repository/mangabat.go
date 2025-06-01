@@ -162,6 +162,24 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
+	c.OnRequest(func(r *colly.Request) {
+		// r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+		// r.Headers.Set("accept-language", "en-US,en;q=0.9,id;q=0.8")
+		// r.Headers.Set("cache-control", "max-age=0")
+		// r.Headers.Set("if-modified-since", "Sun, 01 Jun 2025 06:15:42 GMT")
+		// r.Headers.Set("priority", "u=0, i")
+		r.Headers.Set("referer", "https://www.mangabats.com/")
+		// r.Headers.Set("sec-ch-ua", "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"")
+		// r.Headers.Set("sec-ch-ua-mobile", "?0")
+		// r.Headers.Set("sec-ch-ua-platform", "\"macOS\"")
+		// r.Headers.Set("sec-fetch-dest", "document")
+		// r.Headers.Set("sec-fetch-mode", "navigate")
+		// r.Headers.Set("sec-fetch-site", "same-origin")
+		// r.Headers.Set("sec-fetch-user", "?1")
+		// r.Headers.Set("upgrade-insecure-requests", "1")
+		// r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+	})
+
 	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.daily-update > div > div", func(e *colly.HTMLElement) {
 		sourceID := ""
 		mangaLink := e.ChildAttr("a", "href")
@@ -202,10 +220,13 @@ func (m *Mangabat) GetSearch(ctx context.Context, queryParams models.QueryParams
 	})
 
 	query := strings.Replace(queryParams.Title, " ", "_", -1)
-	err := c.Visit(fmt.Sprintf("%s/search/story/%s", m.Host, query))
+	url := fmt.Sprintf("%s/search/story/%s", m.Host, query)
+	err := c.Visit(url)
 	c.Wait()
 	if err != nil {
-		logrus.WithContext(ctx).Error(err)
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"url": url,
+		}).Error(err)
 		return mangas, err
 	}
 
@@ -222,6 +243,24 @@ func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParam
 		Number:        utils.ForceSanitizeStringToFloat(queryParams.ChapterID),
 		ChapterImages: []contract.ChapterImage{},
 	}
+
+	c.OnRequest(func(r *colly.Request) {
+		// r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+		// r.Headers.Set("accept-language", "en-US,en;q=0.9,id;q=0.8")
+		// r.Headers.Set("cache-control", "max-age=0")
+		// r.Headers.Set("if-modified-since", "Sun, 01 Jun 2025 06:15:42 GMT")
+		// r.Headers.Set("priority", "u=0, i")
+		r.Headers.Set("referer", "https://www.mangabats.com/")
+		// r.Headers.Set("sec-ch-ua", "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"")
+		// r.Headers.Set("sec-ch-ua-mobile", "?0")
+		// r.Headers.Set("sec-ch-ua-platform", "\"macOS\"")
+		// r.Headers.Set("sec-fetch-dest", "document")
+		// r.Headers.Set("sec-fetch-mode", "navigate")
+		// r.Headers.Set("sec-fetch-site", "same-origin")
+		// r.Headers.Set("sec-fetch-user", "?1")
+		// r.Headers.Set("upgrade-insecure-requests", "1")
+		// r.Headers.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+	})
 
 	c.OnHTML("body > div.container-chapter-reader > img", func(e *colly.HTMLElement) {
 		imageURL := e.Attr("src")
