@@ -31,7 +31,6 @@ type (
 		StreamIdx       string `json:"stream_idx"`        //
 		StreamName      string `json:"stream_name"`       //
 		ManualServerOpt string `json:"manual_server_opt"` //
-		SearchAll       bool   `json:"search_all"`        //
 	}
 )
 

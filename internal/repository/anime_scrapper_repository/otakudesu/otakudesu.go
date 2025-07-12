@@ -92,6 +92,8 @@ func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQuery
 }
 
 func (s *Otakudesu) GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	queryParams.Title = strings.ReplaceAll(queryParams.Title, " ", "+")
+
 	animes := []contract.Anime{}
 
 	c := colly.NewCollector()

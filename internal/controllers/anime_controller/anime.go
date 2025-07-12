@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
@@ -42,35 +41,15 @@ func GetSearch(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
-		Source:    c.Param("anime_source"),
-		Title:     c.Query("title"),
-		SearchAll: c.Query("search_all") == "true",
+		Source: c.Param("anime_source"),
+		Title:  c.Query("title"),
 	}
 
-	var animes []contract.Anime
-	var meta models.Meta
-	var err error
-	if queryParams.SearchAll {
-		sources := []string{"otakudesu", "gogo_anime", "gogo_anime_new"}
-
-		for _, source := range sources {
-			var tmpAnimes []contract.Anime
-			queryParams.Source = source
-			tmpAnimes, meta, err = anime_scrapper_service.GetSearch(ctx, queryParams)
-			if err != nil {
-				logrus.WithContext(ctx).Error(err)
-				continue
-			}
-			animes = append(animes, tmpAnimes...)
-		}
-
-	} else {
-		animes, meta, err = anime_scrapper_service.GetSearch(ctx, queryParams)
-		if err != nil {
-			logrus.WithContext(ctx).Error(err)
-			render.ErrorResponse(ctx, c, err, true)
-			return
-		}
+	animes, meta, err := anime_scrapper_service.GetSearch(ctx, queryParams)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		render.ErrorResponse(ctx, c, err, true)
+		return
 	}
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))

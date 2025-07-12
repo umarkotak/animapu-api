@@ -63,7 +63,7 @@ var (
 			Language: "id",
 			Title:    "Komiku",
 			WebLink:  "https://komiku.id",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
@@ -71,7 +71,7 @@ var (
 			Language: "id",
 			Title:    "Komik Cast",
 			WebLink:  "https://komikcast.bz",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
@@ -87,7 +87,7 @@ var (
 			Language: "en",
 			Title:    "Asura",
 			WebLink:  "https://asura.nacm.xyz",
-			Active:   true,
+			Active:   false,
 			Status:   "stable",
 		},
 		{
