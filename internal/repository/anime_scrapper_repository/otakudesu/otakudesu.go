@@ -29,7 +29,7 @@ func NewOtakudesu() Otakudesu {
 	return Otakudesu{
 		AnimapuSource: models.ANIME_SOURCE_OTAKUDESU,
 		Source:        "otakudesu",
-		OtakudesuHost: "https://otakudesu.cloud",
+		OtakudesuHost: "https://otakudesu.best",
 		AllowedStreamServers: []string{
 			"filelions",
 			"ondesuhd",
