@@ -22,8 +22,8 @@ type Komiku struct {
 
 func NewKomiku() Komiku {
 	return Komiku{
-		Host:    "https://komiku.id",
-		ApiHost: "https://api.komiku.id",
+		Host:    "https://komiku.org",
+		ApiHost: "https://api.komiku.org",
 		Source:  "komiku",
 	}
 }

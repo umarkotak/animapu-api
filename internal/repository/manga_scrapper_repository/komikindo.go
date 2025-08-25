@@ -22,7 +22,7 @@ type Komikindo struct {
 
 func NewKomikindo() Komikindo {
 	return Komikindo{
-		Host:   "https://komikindo.pw",
+		Host:   "https://komikindo.ch",
 		Source: "komikindo",
 	}
 }
@@ -33,12 +33,12 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 
 	mangas := []contract.Manga{}
 
-	c.OnHTML("#content > div.postbody > section.whites > div.widget-body > div > div > div.listupd > div.animepost", func(e *colly.HTMLElement) {
-		latestChapterTitle := e.ChildText("div.animposx > div.bigor > div > div > a")
+	c.OnHTML("#content > div.postbody > section.whites > div.widget-body > div > div > div.film-list > div.animepost", func(e *colly.HTMLElement) {
+		latestChapterTitle := e.ChildText("div.animposx > div > div.adds > div > a")
 		latestChapterTitle = utils.RemoveNonNumeric(strings.ReplaceAll(latestChapterTitle, "Ch.", ""))
 		latestChapter, _ := strconv.ParseFloat(latestChapterTitle, 64)
 
-		mangaLink := e.ChildAttr("div.animposx > div.bigor > a", "href")
+		mangaLink := e.ChildAttr("div.animposx > a", "href")
 
 		splitted := strings.Split(mangaLink, "/komik/")
 		mangaID := splitted[1]
@@ -48,7 +48,7 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 			ID:                  mangaID,
 			SourceID:            mangaID,
 			Source:              sc.Source,
-			Title:               e.ChildText("div.animposx > div.bigor > a > div > h4"),
+			Title:               e.ChildText("div.animposx > div > div.tt > h4 > a"),
 			Genres:              []string{},
 			LatestChapterID:     "",
 			LatestChapterNumber: latestChapter,
