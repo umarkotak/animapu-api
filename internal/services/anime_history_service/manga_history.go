@@ -7,7 +7,6 @@ import (
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_history_repository"
-	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
 )
 
@@ -38,59 +37,55 @@ func GetHistories(ctx context.Context, user models.User, pagination models.Pagin
 	return resAnimeHistories, nil
 }
 
-func GetUserAnimeActivities(ctx context.Context, pagination models.Pagination) (contract.UserMangaActivityData, error) {
-	userMangaActivityData := contract.UserMangaActivityData{
-		Users: []contract.UserMangaActivity{},
+func GetUserAnimeActivities(ctx context.Context, pagination models.Pagination) (contract.UserAnimeActivityData, error) {
+	userAnimeActivityData := contract.UserAnimeActivityData{
+		Users: []contract.UserAnimeActivity{},
 	}
 
-	mangaHistories, err := manga_history_repository.GetRecentHistories(ctx, pagination)
+	animeHistories, err := anime_history_repository.GetRecentHistories(ctx, pagination)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return contract.UserMangaActivityData{}, err
+		return contract.UserAnimeActivityData{}, err
 	}
 
 	userIDs := []int64{}
-	for _, mangaHistory := range mangaHistories {
-		userIDs = append(userIDs, mangaHistory.UserID)
+	for _, animeHistory := range animeHistories {
+		userIDs = append(userIDs, animeHistory.UserID)
 	}
 
 	users, err := user_repository.GetByIDs(ctx, userIDs)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return contract.UserMangaActivityData{}, err
+		return contract.UserAnimeActivityData{}, err
 	}
 
-	userMangaActivityIdx := map[int64]int64{}
+	userAnimeActivityIdx := map[int64]int64{}
 	for idx, user := range users {
-		userMangaActivityIdx[user.ID] = int64(idx)
-		userMangaActivityData.Users = append(userMangaActivityData.Users, contract.UserMangaActivity{
+		userAnimeActivityIdx[user.ID] = int64(idx)
+		userAnimeActivityData.Users = append(userAnimeActivityData.Users, contract.UserAnimeActivity{
 			VisitorID:      user.VisitorId,
 			Email:          user.Email.String,
-			MangaHistories: []contract.MangaHistory{},
+			AnimeHistories: []contract.AnimeHistory{},
 		})
 	}
 
-	for _, mangaHistory := range mangaHistories {
-		coverImage := contract.CoverImage{
-			Index:     0,
-			ImageUrls: mangaHistory.MangaCoverUrls,
+	for _, animeHistory := range animeHistories {
+		resAnimeHistory := contract.AnimeHistory{
+			ID:               animeHistory.AnimeSourceID,
+			Source:           animeHistory.AnimeSource,
+			Title:            animeHistory.AnimeTitle,
+			LatestEpisode:    animeHistory.AnimeLatestEpisode,
+			CoverUrls:        animeHistory.AnimeCoverUrls,
+			LastEpisodeWatch: animeHistory.EpisodeNumber,
+			LastLink:         animeHistory.FrontendPath,
+			IsInLibrary:      false,
+			LastWatchAt:      animeHistory.UpdatedAt,
 		}
 
-		resMangaHistory := contract.MangaHistory{
-			Source:              mangaHistory.MangaSource,
-			SourceID:            mangaHistory.MangaSourceID,
-			Title:               mangaHistory.MangaTitle,
-			LatestChapterNumber: mangaHistory.MangaLatestChapter,
-			CoverImages:         []contract.CoverImage{coverImage},
-			LastChapterRead:     mangaHistory.ChapterNumber,
-			LastLink:            mangaHistory.FrontendPath,
-			LastReadAt:          mangaHistory.UpdatedAt,
-		}
+		targetIdx := userAnimeActivityIdx[animeHistory.UserID]
 
-		targetIdx := userMangaActivityIdx[mangaHistory.UserID]
-
-		userMangaActivityData.Users[targetIdx].MangaHistories = append(userMangaActivityData.Users[targetIdx].MangaHistories, resMangaHistory)
+		userAnimeActivityData.Users[targetIdx].AnimeHistories = append(userAnimeActivityData.Users[targetIdx].AnimeHistories, resAnimeHistory)
 	}
 
-	return userMangaActivityData, nil
+	return userAnimeActivityData, nil
 }

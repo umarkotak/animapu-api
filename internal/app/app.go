@@ -74,6 +74,7 @@ func Start() {
 	r.GET("/users/mangas/histories_v2", user_controller.GetHistoriesV2)
 	r.GET("/users/mangas/activities", user_controller.GetUserMangaActivities)
 	r.GET("/users/animes/histories", user_controller.GetAnimeHistories)
+	r.GET("/users/animes/activities", user_controller.GetAnimeHistories)
 
 	r.POST("/users/mangas/libraries/:source/:source_id/add", user_controller.AddLibrary)
 	r.POST("/users/mangas/libraries/:source/:source_id/remove", user_controller.DeleteLibrary)

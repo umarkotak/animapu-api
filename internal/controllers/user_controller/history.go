@@ -97,3 +97,28 @@ func GetAnimeHistories(c *gin.Context) {
 		nil, 200,
 	)
 }
+
+func GetUserAnimeActivities(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	user := common_ctx.GetFromGinCtx(c).User
+
+	if !slices.Contains(models.AdminEmails, user.Email.String) {
+		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
+		return
+	}
+
+	pagination := models.Pagination{
+		Limit: utils.StringMustInt64(c.Query("limit")),
+		Page:  utils.StringMustInt64(c.Query("page")),
+	}
+	pagination.SetDefault(100)
+
+	data, err := anime_history_service.GetUserAnimeActivities(ctx, pagination)
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+
+	render.Response(ctx, c, data, nil, 200)
+}

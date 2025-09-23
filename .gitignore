@@ -7,3 +7,4 @@ local
 .vscode
 animapu-api
 nohup.out
+.DS_Store
