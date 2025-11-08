@@ -5,7 +5,7 @@ bin:
 	go build -o animapu-api cmd/web/main.go
 
 bin_run:
-./animapu-api
+	./animapu-api
 
 nohup_run:
 	nohup ./animapu-api &
@@ -26,6 +26,7 @@ install-service:
 
 uninstall-service:
 	sudo launchctl unload /Library/LaunchDaemons/com.animapu-api.plist
+	sudo rm /Library/LaunchDaemons/com.animapu-api.plist
 
 start:
 	sudo launchctl start com.animapu-api
