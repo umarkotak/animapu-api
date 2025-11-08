@@ -25,11 +25,13 @@ import (
 	"os"
 
 	"cloud.google.com/go/firestore"
+	"firebase.google.com/go/v4/appcheck"
 	"firebase.google.com/go/v4/auth"
 	"firebase.google.com/go/v4/db"
 	"firebase.google.com/go/v4/iid"
 	"firebase.google.com/go/v4/internal"
 	"firebase.google.com/go/v4/messaging"
+	"firebase.google.com/go/v4/remoteconfig"
 	"firebase.google.com/go/v4/storage"
 	"google.golang.org/api/option"
 	"google.golang.org/api/transport"
@@ -38,7 +40,7 @@ import (
 var defaultAuthOverrides = make(map[string]interface{})
 
 // Version of the Firebase Go Admin SDK.
-const Version = "4.8.0"
+const Version = "4.18.0"
 
 // firebaseEnvName is the name of the environment variable with the Config.
 const firebaseEnvName = "FIREBASE_CONFIG"
@@ -114,6 +116,7 @@ func (a *App) InstanceID(ctx context.Context) (*iid.Client, error) {
 	conf := &internal.InstanceIDConfig{
 		ProjectID: a.projectID,
 		Opts:      a.opts,
+		Version:   Version,
 	}
 	return iid.NewClient(ctx, conf)
 }
@@ -126,6 +129,24 @@ func (a *App) Messaging(ctx context.Context) (*messaging.Client, error) {
 		Version:   Version,
 	}
 	return messaging.NewClient(ctx, conf)
+}
+
+// AppCheck returns an instance of appcheck.Client.
+func (a *App) AppCheck(ctx context.Context) (*appcheck.Client, error) {
+	conf := &internal.AppCheckConfig{
+		ProjectID: a.projectID,
+	}
+	return appcheck.NewClient(ctx, conf)
+}
+
+// RemoteConfig returns an instance of remoteconfig.Client.
+func (a *App) RemoteConfig(ctx context.Context) (*remoteconfig.Client, error) {
+	conf := &internal.RemoteConfigClientConfig{
+		ProjectID: a.projectID,
+		Opts:      a.opts,
+		Version:   Version,
+	}
+	return remoteconfig.NewClient(ctx, conf)
 }
 
 // NewApp creates a new App from the provided config and client options.

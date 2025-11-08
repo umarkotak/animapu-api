@@ -26,11 +26,14 @@ For more information, visit the
 
 ## Installation
 
-To install Firebase Admin Go SDK, simply execute the following command
-in a terminal from your `$GOPATH`:
+The Firebase Admin Go SDK can be installed using the `go get` utility:
 
 ```
-go get firebase.google.com/go
+# Install the latest version:
+go get firebase.google.com/go/v4@latest
+
+# Or install a specific version:
+go get firebase.google.com/go/v4@4.x.x
 ```
 
 ## Contributing
@@ -41,10 +44,10 @@ requests, code review feedback, and also pull requests.
 
 ## Supported Go Versions
 
-The Admin Go SDK is compatible with at least the three most recent, major Go releases.
-We currently support Go v1.15 and higher.
+The Admin Go SDK is compatible with the two most-recent major Go releases.
+We currently support Go v1.23 and 1.24.
 [Continuous integration](https://github.com/firebase/firebase-admin-go/actions) system
-tests the code on Go v1.15 through v1.17.
+tests the code on Go v1.23 and v1.24.
 
 ## Documentation
 

@@ -121,6 +121,7 @@ type AndroidConfig struct {
 	Data                  map[string]string    `json:"data,omitempty"` // if specified, overrides the Data field on Message type
 	Notification          *AndroidNotification `json:"notification,omitempty"`
 	FCMOptions            *AndroidFCMOptions   `json:"fcm_options,omitempty"`
+	DirectBootOK          bool                 `json:"direct_boot_ok,omitempty"`
 }
 
 // MarshalJSON marshals an AndroidConfig into JSON (for internal use only).
@@ -190,6 +191,7 @@ type AndroidNotification struct {
 	DefaultLightSettings  bool                          `json:"default_light_settings,omitempty"`
 	Visibility            AndroidNotificationVisibility `json:"-"`
 	NotificationCount     *int                          `json:"notification_count,omitempty"`
+	Proxy                 AndroidNotificationProxy      `json:"-"`
 }
 
 // MarshalJSON marshals an AndroidNotification into JSON (for internal use only).
@@ -216,6 +218,16 @@ func (a *AndroidNotification) MarshalJSON() ([]byte, error) {
 		visibility, _ = visibilities[a.Visibility]
 	}
 
+	var proxy string
+	if a.Proxy != proxyUnspecified {
+		proxies := map[AndroidNotificationProxy]string{
+			ProxyAllow:             "ALLOW",
+			ProxyDeny:              "DENY",
+			ProxyIfPriorityLowered: "IF_PRIORITY_LOWERED",
+		}
+		proxy, _ = proxies[a.Proxy]
+	}
+
 	var timestamp string
 	if a.EventTimestamp != nil {
 		timestamp = a.EventTimestamp.UTC().Format(rfc3339Zulu)
@@ -231,12 +243,14 @@ func (a *AndroidNotification) MarshalJSON() ([]byte, error) {
 		EventTimestamp string   `json:"event_time,omitempty"`
 		Priority       string   `json:"notification_priority,omitempty"`
 		Visibility     string   `json:"visibility,omitempty"`
+		Proxy          string   `json:"proxy,omitempty"`
 		VibrateTimings []string `json:"vibrate_timings,omitempty"`
 		*androidInternal
 	}{
 		EventTimestamp:  timestamp,
 		Priority:        priority,
 		Visibility:      visibility,
+		Proxy:           proxy,
 		VibrateTimings:  vibTimings,
 		androidInternal: (*androidInternal)(a),
 	}
@@ -250,6 +264,7 @@ func (a *AndroidNotification) UnmarshalJSON(b []byte) error {
 		EventTimestamp string   `json:"event_time,omitempty"`
 		Priority       string   `json:"notification_priority,omitempty"`
 		Visibility     string   `json:"visibility,omitempty"`
+		Proxy          string   `json:"proxy,omitempty"`
 		VibrateTimings []string `json:"vibrate_timings,omitempty"`
 		*androidInternal
 	}{
@@ -284,6 +299,19 @@ func (a *AndroidNotification) UnmarshalJSON(b []byte) error {
 			a.Visibility = vis
 		} else {
 			return fmt.Errorf("unknown visibility value: %q", temp.Visibility)
+		}
+	}
+
+	if temp.Proxy != "" {
+		proxies := map[string]AndroidNotificationProxy{
+			"ALLOW":               ProxyAllow,
+			"DENY":                ProxyDeny,
+			"IF_PRIORITY_LOWERED": ProxyIfPriorityLowered,
+		}
+		if prox, ok := proxies[temp.Proxy]; ok {
+			a.Proxy = prox
+		} else {
+			return fmt.Errorf("unknown proxy value: %q", temp.Proxy)
 		}
 	}
 
@@ -353,6 +381,23 @@ const (
 
 	// VisibilitySecret does not reveal any part of this notification on a secure lockscreen.
 	VisibilitySecret
+)
+
+// AndroidNotificationProxy to control when a notification may be proxied.
+type AndroidNotificationProxy int
+
+const (
+	proxyUnspecified AndroidNotificationProxy = iota
+
+	// ProxyAllow tries to proxy this notification.
+	ProxyAllow
+
+	// ProxyDeny does not proxy this notification.
+	ProxyDeny
+
+	// ProxyIfPriorityLowered only tries to proxy this notification if its AndroidConfig's Priority was
+	// lowered from high to normal on the device.
+	ProxyIfPriorityLowered
 )
 
 // LightSettings to control notification LED.
@@ -619,9 +664,10 @@ type WebpushFCMOptions struct {
 // See https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html
 // for more details on supported headers and payload keys.
 type APNSConfig struct {
-	Headers    map[string]string `json:"headers,omitempty"`
-	Payload    *APNSPayload      `json:"payload,omitempty"`
-	FCMOptions *APNSFCMOptions   `json:"fcm_options,omitempty"`
+	Headers           map[string]string `json:"headers,omitempty"`
+	Payload           *APNSPayload      `json:"payload,omitempty"`
+	FCMOptions        *APNSFCMOptions   `json:"fcm_options,omitempty"`
+	LiveActivityToken string            `json:"live_activity_token,omitempty"`
 }
 
 // APNSPayload is the payload that can be included in an APNS message.
@@ -876,7 +922,7 @@ func NewClient(ctx context.Context, c *internal.MessagingConfig) (*Client, error
 
 	return &Client{
 		fcmClient: newFCMClient(hc, c, messagingEndpoint, batchEndpoint),
-		iidClient: newIIDClient(hc),
+		iidClient: newIIDClient(hc, c),
 	}, nil
 }
 
@@ -896,6 +942,7 @@ func newFCMClient(hc *http.Client, conf *internal.MessagingConfig, messagingEndp
 	client.Opts = []internal.HTTPOption{
 		internal.WithHeader(apiFormatVersionHeader, apiFormatVersion),
 		internal.WithHeader(firebaseClientHeader, version),
+		internal.WithHeader("x-goog-api-client", internal.GetMetricsHeader(conf.Version)),
 	}
 
 	return &fcmClient{
@@ -955,7 +1002,7 @@ func IsInternal(err error) bool {
 // IsInvalidAPNSCredentials checks if the given error was due to invalid APNS certificate or auth
 // key.
 //
-// Deprecated. Use IsThirdPartyAuthError().
+// Deprecated: Use IsThirdPartyAuthError().
 func IsInvalidAPNSCredentials(err error) bool {
 	return IsThirdPartyAuthError(err)
 }
@@ -973,7 +1020,7 @@ func IsInvalidArgument(err error) bool {
 
 // IsMessageRateExceeded checks if the given error was due to the client exceeding a quota.
 //
-// Deprecated. Use IsQuotaExceeded().
+// Deprecated: Use IsQuotaExceeded().
 func IsMessageRateExceeded(err error) bool {
 	return IsQuotaExceeded(err)
 }
@@ -986,7 +1033,7 @@ func IsQuotaExceeded(err error) bool {
 // IsMismatchedCredential checks if the given error was due to an invalid credential or permission
 // error.
 //
-// Deprecated. Use IsSenderIDMismatch().
+// Deprecated: Use IsSenderIDMismatch().
 func IsMismatchedCredential(err error) bool {
 	return IsSenderIDMismatch(err)
 }
@@ -1000,7 +1047,7 @@ func IsSenderIDMismatch(err error) bool {
 // IsRegistrationTokenNotRegistered checks if the given error was due to a registration token that
 // became invalid.
 //
-// Deprecated. Use IsUnregistered().
+// Deprecated: Use IsUnregistered().
 func IsRegistrationTokenNotRegistered(err error) bool {
 	return IsUnregistered(err)
 }
@@ -1014,7 +1061,7 @@ func IsUnregistered(err error) bool {
 // IsServerUnavailable checks if the given error was due to the backend server being temporarily
 // unavailable.
 //
-// Deprecated. Use IsUnavailable().
+// Deprecated: Use IsUnavailable().
 func IsServerUnavailable(err error) bool {
 	return IsUnavailable(err)
 }
@@ -1028,14 +1075,14 @@ func IsUnavailable(err error) bool {
 // IsTooManyTopics checks if the given error was due to the client exceeding the allowed number
 // of topics.
 //
-// Deprecated. Always returns false.
+// Deprecated: Always returns false.
 func IsTooManyTopics(err error) bool {
 	return false
 }
 
 // IsUnknown checks if the given error was due to unknown error returned by the backend server.
 //
-// Deprecated. Always returns false.
+// Deprecated: Always returns false.
 func IsUnknown(err error) bool {
 	return false
 }

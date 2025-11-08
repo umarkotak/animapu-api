@@ -36,7 +36,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	c.OnHTML("body > div.container > div.main-wrapper > div > div > div.list-truyen-item-wrap", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div > div > div.list-comic-item-wrap", func(e *colly.HTMLElement) {
 		sourceID := ""
 		mangaLink := e.ChildAttr("a.cover", "href")
 		mangaLinkSplitted := strings.Split(mangaLink, "/")
@@ -81,7 +81,7 @@ func (m *Mangabat) GetHome(ctx context.Context, queryParams models.QueryParams) 
 		})
 	})
 
-	err := c.Visit(fmt.Sprintf("%v/genre/all?page=%v", m.Host, queryParams.Page))
+	err := c.Visit(fmt.Sprintf("%v/manga-list/latest-manga?page=%v", m.Host, queryParams.Page))
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return mangas, err
@@ -103,11 +103,11 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 	c := colly.NewCollector()
 	c.SetRequestTimeout(config.Get().CollyTimeout)
 
-	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.manga-info-top > ul > li:nth-child(1) > h1", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.manga-info-top > div.manga-info-content > ul > li:nth-child(1) > h1", func(e *colly.HTMLElement) {
 		manga.Title = e.Text
 	})
 
-	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.manga-info-top > div > img", func(e *colly.HTMLElement) {
+	c.OnHTML("body > div.container > div.main-wrapper > div.leftCol > div.manga-info-top > div.manga-info-pic > img", func(e *colly.HTMLElement) {
 		imageURL := e.Attr("src")
 		imageURL = fmt.Sprintf("%v/mangas/mangabat/image_proxy/%v", config.Get().AnimapuOnlineHost, imageURL)
 		manga.CoverImages = []contract.CoverImage{

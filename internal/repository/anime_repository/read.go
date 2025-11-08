@@ -2,6 +2,7 @@ package anime_repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -32,10 +33,12 @@ func GetBySourceAndSourceID(ctx context.Context, source, sourceID string) (model
 		"source_id": sourceID,
 	})
 	if err != nil {
-		logrus.WithContext(ctx).WithFields(logrus.Fields{
-			"source":    source,
-			"source_id": sourceID,
-		}).Error(err)
+		if err != sql.ErrNoRows {
+			logrus.WithContext(ctx).WithFields(logrus.Fields{
+				"source":    source,
+				"source_id": sourceID,
+			}).Error(err)
+		}
 		return obj, err
 	}
 

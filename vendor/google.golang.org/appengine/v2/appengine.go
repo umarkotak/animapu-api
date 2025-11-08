@@ -35,24 +35,27 @@ import (
 //
 // Main is designed so that the app's main package looks like this:
 //
-//      package main
+//	package main
 //
-//      import (
-//              "google.golang.org/appengine/v2"
+//	import (
+//	        "google.golang.org/appengine/v2"
 //
-//              _ "myapp/package0"
-//              _ "myapp/package1"
-//      )
+//	        _ "myapp/package0"
+//	        _ "myapp/package1"
+//	)
 //
-//      func main() {
-//              appengine.Main()
-//      }
+//	func main() {
+//	        appengine.Main()
+//	}
 //
 // The "myapp/packageX" packages are expected to register HTTP handlers
 // in their init functions.
 func Main() {
 	internal.Main()
 }
+
+// Middleware wraps an http handler so that it can make GAE API calls
+var Middleware func(http.Handler) http.Handler = internal.Middleware
 
 // IsDevAppServer reports whether the App Engine app is running in the
 // development App Server.
@@ -135,6 +138,9 @@ func APICall(ctx context.Context, service, method string, in, out proto.Message)
 }
 
 // BackgroundContext returns a context not associated with a request.
+//
+// Deprecated: App Engine no longer has a special background context.
+// Just use context.Background().
 func BackgroundContext() context.Context {
-	return internal.BackgroundContext()
+	return context.Background()
 }

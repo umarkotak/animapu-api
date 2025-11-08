@@ -1,4 +1,4 @@
-// Copyright 2014 Manu Martinez-Almeida.  All rights reserved.
+// Copyright 2014 Manu Martinez-Almeida. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -6,9 +6,9 @@ package gin
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -17,24 +17,23 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin/internal/bytesconv"
 )
 
-var (
-	dunno     = []byte("???")
-	centerDot = []byte("·")
-	dot       = []byte(".")
-	slash     = []byte("/")
-)
+const dunno = "???"
+
+var dunnoBytes = []byte(dunno)
 
 // RecoveryFunc defines the function passable to CustomRecovery.
-type RecoveryFunc func(c *Context, err interface{})
+type RecoveryFunc func(c *Context, err any)
 
 // Recovery returns a middleware that recovers from any panics and writes a 500 if there was one.
 func Recovery() HandlerFunc {
 	return RecoveryWithWriter(DefaultErrorWriter)
 }
 
-//CustomRecovery returns a middleware that recovers from any panics and calls the provided handle func to handle it.
+// CustomRecovery returns a middleware that recovers from any panics and calls the provided handle func to handle it.
 func CustomRecovery(handle RecoveryFunc) HandlerFunc {
 	return RecoveryWithWriter(DefaultErrorWriter, handle)
 }
@@ -60,36 +59,30 @@ func CustomRecoveryWithWriter(out io.Writer, handle RecoveryFunc) HandlerFunc {
 				// condition that warrants a panic stack trace.
 				var brokenPipe bool
 				if ne, ok := err.(*net.OpError); ok {
-					if se, ok := ne.Err.(*os.SyscallError); ok {
-						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
+					var se *os.SyscallError
+					if errors.As(ne, &se) {
+						seStr := strings.ToLower(se.Error())
+						if strings.Contains(seStr, "broken pipe") ||
+							strings.Contains(seStr, "connection reset by peer") {
 							brokenPipe = true
 						}
 					}
 				}
 				if logger != nil {
-					stack := stack(3)
-					httpRequest, _ := httputil.DumpRequest(c.Request, false)
-					headers := strings.Split(string(httpRequest), "\r\n")
-					for idx, header := range headers {
-						current := strings.Split(header, ":")
-						if current[0] == "Authorization" {
-							headers[idx] = current[0] + ": *"
-						}
-					}
-					headersToStr := strings.Join(headers, "\r\n")
+					const stackSkip = 3
 					if brokenPipe {
-						logger.Printf("%s\n%s%s", err, headersToStr, reset)
+						logger.Printf("%s\n%s%s", err, secureRequestDump(c.Request), reset)
 					} else if IsDebugging() {
 						logger.Printf("[Recovery] %s panic recovered:\n%s\n%s\n%s%s",
-							timeFormat(time.Now()), headersToStr, err, stack, reset)
+							timeFormat(time.Now()), secureRequestDump(c.Request), err, stack(stackSkip), reset)
 					} else {
 						logger.Printf("[Recovery] %s panic recovered:\n%s\n%s%s",
-							timeFormat(time.Now()), err, stack, reset)
+							timeFormat(time.Now()), err, stack(stackSkip), reset)
 					}
 				}
 				if brokenPipe {
 					// If the connection is dead, we can't write a status to it.
-					c.Error(err.(error)) // nolint: errcheck
+					c.Error(err.(error)) //nolint: errcheck
 					c.Abort()
 				} else {
 					handle(c, err)
@@ -100,7 +93,22 @@ func CustomRecoveryWithWriter(out io.Writer, handle RecoveryFunc) HandlerFunc {
 	}
 }
 
-func defaultHandleRecovery(c *Context, err interface{}) {
+// secureRequestDump returns a sanitized HTTP request dump where the Authorization header,
+// if present, is replaced with a masked value ("Authorization: *") to avoid leaking sensitive credentials.
+//
+// Currently, only the Authorization header is sanitized. All other headers and request data remain unchanged.
+func secureRequestDump(r *http.Request) string {
+	httpRequest, _ := httputil.DumpRequest(r, false)
+	lines := strings.Split(bytesconv.BytesToString(httpRequest), "\r\n")
+	for i, line := range lines {
+		if strings.HasPrefix(line, "Authorization:") {
+			lines[i] = "Authorization: *"
+		}
+	}
+	return strings.Join(lines, "\r\n")
+}
+
+func defaultHandleRecovery(c *Context, _ any) {
 	c.AbortWithStatus(http.StatusInternalServerError)
 }
 
@@ -119,7 +127,7 @@ func stack(skip int) []byte {
 		// Print this much at least.  If we can't find the source, it won't show.
 		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
-			data, err := ioutil.ReadFile(file)
+			data, err := os.ReadFile(file)
 			if err != nil {
 				continue
 			}
@@ -135,37 +143,37 @@ func stack(skip int) []byte {
 func source(lines [][]byte, n int) []byte {
 	n-- // in stack trace, lines are 1-indexed but our array is 0-indexed
 	if n < 0 || n >= len(lines) {
-		return dunno
+		return dunnoBytes
 	}
 	return bytes.TrimSpace(lines[n])
 }
 
 // function returns, if possible, the name of the function containing the PC.
-func function(pc uintptr) []byte {
+func function(pc uintptr) string {
 	fn := runtime.FuncForPC(pc)
 	if fn == nil {
 		return dunno
 	}
-	name := []byte(fn.Name())
+	name := fn.Name()
 	// The name includes the path name to the package, which is unnecessary
 	// since the file name is already included.  Plus, it has center dots.
 	// That is, we see
 	//	runtime/debug.*T·ptrmethod
 	// and want
 	//	*T.ptrmethod
-	// Also the package path might contains dot (e.g. code.google.com/...),
+	// Also the package path might contain dot (e.g. code.google.com/...),
 	// so first eliminate the path prefix
-	if lastSlash := bytes.LastIndex(name, slash); lastSlash >= 0 {
+	if lastSlash := strings.LastIndexByte(name, '/'); lastSlash >= 0 {
 		name = name[lastSlash+1:]
 	}
-	if period := bytes.Index(name, dot); period >= 0 {
+	if period := strings.IndexByte(name, '.'); period >= 0 {
 		name = name[period+1:]
 	}
-	name = bytes.Replace(name, centerDot, dot, -1)
+	name = strings.ReplaceAll(name, "·", ".")
 	return name
 }
 
+// timeFormat returns a customized time string for logger.
 func timeFormat(t time.Time) string {
-	timeString := t.Format("2006/01/02 - 15:04:05")
-	return timeString
+	return t.Format("2006/01/02 - 15:04:05")
 }
