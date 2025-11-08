@@ -17,7 +17,7 @@ statusd:
 	ps aux | grep animapu
 
 logs:
-	log stream --predicate 'processImagePath contains "animapu-api"' --level debug
+	tail -f animapu-api.error.log
 
 install-service:
 	sudo chmod +x animapu-api
@@ -34,3 +34,6 @@ start:
 
 stop:
 	sudo launchctl stop com.animapu-api
+
+status:
+	sudo lsof -i :6001
