@@ -20,9 +20,10 @@ logs:
 	log stream --predicate 'processImagePath contains "animapu-api"' --level debug
 
 install-service:
+	sudo chmod +x animapu-api
 	sudo cp com.animapu-api.plist /Library/LaunchDaemons
-	sudo chmod 644 /Library/LaunchDaemons/com.animapu-api.plist
-	sudo launchctl load /Library/LaunchDaemons/com.animapu-api.plist
+	sudo chmod +x /Library/LaunchDaemons/com.animapu-api.plist
+	sudo launchctl bootstrap system /Library/LaunchDaemons/com.animapu-api.plist
 
 uninstall-service:
 	sudo launchctl unload /Library/LaunchDaemons/com.animapu-api.plist
