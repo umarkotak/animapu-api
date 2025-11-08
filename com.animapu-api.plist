@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+
 <plist version="1.0">
 <dict>
-    <key>Label</key>
-    <string>com.animapu-api</string>
+<key>Label</key>
+<string>com.animapu-api</string>
 
-    <key>ProgramArguments</key>
-    <array>
-        <string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api</string>
-    </array>
+<!-- The path to the compiled Go binary. This is kept as-is based on your project path. -->
+<key>ProgramArguments</key>
+<array>
+    <string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api</string>
+</array>
 
-    <key>WorkingDirectory</key>
-    <string>/Users/umar/umar/personal_project/go/animapu-api</string>
+<!-- Defines the directory the program executes from. Crucial for relative path lookups (e.g., config files). -->
+<key>WorkingDirectory</key>
+<string>/Users/umar/umar/personal_project/go/animapu-api</string>
 
-    <key>RunAtLoad</key>
-    <true/>
+<!-- Start the service automatically when the system loads. -->
+<key>RunAtLoad</key>
+<true/>
 
-    <key>KeepAlive</key>
-    <true/>
+<!-- Ensures the service is restarted immediately if it stops. Ideal for an API. -->
+<key>KeepAlive</key>
+<true/>
 
-    <key>ThrottleInterval</key>
-    <integer>1</integer>
+<!-- We remove ThrottleInterval so launchd uses its default, less aggressive restart backoff policy if it crashes repeatedly. -->
 
-    <key>StandardOutPath</key>
-    <string>/dev/null</string>
+<!-- **FIXED:** Route standard output to a log file for debugging. -->
+<key>StandardOutPath</key>
+<string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api.log</string>
 
-    <key>StandardErrorPath</key>
-    <string>/dev/null</string>
+<!-- **FIXED:** Route standard error to a separate log file for crash reports and errors. -->
+<key>StandardErrorPath</key>
+<string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api.error.log</string>
+
+<!-- Optional: Use your specific username to run the service as a non-root user for security. -->
+<!-- <key>UserName</key>
+<string>umar</string> -->
+
+
 </dict>
 </plist>
