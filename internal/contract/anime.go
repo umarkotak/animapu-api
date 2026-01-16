@@ -35,6 +35,7 @@ type (
 		LastLink         string    `json:"last_link"`
 		IsInLibrary      bool      `json:"is_in_library"`
 		LastWatchAt      time.Time `json:"last_watch_at"`
+		ExternalLinks    any       `json:"external_links"`
 	}
 
 	AnimeHistory struct {

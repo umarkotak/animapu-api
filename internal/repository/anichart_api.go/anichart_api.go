@@ -34,6 +34,10 @@ const (
 					large
 				}
 				description
+				externalLinks {
+					site
+					url
+				}
 			}
 		}
 	}`
@@ -69,17 +73,21 @@ type (
 		CoverImage   struct {
 			Large string `json:"large"`
 		} `json:"coverImage"`
-		Description string `json:"description"`
+		Description   string `json:"description"`
+		ExternalLinks []struct {
+			Site string `json:"site"`
+			Url  string `json:"url"`
+		} `json:"externalLinks"`
 	}
 )
 
 func GetSeasonalAnime(ctx context.Context, year int, season string) ([]Anime, error) {
-	variables := map[string]interface{}{
+	variables := map[string]any{
 		"year":   year,
 		"season": strings.ToUpper(season),
 	}
 
-	requestBody, err := json.Marshal(map[string]interface{}{
+	requestBody, err := json.Marshal(map[string]any{
 		"query":     animeByYearAndSeasonQuery,
 		"variables": variables,
 	})

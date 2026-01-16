@@ -115,6 +115,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 			Relationship:       "",
 			MultipleServer:     false,
 			SearchTitle:        "",
+			ExternalLinks:      anichartAnime.ExternalLinks,
 		}
 		animes = append(animes, anime)
 	}
