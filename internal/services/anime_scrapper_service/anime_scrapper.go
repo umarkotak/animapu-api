@@ -58,7 +58,6 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 	animePerSeason := contract.AnimePerSeason{
 		ReleaseYear: queryParams.ReleaseYear,
 		SeasonName:  queryParams.ReleaseSeason,
-		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
 	}
 
 	cachedAnimePerSeason, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetPerSeason"))
@@ -122,7 +121,7 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 	animePerSeason.Animes = animes
 
 	if len(animePerSeason.Animes) > 0 {
-		datastore.Get().GoCache.Set(queryParams.ToKey("GetPerSeason"), animes, 7*24*time.Hour)
+		datastore.Get().GoCache.Set(queryParams.ToKey("GetPerSeason"), animes, 30*24*time.Hour)
 	}
 
 	return animePerSeason, models.Meta{}, nil

@@ -2,7 +2,9 @@ package manga_scrapper_repository
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -122,28 +124,17 @@ func (m *Mangabat) GetDetail(ctx context.Context, queryParams models.QueryParams
 		manga.Description = e.Text
 	})
 
-	idx := int64(1)
-	c.OnHTML("#chapter > div > div.chapter-list > div", func(e *colly.HTMLElement) {
-		chapterLink := e.ChildAttr("a", "href")
-		splittedLink := strings.Split(chapterLink, "/")
-		if len(splittedLink) == 0 {
-			return
-		}
-		chapterID := splittedLink[len(splittedLink)-1]
+	// Fetch chapters via API
+	chapters, err := m.fetchChapters(ctx, queryParams.SourceID)
+	if err != nil {
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"source_id": queryParams.SourceID,
+		}).Warn("Failed to fetch chapters via API, continuing without chapters: ", err)
+	} else {
+		manga.Chapters = chapters
+	}
 
-		manga.Chapters = append(manga.Chapters, contract.Chapter{
-			ID:       chapterID,
-			Source:   "mangabat",
-			SourceID: chapterID,
-			Title:    e.ChildText("a"),
-			Index:    idx,
-			Number:   utils.ForceSanitizeStringToFloat(chapterID),
-		})
-
-		idx += 1
-	})
-
-	err := c.Visit(fmt.Sprintf("%s/manga/%s", m.Host, queryParams.SourceID))
+	err = c.Visit(fmt.Sprintf("%s/manga/%s", m.Host, queryParams.SourceID))
 	c.Wait()
 
 	if err != nil {
@@ -315,4 +306,95 @@ func (m *Mangabat) GetChapter(ctx context.Context, queryParams models.QueryParam
 	}
 
 	return chapter, nil
+}
+
+// ChapterAPIResponse represents the response from the chapters API
+type ChapterAPIResponse struct {
+	Success bool                   `json:"success"`
+	Data    ChapterAPIResponseData `json:"data"`
+}
+
+type ChapterAPIResponseData struct {
+	Chapters   []ChapterAPIItem     `json:"chapters"`
+	Pagination ChapterAPIPagination `json:"pagination"`
+}
+
+type ChapterAPIItem struct {
+	ChapterName string  `json:"chapter_name"`
+	ChapterSlug string  `json:"chapter_slug"`
+	ChapterNum  float64 `json:"chapter_num"`
+	UpdatedAt   string  `json:"updated_at"`
+	View        int     `json:"view"`
+}
+
+type ChapterAPIPagination struct {
+	Total   int  `json:"total"`
+	Limit   int  `json:"limit"`
+	Offset  int  `json:"offset"`
+	HasMore bool `json:"has_more"`
+}
+
+// fetchChapters fetches chapters from the mangabat API with pagination
+func (m *Mangabat) fetchChapters(ctx context.Context, sourceID string) ([]contract.Chapter, error) {
+	chapters := []contract.Chapter{}
+	limit := 50
+	offset := 0
+
+	for {
+		apiURL := fmt.Sprintf("%s/api/manga/%s/chapters?limit=%d&offset=%d", m.Host, sourceID, limit, offset)
+
+		req, err := http.NewRequestWithContext(ctx, "GET", apiURL, nil)
+		if err != nil {
+			return chapters, fmt.Errorf("failed to create request: %w", err)
+		}
+
+		req.Header.Set("accept", "*/*")
+		req.Header.Set("accept-language", "en-US,en;q=0.9")
+		req.Header.Set("referer", fmt.Sprintf("%s/manga/%s", m.Host, sourceID))
+		req.Header.Set("sec-fetch-dest", "empty")
+		req.Header.Set("sec-fetch-mode", "cors")
+		req.Header.Set("sec-fetch-site", "same-origin")
+		req.Header.Set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36")
+
+		client := &http.Client{Timeout: config.Get().CollyTimeout}
+		resp, err := client.Do(req)
+		if err != nil {
+			return chapters, fmt.Errorf("failed to fetch chapters: %w", err)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			return chapters, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return chapters, fmt.Errorf("failed to read response body: %w", err)
+		}
+
+		var apiResp ChapterAPIResponse
+		if err := json.Unmarshal(body, &apiResp); err != nil {
+			return chapters, fmt.Errorf("failed to parse response: %w", err)
+		}
+
+		for _, ch := range apiResp.Data.Chapters {
+			chapters = append(chapters, contract.Chapter{
+				ID:       ch.ChapterSlug,
+				Source:   "mangabat",
+				SourceID: ch.ChapterSlug,
+				Title:    ch.ChapterName,
+				Index:    int64(len(chapters) + 1),
+				Number:   ch.ChapterNum,
+			})
+		}
+
+		// Check if there are more chapters to fetch
+		if !apiResp.Data.Pagination.HasMore {
+			break
+		}
+
+		offset += limit
+	}
+
+	return chapters, nil
 }

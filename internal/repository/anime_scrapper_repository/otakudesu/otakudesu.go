@@ -491,7 +491,6 @@ func (s *Otakudesu) GetPerSeason(ctx context.Context, queryParams models.AnimeQu
 	animePerSeason := contract.AnimePerSeason{
 		ReleaseYear: queryParams.ReleaseYear,
 		SeasonName:  queryParams.ReleaseSeason,
-		SeasonIndex: models.SEASON_TO_SEASON_INDEX[queryParams.ReleaseSeason],
 		Animes:      []contract.Anime{},
 	}
 
