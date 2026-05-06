@@ -1,5 +1,8 @@
 run:
-	go run cmd/web/main.go
+	go run .
+
+migrate-up:
+	go run . migrate up
 
 bin:
 	go build -o animapu-api cmd/web/main.go
@@ -14,7 +17,7 @@ stopd:
 	pkill animapu-api
 
 statusd:
-	ps aux | grep animapu
+	ps aux | grep animapu-api
 
 logs:
 	tail -f animapu-api.error.log
@@ -35,5 +38,16 @@ start:
 stop:
 	sudo launchctl stop com.animapu-api
 
+deploy:
+	git pull --rebase origin master
+	go mod tidy
+	go mod vendor
+	make bin
+	make stop
+	make start
+
 status:
-	sudo lsof -i :6001
+	sudo lsof -i :33000
+
+db-tunnel:
+	cloudflared access tcp --hostname pg.cabocil.com --url localhost:54322

@@ -10,3 +10,4 @@ nohup.out
 .DS_Store
 animapu-api.log
 animapu-api.error.log
+.cache
