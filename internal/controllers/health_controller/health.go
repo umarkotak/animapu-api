@@ -1,13 +1,13 @@
 package health_controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/animapu-api/internal/repository"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
-func GetHealth(c *gin.Context) {
+func GetHealth(c *fiber_ctx.Context) {
 	render.Response(
 		c.Request.Context(),
 		c,
@@ -20,7 +20,7 @@ func GetHealth(c *gin.Context) {
 	)
 }
 
-func GetLogs(c *gin.Context) {
+func GetLogs(c *fiber_ctx.Context) {
 	render.Response(
 		c.Request.Context(),
 		c,
@@ -30,7 +30,7 @@ func GetLogs(c *gin.Context) {
 	)
 }
 
-func GetVisitorLogs(c *gin.Context) {
+func GetVisitorLogs(c *fiber_ctx.Context) {
 	render.Response(
 		c.Request.Context(),
 		c,

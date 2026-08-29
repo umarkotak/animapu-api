@@ -1,12 +1,12 @@
 package setting_controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
-func GetAvailableSource(c *gin.Context) {
+func GetAvailableSource(c *fiber_ctx.Context) {
 	render.Response(
 		c.Request.Context(),
 		c,
@@ -16,7 +16,7 @@ func GetAvailableSource(c *gin.Context) {
 	)
 }
 
-func GetAnimeAvailableSource(c *gin.Context) {
+func GetAnimeAvailableSource(c *fiber_ctx.Context) {
 	render.Response(
 		c.Request.Context(),
 		c,

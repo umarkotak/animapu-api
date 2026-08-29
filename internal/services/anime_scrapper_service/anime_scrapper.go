@@ -2,10 +2,10 @@ package anime_scrapper_service
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/datastore"
 	"github.com/umarkotak/animapu-api/internal/contract"
@@ -18,9 +18,9 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]cont
 
 	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetLatest"))
 	if found {
-		cachedAnimesByte, err := json.Marshal(cachedAnimes)
+		cachedAnimesByte, err := sonic.Marshal(cachedAnimes)
 		if err == nil {
-			err = json.Unmarshal(cachedAnimesByte, &animes)
+			err = sonic.Unmarshal(cachedAnimesByte, &animes)
 			if err == nil {
 				return animes, models.Meta{FromCache: true}, nil
 			}
@@ -62,9 +62,9 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 
 	cachedAnimePerSeason, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetPerSeason"))
 	if found {
-		cachedAnimesByte, err := json.Marshal(cachedAnimePerSeason)
+		cachedAnimesByte, err := sonic.Marshal(cachedAnimePerSeason)
 		if err == nil {
-			err = json.Unmarshal(cachedAnimesByte, &animePerSeason)
+			err = sonic.Unmarshal(cachedAnimesByte, &animePerSeason)
 			if err == nil {
 				return animePerSeason, models.Meta{FromCache: true}, nil
 			}
@@ -132,9 +132,9 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 
 	cachedAnime, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetDetail"))
 	if found {
-		cachedAnimeByte, err := json.Marshal(cachedAnime)
+		cachedAnimeByte, err := sonic.Marshal(cachedAnime)
 		if err == nil {
-			err = json.Unmarshal(cachedAnimeByte, &anime)
+			err = sonic.Unmarshal(cachedAnimeByte, &anime)
 			if err == nil {
 				return anime, models.Meta{FromCache: true}, nil
 			}
@@ -173,9 +173,9 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 
 	cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
 	if found {
-		cachedEpisodeWatchByte, err := json.Marshal(cachedEpisodeWatch)
+		cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
 		if err == nil {
-			err = json.Unmarshal(cachedEpisodeWatchByte, &episodeWatch)
+			err = sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch)
 			if err == nil {
 				return episodeWatch, models.Meta{FromCache: true}, nil
 			}
@@ -220,9 +220,9 @@ func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]cont
 
 	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetSearch"))
 	if found {
-		cachedAnimesByte, err := json.Marshal(cachedAnimes)
+		cachedAnimesByte, err := sonic.Marshal(cachedAnimes)
 		if err == nil {
-			err = json.Unmarshal(cachedAnimesByte, &animes)
+			err = sonic.Unmarshal(cachedAnimesByte, &animes)
 			if err == nil {
 				return animes, models.Meta{FromCache: true}, nil
 			}

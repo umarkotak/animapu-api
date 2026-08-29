@@ -2,9 +2,9 @@ package manga_scrapper_service
 
 import (
 	"context"
-	"encoding/json"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/datastore"
 	"github.com/umarkotak/animapu-api/internal/contract"
@@ -17,9 +17,9 @@ func GetHome(ctx context.Context, queryParams models.QueryParams) ([]contract.Ma
 
 	cachedMangas, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_latest"))
 	if found {
-		cachedMangasByte, err := json.Marshal(cachedMangas)
+		cachedMangasByte, err := sonic.Marshal(cachedMangas)
 		if err == nil {
-			err = json.Unmarshal(cachedMangasByte, &mangas)
+			err = sonic.Unmarshal(cachedMangasByte, &mangas)
 			if err == nil {
 				return mangas, models.Meta{FromCache: true}, nil
 			}
@@ -61,9 +61,9 @@ func GetDetail(ctx context.Context, queryParams models.QueryParams) (contract.Ma
 
 	cachedManga, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_detail"))
 	if found {
-		cachedMangaByte, err := json.Marshal(cachedManga)
+		cachedMangaByte, err := sonic.Marshal(cachedManga)
 		if err == nil {
-			err = json.Unmarshal(cachedMangaByte, &manga)
+			err = sonic.Unmarshal(cachedMangaByte, &manga)
 			if err == nil {
 				return manga, models.Meta{FromCache: true}, nil
 			}
@@ -105,9 +105,9 @@ func GetSearch(ctx context.Context, queryParams models.QueryParams) ([]contract.
 
 	cachedMangas, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_search"))
 	if found {
-		cachedMangasByte, err := json.Marshal(cachedMangas)
+		cachedMangasByte, err := sonic.Marshal(cachedMangas)
 		if err == nil {
-			err = json.Unmarshal(cachedMangasByte, &mangas)
+			err = sonic.Unmarshal(cachedMangasByte, &mangas)
 			if err == nil {
 				return mangas, models.Meta{FromCache: true}, nil
 			}
@@ -140,9 +140,9 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.C
 
 	cachedChapter, found := datastore.Get().GoCache.Get(queryParams.ToKey("page_read"))
 	if found {
-		cachedChapterByte, err := json.Marshal(cachedChapter)
+		cachedChapterByte, err := sonic.Marshal(cachedChapter)
 		if err == nil {
-			err = json.Unmarshal(cachedChapterByte, &chapter)
+			err = sonic.Unmarshal(cachedChapterByte, &chapter)
 			if err == nil {
 				return chapter, models.Meta{FromCache: true}, nil
 			}

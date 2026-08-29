@@ -3,8 +3,6 @@ package repository
 import (
 	"fmt"
 	"sync"
-
-	"github.com/gin-gonic/gin"
 )
 
 type VisitorLog struct {
@@ -16,16 +14,16 @@ var visitorLog = VisitorLog{
 	QuickUserLog: map[string][]string{},
 }
 
-func LogVisitor(c *gin.Context) {
+func LogVisitor(visitorID, fromPath string) {
 	visitorLog.mu.Lock()
 	defer visitorLog.mu.Unlock()
 
-	visitorLog.QuickUserLog[c.Request.Header.Get("X-Visitor-Id")] = append(
-		[]string{fmt.Sprintf("%v", c.Request.Header.Get("X-From-Path"))},
-		visitorLog.QuickUserLog[c.Request.Header.Get("X-Visitor-Id")]...,
+	visitorLog.QuickUserLog[visitorID] = append(
+		[]string{fmt.Sprintf("%v", fromPath)},
+		visitorLog.QuickUserLog[visitorID]...,
 	)
-	if len(visitorLog.QuickUserLog[c.Request.Header.Get("X-Visitor-Id")]) >= 100 {
-		visitorLog.QuickUserLog[c.Request.Header.Get("X-Visitor-Id")] = visitorLog.QuickUserLog[c.Request.Header.Get("X-Visitor-Id")][:100]
+	if len(visitorLog.QuickUserLog[visitorID]) >= 100 {
+		visitorLog.QuickUserLog[visitorID] = visitorLog.QuickUserLog[visitorID][:100]
 	}
 }
 

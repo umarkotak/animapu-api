@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/johnfercher/maroto/v2"
 	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/page"
 	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/consts/extension"
 	"github.com/johnfercher/maroto/v2/pkg/props"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
@@ -23,8 +23,8 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
 
-func GetMangaLatest(c *gin.Context) {
-	commonCtx := common_ctx.GetFromGinCtx(c)
+func GetMangaLatest(c *fiber_ctx.Context) {
+	commonCtx := common_ctx.GetFromFiberCtx(c)
 
 	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
 	queryParams := models.QueryParams{
@@ -45,7 +45,7 @@ func GetMangaLatest(c *gin.Context) {
 	render.Response(c.Request.Context(), c, mangas, nil, 200)
 }
 
-func GetMangaDetail(c *gin.Context) {
+func GetMangaDetail(c *fiber_ctx.Context) {
 	queryParams := models.QueryParams{
 		Source:            c.Param("manga_source"),
 		SourceID:          c.Param("manga_id"),
@@ -63,7 +63,7 @@ func GetMangaDetail(c *gin.Context) {
 	render.Response(c.Request.Context(), c, manga, nil, 200)
 }
 
-func ReadManga(c *gin.Context) {
+func ReadManga(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.QueryParams{
@@ -71,7 +71,7 @@ func ReadManga(c *gin.Context) {
 		SourceID:          c.Param("manga_id"),
 		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
 		ChapterID:         c.Param("chapter_id"),
-		User:              common_ctx.GetFromGinCtx(c).User,
+		User:              common_ctx.GetFromFiberCtx(c).User,
 	}
 
 	chapter, meta, err := manga_scrapper_service.GetChapter(ctx, queryParams)
@@ -85,8 +85,8 @@ func ReadManga(c *gin.Context) {
 	render.Response(ctx, c, chapter, nil, 200)
 }
 
-func SearchManga(c *gin.Context) {
-	commonCtx := common_ctx.GetFromGinCtx(c)
+func SearchManga(c *fiber_ctx.Context) {
+	commonCtx := common_ctx.GetFromFiberCtx(c)
 
 	page, _ := strconv.ParseInt(c.Request.URL.Query().Get("page"), 10, 64)
 	queryParams := models.QueryParams{
@@ -108,7 +108,7 @@ func SearchManga(c *gin.Context) {
 	render.Response(c.Request.Context(), c, mangas, nil, 200)
 }
 
-func DownloadMangaChapter(c *gin.Context) {
+func DownloadMangaChapter(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.QueryParams{
@@ -116,7 +116,7 @@ func DownloadMangaChapter(c *gin.Context) {
 		SourceID:          c.Param("manga_id"),
 		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
 		ChapterID:         c.Param("chapter_id"),
-		User:              common_ctx.GetFromGinCtx(c).User,
+		User:              common_ctx.GetFromFiberCtx(c).User,
 	}
 
 	manga, _, err := manga_scrapper_service.GetDetail(c.Request.Context(), queryParams)

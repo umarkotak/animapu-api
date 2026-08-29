@@ -1,7 +1,6 @@
 package user_controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
@@ -9,6 +8,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/services/manga_library_service"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
@@ -24,10 +24,10 @@ type (
 	}
 )
 
-func GetLibraries(c *gin.Context) {
+func GetLibraries(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
-	user := common_ctx.GetFromGinCtx(c).User
+	user := common_ctx.GetFromFiberCtx(c).User
 
 	params := contract.MangaLibraryParams{
 		UserID: user.ID,
@@ -49,11 +49,11 @@ func GetLibraries(c *gin.Context) {
 	render.Response(ctx, c, mangas, nil, 200)
 }
 
-func AddLibrary(c *gin.Context) {
+func AddLibrary(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	postLibraryParams := PostLibraryParams{
-		User:     common_ctx.GetFromGinCtx(c).User,
+		User:     common_ctx.GetFromFiberCtx(c).User,
 		Source:   c.Param("source"),
 		SourceID: c.Param("source_id"),
 	}
@@ -87,11 +87,11 @@ func AddLibrary(c *gin.Context) {
 	)
 }
 
-func DeleteLibrary(c *gin.Context) {
+func DeleteLibrary(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	postLibraryParams := PostLibraryParams{
-		User:     common_ctx.GetFromGinCtx(c).User,
+		User:     common_ctx.GetFromFiberCtx(c).User,
 		Source:   c.Param("source"),
 		SourceID: c.Param("source_id"),
 	}

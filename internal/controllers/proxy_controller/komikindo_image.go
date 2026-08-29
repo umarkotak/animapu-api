@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
-func KomikindoImage(c *gin.Context) {
+func KomikindoImage(c *fiber_ctx.Context) {
 	currPath := c.Request.URL.String()
 	splitPath := strings.Split(currPath, "/image_proxy/")
 	if len(splitPath) != 2 {

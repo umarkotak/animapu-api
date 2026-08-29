@@ -2,12 +2,12 @@ package manga_scrapper_repository
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 
+	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
@@ -373,7 +373,7 @@ func (m *Mangabat) fetchChapters(ctx context.Context, sourceID string) ([]contra
 		}
 
 		var apiResp ChapterAPIResponse
-		if err := json.Unmarshal(body, &apiResp); err != nil {
+		if err := sonic.Unmarshal(body, &apiResp); err != nil {
 			return chapters, fmt.Errorf("failed to parse response: %w", err)
 		}
 

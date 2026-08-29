@@ -3,12 +3,12 @@ package render
 import (
 	"context"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 )
 
-func Response(ctx context.Context, c *gin.Context, bodyPayload any, err any, status int) {
+func Response(ctx context.Context, c *fiber_ctx.Context, bodyPayload any, err any, status int) {
 	success := true
 	if status != 200 {
 		success = false
@@ -28,14 +28,14 @@ func Response(ctx context.Context, c *gin.Context, bodyPayload any, err any, sta
 		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Animapu-User-Uid, Animapu-User-Email, X-Visitor-Id, X-From-Path",
 	)
 	c.Header("Access-Control-Allow-Credentials", "true")
-	c.JSON(status, gin.H{
+	c.JSON(status, map[string]any{
 		"success": success,
 		"data":    bodyPayload,
 		"error":   err,
 	})
 }
 
-func ErrorResponse(ctx context.Context, c *gin.Context, err error, showErr bool) {
+func ErrorResponse(ctx context.Context, c *fiber_ctx.Context, err error, showErr bool) {
 	animapuError, ok := models.ERROR_MAP[err]
 	if !ok {
 		err = models.ErrInternal

@@ -1,8 +1,8 @@
 run:
-	go run .
+	go run cmd/web/main.go
 
 migrate-up:
-	go run . migrate up
+	go run cmd/web/main.go migrate up
 
 bin:
 	go build -o animapu-api cmd/web/main.go

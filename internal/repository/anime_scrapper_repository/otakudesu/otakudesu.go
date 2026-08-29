@@ -3,13 +3,13 @@ package anime_scrapper_otakudesu
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"regexp"
 	"slices"
 	"strings"
 
+	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
@@ -357,7 +357,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	// logrus.Infof("NONCE BODY: %+v", string(nonceBody))
 
 	nonceData := map[string]string{}
-	json.Unmarshal(nonceBody, &nonceData)
+	sonic.Unmarshal(nonceBody, &nonceData)
 	nonce := nonceData["data"]
 	if nonce == "" {
 		err = fmt.Errorf("missing nonce p")
@@ -381,7 +381,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 
 		iframeBase64Data := map[string]string{}
-		json.Unmarshal(iframeBody, &iframeBase64Data)
+		sonic.Unmarshal(iframeBody, &iframeBase64Data)
 		iframeBase64 := iframeBase64Data["data"]
 		if iframeBase64 == "" {
 			err = fmt.Errorf("missing iframe data")
@@ -434,7 +434,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 			}
 
 			iframeBase64Data := map[string]string{}
-			json.Unmarshal(iframeBody, &iframeBase64Data)
+			sonic.Unmarshal(iframeBody, &iframeBase64Data)
 			iframeBase64 := iframeBase64Data["data"]
 			if iframeBase64 == "" {
 				err = fmt.Errorf("missing iframe data")

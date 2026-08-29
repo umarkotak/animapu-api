@@ -1,11 +1,11 @@
 package affiliate_link_controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/affiliate_link_repository"
 	"github.com/umarkotak/animapu-api/internal/services/affiliate_link_service"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -16,7 +16,7 @@ type (
 	}
 )
 
-func GetRandom(c *gin.Context) {
+func GetRandom(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	pagination := models.Pagination{
@@ -35,7 +35,7 @@ func GetRandom(c *gin.Context) {
 	render.Response(ctx, c, affiliateLinks, nil, 200)
 }
 
-func GetList(c *gin.Context) {
+func GetList(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	pagination := models.Pagination{
@@ -54,7 +54,7 @@ func GetList(c *gin.Context) {
 	render.Response(ctx, c, affiliateLinks, nil, 200)
 }
 
-func AddTokopediaAffiliateLink(c *gin.Context) {
+func AddTokopediaAffiliateLink(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	params := AddAffiliateLinkParams{}

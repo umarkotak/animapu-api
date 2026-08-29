@@ -3,11 +3,12 @@ package anichart_api
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/bytedance/sonic"
 )
 
 // AniList API endpoint
@@ -87,7 +88,7 @@ func GetSeasonalAnime(ctx context.Context, year int, season string) ([]Anime, er
 		"season": strings.ToUpper(season),
 	}
 
-	requestBody, err := json.Marshal(map[string]any{
+	requestBody, err := sonic.Marshal(map[string]any{
 		"query":     animeByYearAndSeasonQuery,
 		"variables": variables,
 	})
@@ -116,7 +117,7 @@ func GetSeasonalAnime(ctx context.Context, year int, season string) ([]Anime, er
 	}
 
 	var aniListResponse AniListResponse
-	err = json.Unmarshal(body, &aniListResponse)
+	err = sonic.Unmarshal(body, &aniListResponse)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response body: %w, Body: %s", err, string(body))
 	}

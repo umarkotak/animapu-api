@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 )
 
 type (
@@ -20,7 +20,7 @@ var (
 	CommonCtxKey = CommonCtxKeyType("common_ctx")
 )
 
-func GetFromGinCtx(c *gin.Context) CommonCtx {
+func GetFromFiberCtx(c *fiber_ctx.Context) CommonCtx {
 	commonCtx := CommonCtx{
 		User: models.User{},
 	}

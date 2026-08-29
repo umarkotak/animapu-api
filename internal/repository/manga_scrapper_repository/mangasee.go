@@ -2,7 +2,6 @@ package manga_scrapper_repository
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
@@ -83,7 +83,7 @@ func (sc *Mangasee) GetHome(ctx context.Context, queryParams models.QueryParams)
 		dataJson = strings.TrimSpace(dataJson)
 
 		mangaseeMangas := []MangaseeManga{}
-		json.Unmarshal([]byte(dataJson), &mangaseeMangas)
+		sonic.Unmarshal([]byte(dataJson), &mangaseeMangas)
 
 		for _, oneMangaseeManga := range mangaseeMangas {
 			chNumber := mangaseeDecodeCh(oneMangaseeManga.Chapter)
@@ -166,7 +166,7 @@ func (sc *Mangasee) GetDetail(ctx context.Context, queryParams models.QueryParam
 		dataJson = strings.TrimSpace(dataJson)
 
 		mangaseeChapters := []MangaseeChapter{}
-		json.Unmarshal([]byte(dataJson), &mangaseeChapters)
+		sonic.Unmarshal([]byte(dataJson), &mangaseeChapters)
 
 		for i, oneMangaseeChapter := range mangaseeChapters {
 			firstNum := oneMangaseeChapter.Chapter[0:1]
@@ -229,7 +229,7 @@ func (sc *Mangasee) GetSearch(ctx context.Context, queryParams models.QueryParam
 	}
 
 	mangaseeSearchDatas := []MangaseeSearchManga{}
-	err = json.Unmarshal(body, &mangaseeSearchDatas)
+	err = sonic.Unmarshal(body, &mangaseeSearchDatas)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		return []contract.Manga{}, err
@@ -316,7 +316,7 @@ func (sc *Mangasee) GetChapter(ctx context.Context, queryParams models.QueryPara
 			ChapterName *string `json:"ChapterName"`
 		}
 		mangaseeChapter := MangaseeChapter{}
-		json.Unmarshal([]byte(currChString), &mangaseeChapter)
+		sonic.Unmarshal([]byte(currChString), &mangaseeChapter)
 		pageInt, _ := strconv.ParseInt(mangaseeChapter.Page, 10, 54)
 		if pageInt == 0 {
 			pageInt = 150

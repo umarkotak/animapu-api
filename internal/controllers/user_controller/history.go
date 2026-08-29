@@ -3,7 +3,6 @@ package user_controller
 import (
 	"slices"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
@@ -12,6 +11,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/services/manga_history_service"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
@@ -23,8 +23,8 @@ type (
 	}
 )
 
-func GetHistoriesV2(c *gin.Context) {
-	commonCtx := common_ctx.GetFromGinCtx(c)
+func GetHistoriesV2(c *fiber_ctx.Context) {
+	commonCtx := common_ctx.GetFromFiberCtx(c)
 
 	pagination := models.Pagination{
 		Limit: utils.StringMustInt64(c.Query("limit")),
@@ -48,10 +48,10 @@ func GetHistoriesV2(c *gin.Context) {
 	)
 }
 
-func GetUserMangaActivities(c *gin.Context) {
+func GetUserMangaActivities(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
-	user := common_ctx.GetFromGinCtx(c).User
+	user := common_ctx.GetFromFiberCtx(c).User
 
 	if !slices.Contains(models.AdminEmails, user.Email.String) {
 		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
@@ -73,8 +73,8 @@ func GetUserMangaActivities(c *gin.Context) {
 	render.Response(ctx, c, data, nil, 200)
 }
 
-func GetAnimeHistories(c *gin.Context) {
-	commonCtx := common_ctx.GetFromGinCtx(c)
+func GetAnimeHistories(c *fiber_ctx.Context) {
+	commonCtx := common_ctx.GetFromFiberCtx(c)
 
 	pagination := models.Pagination{
 		Limit: utils.StringMustInt64(c.Query("limit")),
@@ -98,10 +98,10 @@ func GetAnimeHistories(c *gin.Context) {
 	)
 }
 
-func GetUserAnimeActivities(c *gin.Context) {
+func GetUserAnimeActivities(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
-	user := common_ctx.GetFromGinCtx(c).User
+	user := common_ctx.GetFromFiberCtx(c).User
 
 	if !slices.Contains(models.AdminEmails, user.Email.String) {
 		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)

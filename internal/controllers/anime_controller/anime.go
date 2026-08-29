@@ -5,18 +5,18 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
-func GetLatest(c *gin.Context) {
+func GetLatest(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
-	commonCtx := common_ctx.GetFromGinCtx(c)
+	commonCtx := common_ctx.GetFromFiberCtx(c)
 
 	page, _ := strconv.ParseInt(c.Query("page"), 10, 64)
 	queryParams := models.AnimeQueryParams{
@@ -37,7 +37,7 @@ func GetLatest(c *gin.Context) {
 	render.Response(ctx, c, animes, nil, 200)
 }
 
-func GetSearch(c *gin.Context) {
+func GetSearch(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
@@ -56,7 +56,7 @@ func GetSearch(c *gin.Context) {
 	render.Response(ctx, c, animes, nil, 200)
 }
 
-func GetPerSeason(c *gin.Context) {
+func GetPerSeason(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	releaseYear, _ := strconv.ParseInt(c.Param("release_year"), 10, 64)
@@ -77,7 +77,7 @@ func GetPerSeason(c *gin.Context) {
 	render.Response(ctx, c, animes, nil, 200)
 }
 
-func GetDetail(c *gin.Context) {
+func GetDetail(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
@@ -96,7 +96,7 @@ func GetDetail(c *gin.Context) {
 	render.Response(ctx, c, anime, nil, 200)
 }
 
-func GetWatch(c *gin.Context) {
+func GetWatch(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{
@@ -107,7 +107,7 @@ func GetWatch(c *gin.Context) {
 		Resolution:      c.Request.URL.Query().Get("resolution"),
 		StreamIdx:       c.Request.URL.Query().Get("stream_idx"),
 		ManualServerOpt: c.Request.URL.Query().Get("manual_server_opt"),
-		User:            common_ctx.GetFromGinCtx(c).User,
+		User:            common_ctx.GetFromFiberCtx(c).User,
 	}
 
 	episodeWatch, meta, err := anime_scrapper_service.Watch(ctx, queryParams)
@@ -127,7 +127,7 @@ func GetWatch(c *gin.Context) {
 	render.Response(ctx, c, episodeWatch, nil, 200)
 }
 
-func GetRandom(c *gin.Context) {
+func GetRandom(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.AnimeQueryParams{

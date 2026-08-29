@@ -4,13 +4,13 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
-func GenericImage(c *gin.Context) {
+func GenericImage(c *fiber_ctx.Context) {
 	referer := c.Request.URL.Query().Get("referer")
 	targetUrl := c.Request.URL.Query().Get("target")
 

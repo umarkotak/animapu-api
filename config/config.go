@@ -14,7 +14,6 @@ type (
 		AnimapuOnlineHost           string
 		AnimapuLocalHost            string
 		AnimapuGoogleServiceAccount string
-		AnimapuFirebaseUrl          string
 		MangameeApiHost             string
 		CollyTimeout                time.Duration
 		DbUrl                       string
@@ -41,14 +40,9 @@ func Initialize() error {
 		AnimapuOnlineHost:           os.Getenv("ANIMAPU_API_HOST"),
 		AnimapuLocalHost:            "http://localhost:6001",
 		AnimapuGoogleServiceAccount: os.Getenv("ANIMAPU_GOOGLE_SERVICE_ACCOUNT"),
-		AnimapuFirebaseUrl:          os.Getenv("ANIMAPU_FIREBASE_URL"),
 		MangameeApiHost:             os.Getenv("MANGAMEE_API_HOST"),
 		CollyTimeout:                5 * time.Minute,
 		DbUrl:                       os.Getenv("DB_URL"),
-	}
-
-	if config.AnimapuFirebaseUrl == "" {
-		panic("firebase url unset!")
 	}
 
 	return nil
