@@ -67,6 +67,10 @@ func Start() error {
 	r.Get("/mangas/sources", fiber_ctx.Wrap(setting_controller.GetAvailableSource))
 	r.Get("/animes/sources", fiber_ctx.Wrap(setting_controller.GetAnimeAvailableSource))
 
+	r.Get("/mangas/komikindo/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.KomikindoImage))
+	r.Get("/mangas/weeb_central/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.WeebCentralImage))
+	r.Get("/image_proxy", fiber_ctx.Wrap(proxy_controller.GenericImage))
+
 	r.Get("/mangas/:manga_source/latest", fiber_ctx.Wrap(manga_controller.GetMangaLatest))
 	r.Get("/mangas/:manga_source/detail/:manga_id", fiber_ctx.Wrap(manga_controller.GetMangaDetail))
 	r.Get("/mangas/:manga_source/read/:manga_id/:chapter_id", fiber_ctx.Wrap(manga_controller.ReadManga))
@@ -81,12 +85,6 @@ func Start() error {
 	r.Post("/users/mangas/libraries/:source/:source_id/add", fiber_ctx.Wrap(user_controller.AddLibrary))
 	r.Post("/users/mangas/libraries/:source/:source_id/remove", fiber_ctx.Wrap(user_controller.DeleteLibrary))
 	r.Get("/users/mangas/libraries", fiber_ctx.Wrap(user_controller.GetLibraries))
-
-	r.Get("/mangas/mangabat/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.MangabatImage))
-	r.Get("/mangas/weeb_central/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.WeebCentralImage))
-	r.Get("/mangas/klikmanga/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.KlikmangaImage))
-	r.Get("/mangas/komikindo/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.KomikindoImage))
-	r.Get("/image_proxy", fiber_ctx.Wrap(proxy_controller.GenericImage))
 
 	r.Get("/animes/:anime_source/latest", fiber_ctx.Wrap(anime_controller.GetLatest))
 	r.Get("/animes/:anime_source/search", fiber_ctx.Wrap(anime_controller.GetSearch))
