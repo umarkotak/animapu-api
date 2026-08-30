@@ -7,7 +7,6 @@ require (
 	github.com/bytedance/sonic v1.15.3
 	github.com/go-rod/rod v0.116.2
 	github.com/gocolly/colly v1.2.0
-	github.com/gocolly/colly/v2 v2.2.0
 	github.com/gofiber/fiber/v3 v3.5.0
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/google/uuid v1.6.0
@@ -27,7 +26,6 @@ require (
 	github.com/antchfx/htmlquery v1.3.4 // indirect
 	github.com/antchfx/xmlquery v1.4.4 // indirect
 	github.com/antchfx/xpath v1.3.3 // indirect
-	github.com/bits-and-blooms/bitset v1.22.0 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
 	github.com/bytedance/sonic/loader v0.5.2 // indirect
@@ -52,7 +50,6 @@ require (
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/nlnwa/whatwg-url v0.6.1 // indirect
 	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
