@@ -68,3 +68,10 @@ func TestMP4URLs(t *testing.T) {
 		t.Fatalf("mp4URLs() = %#v", urls)
 	}
 }
+
+func TestR2URLs(t *testing.T) {
+	urls := r2URLs(`{"stream":"https:\/\/pub-123.r2.cloudflarestorage.com\/episode\/video"}`)
+	if len(urls) != 1 || urls[0] != "https://pub-123.r2.cloudflarestorage.com/episode/video" {
+		t.Fatalf("r2URLs() = %#v", urls)
+	}
+}

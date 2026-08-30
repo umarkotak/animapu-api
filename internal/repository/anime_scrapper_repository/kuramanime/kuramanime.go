@@ -28,9 +28,14 @@ type Kuramanime struct {
 }
 
 var mp4URLPattern = regexp.MustCompile(`(?i)https?://[^\s"'\\]+\.mp4[^\s"'\\]*`)
+var r2URLPattern = regexp.MustCompile(`(?i)https?://[^\s"'\\]*r2\.cloudflarestorage\.com[^\s"'\\]*`)
 
 func mp4URLs(value string) []string {
 	return mp4URLPattern.FindAllString(strings.ReplaceAll(value, `\/`, "/"), -1)
+}
+
+func r2URLs(value string) []string {
+	return r2URLPattern.FindAllString(strings.ReplaceAll(value, `\/`, "/"), -1)
 }
 
 func New() Kuramanime {
@@ -269,7 +274,6 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 
 	episodeWatch := contract.EpisodeWatch{
 		OriginalUrl: targetURL,
-		StreamType:  "gdrive",
 		GdriveConf:  contract.GdriveConf{},
 	}
 
@@ -339,10 +343,12 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 	mediaBrowser, stopMediaWait := browser.Context(ctx).WithCancel()
 	mediaEvents := mediaBrowser.Event()
 	mediaDone := make(chan struct{})
+	r2StreamFound := make(chan string, 1)
 	go func() {
 		defer close(mediaDone)
 		apiResponses := map[proto.NetworkRequestID]struct{}{}
 		foundMP4URLs := map[string]struct{}{}
+		foundR2URLs := map[string]struct{}{}
 		recordMP4URLs := func(value string) bool {
 			for _, url := range mp4URLs(value) {
 				if _, found := foundMP4URLs[url]; found {
@@ -356,6 +362,19 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 			}
 			return false
 		}
+		recordR2URLs := func(value string) {
+			for _, url := range r2URLs(value) {
+				if _, found := foundR2URLs[url]; found {
+					continue
+				}
+				foundR2URLs[url] = struct{}{}
+				logrus.WithField("url", url).Info("Kuramanime Cloudflare R2 media")
+				select {
+				case r2StreamFound <- url:
+				default:
+				}
+			}
+		}
 		for event := range mediaEvents {
 			if event.SessionID != page.SessionID {
 				continue
@@ -366,6 +385,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 				if !event.Load(response) || response.Response == nil {
 					continue
 				}
+				recordR2URLs(response.Response.URL)
 				if recordMP4URLs(response.Response.URL) {
 					return
 				}
@@ -392,6 +412,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 						responseBody = string(decoded)
 					}
 				}
+				recordR2URLs(responseBody)
 				if recordMP4URLs(responseBody) {
 					return
 				}
@@ -415,7 +436,11 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 	case <-ctx.Done():
 		return episodeWatch, ctx.Err()
 	case gdriveConf := <-driveTokenFound:
+		episodeWatch.StreamType = "gdrive"
 		episodeWatch.GdriveConf = gdriveConf
+	case r2StreamURL := <-r2StreamFound:
+		episodeWatch.StreamType = "mp4"
+		episodeWatch.RawStreamUrl = r2StreamURL
 	case <-mediaDone:
 	case <-time.After(WAIT_DURATION):
 	}

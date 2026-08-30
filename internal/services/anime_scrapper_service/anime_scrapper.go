@@ -171,16 +171,16 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, models.Meta, error) {
 	episodeWatch := contract.EpisodeWatch{}
 
-	cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
-	if found {
-		cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
-		if err == nil {
-			err = sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch)
-			if err == nil {
-				return episodeWatch, models.Meta{FromCache: true}, nil
-			}
-		}
-	}
+	// cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
+	// if found {
+	// 	cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
+	// 	if err == nil {
+	// 		err = sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch)
+	// 		if err == nil {
+	// 			return episodeWatch, models.Meta{FromCache: true}, nil
+	// 		}
+	// 	}
+	// }
 
 	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
 	if err != nil {
