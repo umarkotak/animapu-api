@@ -1,4 +1,4 @@
-package manga_scrapper_repository
+package weebcentral
 
 import (
 	"context"
@@ -46,7 +46,7 @@ type WeebCentral struct {
 	ImgHost string
 }
 
-func NewWeebCentral() WeebCentral {
+func New() WeebCentral {
 	return WeebCentral{
 		Source:  "weeb_central",
 		Host:    "https://weebcentral.com",

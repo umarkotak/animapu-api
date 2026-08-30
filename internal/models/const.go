@@ -37,6 +37,7 @@ const (
 
 	// indonesia
 	ANIME_SOURCE_OTAKUDESU     = "otakudesu"
+	ANIME_SOURCE_KURAMANIME    = "kuramanime"
 	ANIME_SOURCE_ANIMEINDO     = "animeindo"     // TODO: https://anime-indo.lol
 	ANIME_SOURCE_SAMEHADAKU_AC = "samehadaku_ac" // TODO: https://samehadaku.ac
 
@@ -67,68 +68,12 @@ var (
 			Status:   "stable",
 		},
 		{
-			ID:       SOURCE_KOMIKCAST,
-			Language: "id",
-			Title:    "Komik Cast",
-			WebLink:  "https://komikcast.bz",
-			Active:   false,
-			Status:   "stable",
-		},
-		{
-			ID:       SOURCE_MANGABAT,
-			Language: "en",
-			Title:    "Manga Bat",
-			WebLink:  "https://www.mangabats.com",
-			Active:   true,
-			Status:   "stable",
-		},
-		{
-			ID:       SOURCE_ASURA_NACM,
-			Language: "en",
-			Title:    "Asura",
-			WebLink:  "https://asura.nacm.xyz",
-			Active:   false,
-			Status:   "stable",
-		},
-		{
-			ID:       SOURCE_MANGASEE,
-			Language: "en",
-			Title:    "Mangasee",
-			WebLink:  "https://www.mangasee123.com",
-			Active:   false,
-			Status:   "stable",
-		},
-		{
 			ID:       SOURCE_WEEB_CENTRAL,
 			Language: "en",
 			Title:    "Weeb Central",
 			WebLink:  "https://weebcentral.com",
 			Active:   true,
 			Status:   "stable",
-		},
-		{
-			ID:       SOURCE_MANGADEX,
-			Language: "en",
-			Title:    "Mangadex",
-			WebLink:  "https://mangadex.org",
-			Active:   false,
-			Status:   "wip",
-		},
-		{
-			ID:       SOURCE_MANGAKAKALOT,
-			Language: "en",
-			Title:    "Manga Kakalot",
-			WebLink:  "https://www.mangakakalot.gg",
-			Active:   false,
-			Status:   "wip",
-		},
-		{
-			ID:       SOURCE_MANGANATO,
-			Language: "en",
-			Title:    "Manga Nato",
-			WebLink:  "https://manganato.info",
-			Active:   false,
-			Status:   "wip",
 		},
 	}
 
@@ -139,22 +84,6 @@ var (
 			Title:    "Otakudesu",
 			WebLink:  "https://otakudesu.cloud",
 			Active:   true,
-			Status:   "stable",
-		},
-		{
-			ID:       ANIME_SOURCE_GOGO_ANIME,
-			Language: "en",
-			Title:    "Gogo Anime Old",
-			WebLink:  "https://ww10.gogoanimes.org",
-			Active:   false,
-			Status:   "stable",
-		},
-		{
-			ID:       ANIME_SOURCE_GOGO_ANIME_NEW,
-			Language: "en",
-			Title:    "Gogo Anime New",
-			WebLink:  "https://gogoanime.by", // https://gogoanime.by,
-			Active:   false,
 			Status:   "stable",
 		},
 	}

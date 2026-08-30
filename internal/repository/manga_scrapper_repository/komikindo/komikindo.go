@@ -1,4 +1,4 @@
-package manga_scrapper_repository
+package komikindo
 
 import (
 	"context"
@@ -20,7 +20,7 @@ type Komikindo struct {
 	Source string
 }
 
-func NewKomikindo() Komikindo {
+func New() Komikindo {
 	return Komikindo{
 		Host:   "https://komikindo.ch",
 		Source: "komikindo",

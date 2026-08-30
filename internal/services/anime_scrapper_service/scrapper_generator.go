@@ -5,10 +5,8 @@ import (
 
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
-	anime_scrapper_animeindo "github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository/animeindo"
-	anime_scrapper_gogo_anime "github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository/gogo_anime"
-	anime_scrapper_gogo_anime_new "github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository/gogo_anime_new"
-	anime_scrapper_otakudesu "github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository/otakudesu"
+	"github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository/kuramanime"
+	"github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository/otakudesu"
 )
 
 type (
@@ -27,16 +25,10 @@ func animeScrapperGenerator(animeSource string) (AnimeScrapper, error) {
 
 	switch animeSource {
 	case models.ANIME_SOURCE_OTAKUDESU:
-		animeScrapper := anime_scrapper_otakudesu.NewOtakudesu()
+		animeScrapper := otakudesu.New()
 		return &animeScrapper, nil
-	case models.ANIME_SOURCE_ANIMEINDO:
-		animeScrapper := anime_scrapper_animeindo.NewAnimeindo()
-		return &animeScrapper, nil
-	case models.ANIME_SOURCE_GOGO_ANIME:
-		animeScrapper := anime_scrapper_gogo_anime.NewGogoAnime()
-		return &animeScrapper, nil
-	case models.ANIME_SOURCE_GOGO_ANIME_NEW:
-		animeScrapper := anime_scrapper_gogo_anime_new.NewGogoAnimeNew()
+	case models.ANIME_SOURCE_KURAMANIME:
+		animeScrapper := kuramanime.New()
 		return &animeScrapper, nil
 	}
 

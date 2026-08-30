@@ -21,7 +21,6 @@ import (
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
-	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
 	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
@@ -42,7 +41,6 @@ func Initialize() {
 	manga_history_repository.Initialize()
 	manga_library_repository.Initialize()
 	affiliate_link_repository.Initialize()
-	manga_scrapper_repository.InitializeAsuraComic()
 	anime_repository.Initialize()
 	anime_history_repository.Initialize()
 }
@@ -100,6 +98,5 @@ func Start() error {
 	r.Get("/affiliate_links/random", fiber_ctx.Wrap(affiliate_link_controller.GetRandom))
 	r.Get("/affiliate_links", fiber_ctx.Wrap(affiliate_link_controller.GetList))
 
-	defer manga_scrapper_repository.DeferAsuraComic()
 	return r.Listen(":" + config.Get().Port)
 }

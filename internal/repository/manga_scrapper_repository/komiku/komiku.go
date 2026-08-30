@@ -1,4 +1,4 @@
-package manga_scrapper_repository
+package komiku
 
 import (
 	"context"
@@ -20,7 +20,7 @@ type Komiku struct {
 	Source  string
 }
 
-func NewKomiku() Komiku {
+func New() Komiku {
 	return Komiku{
 		Host:    "https://komiku.org",
 		ApiHost: "https://api.komiku.org",

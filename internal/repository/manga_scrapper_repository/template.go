@@ -13,7 +13,7 @@ import (
 
 type Template struct{}
 
-func NewTemplate() Template {
+func New() Template {
 	return Template{}
 }
 

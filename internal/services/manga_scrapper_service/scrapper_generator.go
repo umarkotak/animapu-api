@@ -5,7 +5,9 @@ import (
 
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
-	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository/komikindo"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository/komiku"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_scrapper_repository/weebcentral"
 )
 
 type (
@@ -21,29 +23,14 @@ func mangaScrapperGenerator(mangaSource string) (MangaScrapper, error) {
 	var mangaScrapper MangaScrapper
 
 	switch mangaSource {
-	case models.SOURCE_MANGABAT:
-		mangaScrapper := manga_scrapper_repository.NewMangabat()
-		return &mangaScrapper, nil
-	case models.SOURCE_ASURA_NACM:
-		mangaScrapper := manga_scrapper_repository.NewAsuraComic()
-		return &mangaScrapper, nil
 	case models.SOURCE_KOMIKINDO:
-		mangaScrapper := manga_scrapper_repository.NewKomikindo()
+		mangaScrapper := komikindo.New()
 		return &mangaScrapper, nil
 	case models.SOURCE_KOMIKU:
-		mangaScrapper := manga_scrapper_repository.NewKomiku()
-		return &mangaScrapper, nil
-	case models.SOURCE_KOMIKCAST:
-		mangaScrapper := manga_scrapper_repository.NewKomikcast()
-		return &mangaScrapper, nil
-	case models.SOURCE_MANGASEE:
-		mangaScrapper := manga_scrapper_repository.NewMangasee()
+		mangaScrapper := komiku.New()
 		return &mangaScrapper, nil
 	case models.SOURCE_WEEB_CENTRAL:
-		mangaScrapper := manga_scrapper_repository.NewWeebCentral()
-		return &mangaScrapper, nil
-	case models.SOURCE_MANGADEX:
-		mangaScrapper := manga_scrapper_repository.NewMangadex()
+		mangaScrapper := weebcentral.New()
 		return &mangaScrapper, nil
 	}
 

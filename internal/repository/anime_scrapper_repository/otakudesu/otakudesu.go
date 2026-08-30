@@ -1,4 +1,4 @@
-package anime_scrapper_otakudesu
+package otakudesu
 
 import (
 	"context"
@@ -22,21 +22,29 @@ type Otakudesu struct {
 	AnimapuSource        string
 	Source               string
 	OtakudesuHost        string
-	AllowedStreamServers []string
+	KnownServers         []string // used for documentation
+	SkippedStreamServers map[string]bool
 }
 
-func NewOtakudesu() Otakudesu {
+// {Name:filedon Idx:0} {Name:vidhide Idx:1} {Name:mega Idx:2}] 480p:[{Name:blogs Idx:0} {Name:filedon Idx:1} {Name:vidhide Idx:2} {Name:mega Idx:3} {Name:ondesu Idx:4}] 720p:[{Name:ondesuhd  Idx:0} {Name:odstream  Idx:1} {Name:filedon  Idx:2} {Name:vidhide  Idx:3} {Name:mega  Idx:4}
+func New() Otakudesu {
 	return Otakudesu{
 		AnimapuSource: models.ANIME_SOURCE_OTAKUDESU,
 		Source:        "otakudesu",
-		OtakudesuHost: "https://otakudesu.best",
-		AllowedStreamServers: []string{
-			"filelions",
+		OtakudesuHost: "https://otakudesu.blog",
+		KnownServers: []string{
+			"filedon",
+			"vidhide",
+			"mega",
+			"blogs",
+			"ondesu",
 			"ondesuhd",
-			"otakustream",
 			"odstream",
-			"pdrain",
-			"", // whitelist all
+		},
+		SkippedStreamServers: map[string]bool{
+			"ondesu":   true,
+			"ondesuhd": true,
+			"odstream": true,
 		},
 	}
 }
@@ -228,7 +236,7 @@ func (s *Otakudesu) GetDetail(ctx context.Context, queryParams models.AnimeQuery
 	}
 	c.Wait()
 
-	for idx, _ := range anime.Episodes {
+	for idx := range anime.Episodes {
 		// anime.Episodes[idx].Number = float64(len(anime.Episodes) - idx)
 		anime.Episodes[idx].CoverUrl = anime.CoverUrls[0]
 		anime.Episodes[idx].CoverUrls = anime.CoverUrls
@@ -243,8 +251,6 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	if queryParams.Resolution == "" {
 		queryParams.Resolution = "720p"
 	}
-
-	streamOptions := []contract.StreamOption{}
 
 	episodeWatch := contract.EpisodeWatch{}
 
@@ -261,6 +267,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		Name string
 		Idx  string
 	}
+	streamOptions := []contract.StreamOption{}
 	streams := map[string][]serverOpt{
 		"720p": {},
 		"480p": {},
@@ -268,40 +275,52 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 	c.OnHTML("#venkonten > div.venser > div.venutama > div.mirrorstream > ul.m720p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
+			streamServer := strings.Trim(h.Text, " ")
+			if s.SkippedStreamServers[streamServer] {
+				return
+			}
 			streams["720p"] = append(streams["720p"], serverOpt{
-				Name: h.Text,
+				Name: streamServer,
 				Idx:  fmt.Sprint(i),
 			})
 			streamOptions = append(streamOptions, contract.StreamOption{
 				Resolution: "720p",
 				Index:      fmt.Sprint(i),
-				Name:       h.Text,
+				Name:       streamServer,
 			})
 		})
 	})
 	c.OnHTML("#venkonten > div.venser > div.venutama > div.mirrorstream > ul.m480p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
+			streamServer := strings.Trim(h.Text, " ")
+			if s.SkippedStreamServers[streamServer] {
+				return
+			}
 			streams["480p"] = append(streams["480p"], serverOpt{
-				Name: h.Text,
+				Name: streamServer,
 				Idx:  fmt.Sprint(i),
 			})
 			streamOptions = append(streamOptions, contract.StreamOption{
 				Resolution: "480p",
 				Index:      fmt.Sprint(i),
-				Name:       h.Text,
+				Name:       streamServer,
 			})
 		})
 	})
 	c.OnHTML("#venkonten > div.venser > div.venutama > div.mirrorstream > ul.m360p", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, h *colly.HTMLElement) {
+			streamServer := strings.Trim(h.Text, " ")
+			if s.SkippedStreamServers[streamServer] {
+				return
+			}
 			streams["360p"] = append(streams["360p"], serverOpt{
-				Name: h.Text,
+				Name: streamServer,
 				Idx:  fmt.Sprint(i),
 			})
 			streamOptions = append(streamOptions, contract.StreamOption{
 				Resolution: "360p",
 				Index:      fmt.Sprint(i),
-				Name:       h.Text,
+				Name:       streamServer,
 			})
 		})
 	})
@@ -314,7 +333,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 	}
 	c.Wait()
 
-	// logrus.Infof("STREAM SERVER: %+v", streams)
+	logrus.Infof("STREAM SERVER: %+v", streams)
 
 	if len(streams[queryParams.Resolution]) <= 0 {
 		backupFound := false
@@ -327,7 +346,7 @@ func (s *Otakudesu) Watch(ctx context.Context, queryParams models.AnimeQueryPara
 		}
 
 		if !backupFound {
-			err = fmt.Errorf(fmt.Sprintf("%s stream server not found", queryParams.Resolution))
+			err = fmt.Errorf("%s stream server not found", queryParams.Resolution)
 			logrus.WithContext(ctx).Error(err)
 			return episodeWatch, err
 		}
