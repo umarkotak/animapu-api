@@ -58,7 +58,8 @@ func (sc *Komikindo) GetHome(ctx context.Context, queryParams models.QueryParams
 				{
 					Index: 1,
 					ImageUrls: []string{
-						fmt.Sprintf("%v/mangas/komikindo/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a > div > img", "src")),
+						// fmt.Sprintf("%v/mangas/komikindo/image_proxy/%v", config.Get().AnimapuOnlineHost, e.ChildAttr("a > div > img", "src")),
+						e.ChildAttr("a > div > img", "src"),
 					},
 				},
 			},
