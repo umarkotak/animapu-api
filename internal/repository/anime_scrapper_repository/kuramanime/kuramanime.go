@@ -285,8 +285,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 	router := browser.HijackRequests()
 	if err := router.Add("*", "", func(h *rod.Hijack) {
 		isMiscRequest := strings.HasPrefix(h.Request.URL().String(), fmt.Sprintf("%s/misc/token/drive-token", host))
-		isAPIRequest := h.Request.Type() == proto.NetworkResourceTypeXHR || h.Request.Type() == proto.NetworkResourceTypeFetch
-		if !isMiscRequest && !isAPIRequest {
+		if !isMiscRequest {
 			h.ContinueRequest(&proto.FetchContinueRequest{})
 			return
 		}

@@ -66,7 +66,7 @@ func launchChrome() (*rod.Browser, error) {
 			}
 		}
 		if attempt == 0 {
-			args := []string{"-na", "Google Chrome", "--args", "--remote-debugging-port=9222", "--user-data-dir=/tmp/chrome-rod"}
+			args := []string{"-na", "Google Chrome", "--args", "--remote-debugging-port=9222", "--user-data-dir=/tmp/chrome-rod", "--mute-audio"}
 			if config.Get().RodHeadless {
 				args = append(args, "--headless=new")
 			}
