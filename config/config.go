@@ -17,6 +17,7 @@ type (
 		MangameeApiHost             string
 		CollyTimeout                time.Duration
 		DbUrl                       string
+		RodHeadless                 bool
 	}
 )
 
@@ -43,6 +44,7 @@ func Initialize() error {
 		MangameeApiHost:             os.Getenv("MANGAMEE_API_HOST"),
 		CollyTimeout:                5 * time.Minute,
 		DbUrl:                       os.Getenv("DB_URL"),
+		RodHeadless:                 os.Getenv("ROD_HEADLESS") == "true",
 	}
 
 	return nil

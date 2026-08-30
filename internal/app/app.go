@@ -6,7 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/datastore"
-	"github.com/umarkotak/animapu-api/internal/controllers/affiliate_link_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/anime_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/health_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/manga_controller"
@@ -14,7 +13,6 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
-	"github.com/umarkotak/animapu-api/internal/repository/affiliate_link_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_chapter_repository"
@@ -26,23 +24,26 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
 )
 
-func Initialize() {
+func Initialize() error {
 	logger.Initialize()
 	logrus.AddHook(&logger.AnimapuHook{})
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logger.Formatter{})
 
 	config.Initialize()
-	datastore.Initialize()
+	if err := datastore.Initialize(); err != nil {
+		return err
+	}
 
 	user_repository.Initialize()
 	manga_repository.Initialize()
 	manga_chapter_repository.Initialize()
 	manga_history_repository.Initialize()
 	manga_library_repository.Initialize()
-	affiliate_link_repository.Initialize()
 	anime_repository.Initialize()
 	anime_history_repository.Initialize()
+
+	return nil
 }
 
 func Start() error {
@@ -93,10 +94,6 @@ func Start() error {
 	r.Get("/animes/:anime_source/season/:release_year/:release_season", fiber_ctx.Wrap(anime_controller.GetPerSeason))
 	r.Get("/animes/:anime_source/detail/:anime_id", fiber_ctx.Wrap(anime_controller.GetDetail))
 	r.Get("/animes/:anime_source/watch/:anime_id/:episode_id", fiber_ctx.Wrap(anime_controller.GetWatch))
-
-	r.Post("/affiliate_links/tokopedia/add", fiber_ctx.Wrap(affiliate_link_controller.AddTokopediaAffiliateLink))
-	r.Get("/affiliate_links/random", fiber_ctx.Wrap(affiliate_link_controller.GetRandom))
-	r.Get("/affiliate_links", fiber_ctx.Wrap(affiliate_link_controller.GetList))
 
 	return r.Listen(":" + config.Get().Port)
 }

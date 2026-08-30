@@ -157,13 +157,12 @@ func (sc *WeebCentral) GetDetail(ctx context.Context, queryParams models.QueryPa
 		chNumer := utils.ForceSanitizeStringToFloat(chText)
 
 		manga.Chapters = append(manga.Chapters, contract.Chapter{
-			ID:                chapterID,
-			Source:            sc.Source,
-			SourceID:          chapterID,
-			SecondarySourceID: "",
-			Title:             chText,
-			Index:             int64(chNumer),
-			Number:            chNumer,
+			ID:       chapterID,
+			Source:   sc.Source,
+			SourceID: chapterID,
+			Title:    chText,
+			Index:    int64(chNumer),
+			Number:   chNumer,
 		})
 	})
 

@@ -86,6 +86,14 @@ var (
 			Active:   true,
 			Status:   "stable",
 		},
+		{
+			ID:       ANIME_SOURCE_KURAMANIME,
+			Language: "id",
+			Title:    "Kuramanime",
+			WebLink:  "https://kuramalink.app",
+			Active:   true,
+			Status:   "stable",
+		},
 	}
 
 	AdminEmails = []string{

@@ -47,9 +47,8 @@ func GetMangaLatest(c *fiber_ctx.Context) {
 
 func GetMangaDetail(c *fiber_ctx.Context) {
 	queryParams := models.QueryParams{
-		Source:            c.Param("manga_source"),
-		SourceID:          c.Param("manga_id"),
-		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
+		Source:   c.Param("manga_source"),
+		SourceID: c.Param("manga_id"),
 	}
 
 	manga, meta, err := manga_scrapper_service.GetDetail(c.Request.Context(), queryParams)
@@ -67,11 +66,10 @@ func ReadManga(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.QueryParams{
-		Source:            c.Param("manga_source"),
-		SourceID:          c.Param("manga_id"),
-		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
-		ChapterID:         c.Param("chapter_id"),
-		User:              common_ctx.GetFromFiberCtx(c).User,
+		Source:    c.Param("manga_source"),
+		SourceID:  c.Param("manga_id"),
+		ChapterID: c.Param("chapter_id"),
+		User:      common_ctx.GetFromFiberCtx(c).User,
 	}
 
 	chapter, meta, err := manga_scrapper_service.GetChapter(ctx, queryParams)
@@ -112,11 +110,10 @@ func DownloadMangaChapter(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	queryParams := models.QueryParams{
-		Source:            c.Param("manga_source"),
-		SourceID:          c.Param("manga_id"),
-		SecondarySourceID: c.Request.URL.Query().Get("secondary_source_id"),
-		ChapterID:         c.Param("chapter_id"),
-		User:              common_ctx.GetFromFiberCtx(c).User,
+		Source:    c.Param("manga_source"),
+		SourceID:  c.Param("manga_id"),
+		ChapterID: c.Param("chapter_id"),
+		User:      common_ctx.GetFromFiberCtx(c).User,
 	}
 
 	manga, _, err := manga_scrapper_service.GetDetail(c.Request.Context(), queryParams)

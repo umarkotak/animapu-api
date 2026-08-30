@@ -199,7 +199,7 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, models.Meta{}, err
+		return episodeWatch, models.Meta{}, nil
 	}
 
 	// if episodeWatch.RawStreamUrl != "" || episodeWatch.IframeUrl != "" {

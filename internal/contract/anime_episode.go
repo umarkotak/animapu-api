@@ -14,7 +14,7 @@ type (
 	}
 
 	EpisodeWatch struct {
-		StreamType    string            `json:"stream_type"`    // Enum: hls, mp4, iframe
+		StreamType    string            `json:"stream_type"`    // Enum: hls, mp4, iframe, gdrive
 		RawStreamUrl  string            `json:"raw_stream_url"` //
 		RawPageByte   []byte            `json:"raw_page_byte"`  //
 		IframeUrl     string            `json:"iframe_url"`     //
@@ -23,6 +23,7 @@ type (
 		StreamOptions []StreamOption    `json:"stream_options"` //
 		Resolution    string            `json:"resolution"`     //
 		StreamIdx     string            `json:"stream_idx"`     //
+		GdriveConf    GdriveConf        `json:"gdrive_conf"`    //
 	}
 
 	StreamOption struct {
@@ -30,5 +31,10 @@ type (
 		Index      string `json:"index"`
 		Name       string `json:"name"`
 		Used       bool   `json:"used"`
+	}
+
+	GdriveConf struct {
+		AccessToken string `json:"access_token"`
+		Gid         string `json:"gid"`
 	}
 )

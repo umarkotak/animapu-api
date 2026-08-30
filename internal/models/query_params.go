@@ -7,13 +7,12 @@ import (
 
 type (
 	QueryParams struct {
-		User              User   `json:"-"`
-		Source            string `json:"source"`
-		SourceID          string `json:"source_id"`
-		SecondarySourceID string `json:"secondary_source_id"`
-		Page              int64  `json:"page"`
-		ChapterID         string `json:"chapter_id"`
-		Title             string `json:"title"`
+		User      User   `json:"-"`
+		Source    string `json:"source"`
+		SourceID  string `json:"source_id"`
+		Page      int64  `json:"page"`
+		ChapterID string `json:"chapter_id"`
+		Title     string `json:"title"`
 	}
 
 	AnimeQueryParams struct {
@@ -36,10 +35,9 @@ type (
 
 func (qp *QueryParams) ToKey(page string) string {
 	return fmt.Sprintf(
-		"%v:%v:%v:%v:%v:%v:%v",
+		"%v:%v:%v:%v:%v:%v",
 		qp.Source,
 		qp.SourceID,
-		qp.SecondarySourceID,
 		qp.Page,
 		qp.ChapterID,
 		qp.Title,
@@ -49,10 +47,9 @@ func (qp *QueryParams) ToKey(page string) string {
 
 func (qp *QueryParams) ToFbKey(page string) string {
 	tempKey := fmt.Sprintf(
-		"%v:%v:%v:%v:%v:%v:%v",
+		"%v:%v:%v:%v:%v:%v",
 		qp.Source,
 		qp.SourceID,
-		qp.SecondarySourceID,
 		qp.Page,
 		qp.ChapterID,
 		qp.Title,

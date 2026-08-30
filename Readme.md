@@ -12,12 +12,12 @@ Open source API to fetch latest manga from multiple sources. CORS friendly.
 
 ## USAGES
 
-| Name         | Method      | PATH                                                                         |
-| -----------  | ----------- | ---------------------------------------------------------------------------- |
-| Latest Manga | GET         | {HOST}/mangas/:manga_source/latest?page=                                     |
-| Search Manga | GET         | {HOST}/mangas/:manga_source/search?title=                                    |
-| Detail Manga | GET         | {HOST}/mangas/:manga_source/detail/:manga_id?secondary_source_id=            |
-| Read Manga   | GET         | {HOST}/mangas/:manga_source/read/:manga_id/:chapter_id? secondary_source_id= |
+| Name         | Method      | PATH                                                   |
+| -----------  | ----------- | ------------------------------------------------------ |
+| Latest Manga | GET         | {HOST}/mangas/:manga_source/latest?page=               |
+| Search Manga | GET         | {HOST}/mangas/:manga_source/search?title=              |
+| Detail Manga | GET         | {HOST}/mangas/:manga_source/detail/:manga_id           |
+| Read Manga   | GET         | {HOST}/mangas/:manga_source/read/:manga_id/:chapter_id |
 
 ## INFRASTRUCTURE
 
