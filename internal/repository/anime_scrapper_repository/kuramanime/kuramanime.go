@@ -39,7 +39,7 @@ func New() Kuramanime {
 	}
 }
 
-var WAIT_DURATION = 15 * time.Second
+var WAIT_DURATION = 60 * time.Second
 
 func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
 	page := queryParams.Page

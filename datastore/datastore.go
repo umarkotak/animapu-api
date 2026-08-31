@@ -52,7 +52,50 @@ func launchChrome() (*rod.Browser, error) {
 		WebSocketDebuggerURL string `json:"webSocketDebuggerUrl"`
 	}
 	client := http.Client{Timeout: time.Second}
+	closedExistingChrome := false
+
+	resp, err := client.Get("http://127.0.0.1:9222/json/version")
+	if err == nil {
+		err = json.NewDecoder(resp.Body).Decode(&version)
+		resp.Body.Close()
+		if err == nil && version.WebSocketDebuggerURL != "" {
+			browser := rod.New().ControlURL(version.WebSocketDebuggerURL)
+			if err := browser.Connect(); err != nil {
+				return nil, fmt.Errorf("connect to existing Chrome: %w", err)
+			}
+			if err := browser.Close(); err != nil {
+				return nil, fmt.Errorf("close existing Chrome: %w", err)
+			}
+			closedExistingChrome = true
+		}
+	}
+
 	for attempt := 0; attempt <= 20; attempt++ {
+		if attempt == 0 {
+			for waitAttempt := 0; closedExistingChrome && waitAttempt <= 20; waitAttempt++ {
+				resp, err := client.Get("http://127.0.0.1:9222/json/version")
+				if err != nil {
+					break
+				}
+				resp.Body.Close()
+				time.Sleep(250 * time.Millisecond)
+			}
+			if closedExistingChrome {
+				resp, err := client.Get("http://127.0.0.1:9222/json/version")
+				if err == nil {
+					resp.Body.Close()
+					return nil, fmt.Errorf("existing Chrome did not close")
+				}
+			}
+			args := []string{"-na", "Google Chrome", "--args", "--remote-debugging-port=9222", "--user-data-dir=/tmp/chrome-rod", "--mute-audio"}
+			if config.Get().RodHeadless {
+				args = append(args, "--headless=new")
+			}
+			if err := exec.Command("open", args...).Run(); err != nil {
+				return nil, fmt.Errorf("launch Chrome: %w", err)
+			}
+		}
+
 		resp, err := client.Get("http://127.0.0.1:9222/json/version")
 		if err == nil {
 			err = json.NewDecoder(resp.Body).Decode(&version)
@@ -63,15 +106,6 @@ func launchChrome() (*rod.Browser, error) {
 					return nil, fmt.Errorf("connect to Chrome: %w", err)
 				}
 				return browser, nil
-			}
-		}
-		if attempt == 0 {
-			args := []string{"-na", "Google Chrome", "--args", "--remote-debugging-port=9222", "--user-data-dir=/tmp/chrome-rod", "--mute-audio"}
-			if config.Get().RodHeadless {
-				args = append(args, "--headless=new")
-			}
-			if err := exec.Command("open", args...).Run(); err != nil {
-				return nil, fmt.Errorf("launch Chrome: %w", err)
 			}
 		}
 		time.Sleep(250 * time.Millisecond)
