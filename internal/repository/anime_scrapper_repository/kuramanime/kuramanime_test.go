@@ -62,16 +62,9 @@ func TestGetDetail(t *testing.T) {
 	}
 }
 
-func TestMP4URLs(t *testing.T) {
-	urls := mp4URLs(`{"first":"https:\/\/cdn.example.com\/first.mp4?token=one","second":"https://cdn.example.com/second.MP4"}`)
-	if len(urls) != 2 || urls[0] != "https://cdn.example.com/first.mp4?token=one" || urls[1] != "https://cdn.example.com/second.MP4" {
-		t.Fatalf("mp4URLs() = %#v", urls)
-	}
-}
-
 func TestR2URLs(t *testing.T) {
-	urls := r2URLs(`{"stream":"https:\/\/pub-123.r2.cloudflarestorage.com\/episode\/video"}`)
-	if len(urls) != 1 || urls[0] != "https://pub-123.r2.cloudflarestorage.com/episode/video" {
+	urls := r2URLs(`{"stream":"https:\/\/pub-123.r2.cloudflarestorage.com\/episode\/video?one=1&amp;two=2"}`)
+	if len(urls) != 1 || urls[0] != "https://pub-123.r2.cloudflarestorage.com/episode/video?one=1&two=2" {
 		t.Fatalf("r2URLs() = %#v", urls)
 	}
 }

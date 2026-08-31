@@ -27,12 +27,7 @@ type Kuramanime struct {
 	KuramanimeAggregator string
 }
 
-var mp4URLPattern = regexp.MustCompile(`(?i)https?://[^\s"'\\]+\.mp4[^\s"'\\]*`)
 var r2URLPattern = regexp.MustCompile(`(?i)https?://[^\s"'\\]*r2\.cloudflarestorage\.com[^\s"'\\]*`)
-
-func mp4URLs(value string) []string {
-	return mp4URLPattern.FindAllString(strings.ReplaceAll(value, `\/`, "/"), -1)
-}
 
 func r2URLs(value string) []string {
 	return r2URLPattern.FindAllString(strings.ReplaceAll(value, `\/`, "/"), -1)
@@ -44,10 +39,7 @@ func New() Kuramanime {
 	}
 }
 
-var (
-	WAIT_DURATION    = 15 * time.Second
-	TARGET_MP4_COUNT = 6
-)
+var WAIT_DURATION = 15 * time.Second
 
 func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
 	page := queryParams.Page
@@ -347,21 +339,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 	go func() {
 		defer close(mediaDone)
 		apiResponses := map[proto.NetworkRequestID]struct{}{}
-		foundMP4URLs := map[string]struct{}{}
 		foundR2URLs := map[string]struct{}{}
-		recordMP4URLs := func(value string) bool {
-			for _, url := range mp4URLs(value) {
-				if _, found := foundMP4URLs[url]; found {
-					continue
-				}
-				foundMP4URLs[url] = struct{}{}
-				logrus.WithField("url", url).Info("Kuramanime MP4 media")
-				if len(foundMP4URLs) >= TARGET_MP4_COUNT {
-					return true
-				}
-			}
-			return false
-		}
 		recordR2URLs := func(value string) {
 			for _, url := range r2URLs(value) {
 				if _, found := foundR2URLs[url]; found {
@@ -386,9 +364,6 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 					continue
 				}
 				recordR2URLs(response.Response.URL)
-				if recordMP4URLs(response.Response.URL) {
-					return
-				}
 				if response.Type == proto.NetworkResourceTypeXHR || response.Type == proto.NetworkResourceTypeFetch {
 					apiResponses[response.RequestID] = struct{}{}
 				}
@@ -413,9 +388,6 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 					}
 				}
 				recordR2URLs(responseBody)
-				if recordMP4URLs(responseBody) {
-					return
-				}
 			}
 		}
 	}()
@@ -440,8 +412,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 		episodeWatch.GdriveConf = gdriveConf
 	case r2StreamURL := <-r2StreamFound:
 		episodeWatch.StreamType = "mp4"
-		episodeWatch.RawStreamUrl = r2StreamURL
-	case <-mediaDone:
+		episodeWatch.RawStreamUrl = strings.ReplaceAll(r2StreamURL, "&amp;", "&")
 	case <-time.After(WAIT_DURATION):
 	}
 
