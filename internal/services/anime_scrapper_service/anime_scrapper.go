@@ -47,7 +47,7 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]cont
 	}
 
 	if len(animes) > 0 {
-		go datastore.Get().GoCache.Set(queryParams.ToKey("GetLatest"), animes, 24*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("GetLatest"), animes, 1*time.Hour)
 		go AnimeSync(context.Background(), animes)
 	}
 
@@ -161,7 +161,7 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 	}
 
 	if anime.ID != "" {
-		go datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 24*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 6*time.Hour)
 		go AnimeSync(context.Background(), []contract.Anime{anime})
 	}
 
@@ -196,7 +196,7 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 	}
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return episodeWatch, models.Meta{}, nil
+		return episodeWatch, models.Meta{}, err
 	}
 
 	if validWatchForCache(episodeWatch) {

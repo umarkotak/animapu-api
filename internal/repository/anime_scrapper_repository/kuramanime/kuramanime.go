@@ -281,6 +281,23 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 }
 
 func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
+	for attempt := 1; attempt <= 2; attempt++ {
+		episodeWatch, err := s.watchOnce(ctx, queryParams)
+		if err != nil || episodeWatch.StreamType != "" || attempt == 2 {
+			return episodeWatch, err
+		}
+
+		logrus.WithContext(ctx).WithFields(logrus.Fields{
+			"anime_id":   queryParams.SourceID,
+			"episode_id": queryParams.EpisodeID,
+			"attempt":    attempt + 1,
+		}).Warn("Kuramanime stream discovery timed out; retrying")
+	}
+
+	return contract.EpisodeWatch{}, nil
+}
+
+func (s *Kuramanime) watchOnce(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
 	host := s.getHost()
 	targetURL := fmt.Sprintf("%s/anime/%s", host, queryParams.SourceID)
 	if finalURL, err := utils.GetFinalURL(targetURL); err != nil {
