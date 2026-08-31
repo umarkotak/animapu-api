@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/bytedance/sonic"
-	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
@@ -28,6 +28,7 @@ type Kuramanime struct {
 }
 
 var r2URLPattern = regexp.MustCompile(`(?i)https?://[^\s"'\\]*r2\.cloudflarestorage\.com[^\s"'\\]*`)
+var kuramanimeFetchMu sync.Mutex
 
 func r2URLs(value string) []string {
 	return r2URLPattern.FindAllString(strings.ReplaceAll(value, `\/`, "/"), -1)
@@ -281,6 +282,9 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 }
 
 func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
+	kuramanimeFetchMu.Lock()
+	defer kuramanimeFetchMu.Unlock()
+
 	for attempt := 1; attempt <= 2; attempt++ {
 		episodeWatch, err := s.watchOnce(ctx, queryParams)
 		if err != nil || episodeWatch.StreamType != "" || attempt == 2 {
@@ -312,12 +316,12 @@ func (s *Kuramanime) watchOnce(ctx context.Context, queryParams models.AnimeQuer
 		GdriveConf:  contract.GdriveConf{},
 	}
 
-	browser := datastore.Get().Browser
-	if browser == nil {
-		err := fmt.Errorf("Rod browser is not initialized")
-		logError(ctx, "create watch page", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
+	browser, err := datastore.NewBrowser()
+	if err != nil {
+		logError(ctx, "create isolated browser", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
+	defer browser.Close()
 
 	page, err := browser.Page(proto.TargetCreateTarget{})
 	if err != nil {
@@ -327,40 +331,76 @@ func (s *Kuramanime) watchOnce(ctx context.Context, queryParams models.AnimeQuer
 	defer page.Close()
 
 	driveTokenFound := make(chan contract.GdriveConf, 1)
-	router := browser.HijackRequests()
-	if err := router.Add("*", "", func(h *rod.Hijack) {
-		isMiscRequest := strings.HasPrefix(h.Request.URL().String(), fmt.Sprintf("%s/misc/token/drive-token", host))
-		if !isMiscRequest {
-			h.ContinueRequest(&proto.FetchContinueRequest{})
-			return
-		}
-		if err := h.LoadResponse(http.DefaultClient, true); err != nil {
-			logError(ctx, "read Drive token response", err, logrus.Fields{"url": h.Request.URL().String(), "method": h.Request.Method()})
-			h.ContinueRequest(&proto.FetchContinueRequest{})
-			return
-		}
-		if isMiscRequest {
-			var driveToken struct {
-				Token string `json:"access_token"`
-				ID    string `json:"gid"`
+	driveTokenURL := fmt.Sprintf("%s/misc/token/drive-token", host)
+	driveBrowser, stopDriveWait := browser.Context(ctx).WithCancel()
+	driveEvents := driveBrowser.Event()
+	driveDone := make(chan struct{})
+	if err := (&proto.FetchEnable{Patterns: []*proto.FetchRequestPattern{{
+		URLPattern:   driveTokenURL + "*",
+		RequestStage: proto.FetchRequestStageResponse,
+	}}}).Call(browser); err != nil {
+		logError(ctx, "enable Drive token listener", err, logrus.Fields{"url": driveTokenURL})
+		return episodeWatch, err
+	}
+	go func() {
+		defer close(driveDone)
+		for event := range driveEvents {
+			if event.Method != "Fetch.requestPaused" {
+				continue
 			}
-			if err := sonic.Unmarshal([]byte(h.Response.Body()), &driveToken); err != nil {
-				logError(ctx, "parse Drive token response", err, logrus.Fields{"url": h.Request.URL().String(), "response_length": len(h.Response.Body())})
-			} else if driveToken.Token == "" || driveToken.ID == "" {
-				logrus.WithContext(ctx).WithFields(logrus.Fields{"url": h.Request.URL().String(), "has_token": driveToken.Token != "", "has_gid": driveToken.ID != ""}).Warn("Kuramanime Drive token response is incomplete")
+			paused := &proto.FetchRequestPaused{}
+			if !event.Load(paused) || paused.Request == nil || paused.ResponseStatusCode == nil {
+				continue
+			}
+
+			var foundDriveToken *contract.GdriveConf
+			body, err := (proto.FetchGetResponseBody{RequestID: paused.RequestID}).Call(browser)
+			if err != nil {
+				logError(ctx, "read Drive token response", err, logrus.Fields{"url": paused.Request.URL, "status_code": *paused.ResponseStatusCode})
 			} else {
+				responseBody := body.Body
+				if body.Base64Encoded {
+					decoded, err := base64.StdEncoding.DecodeString(responseBody)
+					if err != nil {
+						logError(ctx, "decode Drive token response", err, logrus.Fields{"url": paused.Request.URL, "response_length": len(responseBody)})
+						responseBody = ""
+					} else {
+						responseBody = string(decoded)
+					}
+				}
+
+				var driveToken struct {
+					Token string `json:"access_token"`
+					ID    string `json:"gid"`
+				}
+				if err := sonic.Unmarshal([]byte(responseBody), &driveToken); err != nil {
+					logError(ctx, "parse Drive token response", err, logrus.Fields{"url": paused.Request.URL, "status_code": *paused.ResponseStatusCode, "response_length": len(responseBody)})
+				} else if driveToken.Token == "" || driveToken.ID == "" {
+					logrus.WithContext(ctx).WithFields(logrus.Fields{"url": paused.Request.URL, "status_code": *paused.ResponseStatusCode, "has_token": driveToken.Token != "", "has_gid": driveToken.ID != ""}).Warn("Kuramanime Drive token response is incomplete")
+				} else {
+					foundDriveToken = &contract.GdriveConf{AccessToken: driveToken.Token, Gid: driveToken.ID}
+				}
+			}
+
+			if err := (proto.FetchContinueRequest{RequestID: paused.RequestID}).Call(browser); err != nil {
+				logError(ctx, "continue Drive token response", err, logrus.Fields{"url": paused.Request.URL})
+				continue
+			}
+			if foundDriveToken != nil {
 				select {
-				case driveTokenFound <- contract.GdriveConf{AccessToken: driveToken.Token, Gid: driveToken.ID}:
+				case driveTokenFound <- *foundDriveToken:
 				default:
 				}
 			}
 		}
-	}); err != nil {
-		logError(ctx, "register network listener", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
-		return episodeWatch, err
-	}
-	go router.Run()
-	defer router.Stop()
+	}()
+	defer func() {
+		stopDriveWait()
+		<-driveDone
+		if err := (proto.FetchDisable{}).Call(browser); err != nil {
+			logError(ctx, "disable Drive token listener", err, logrus.Fields{"url": driveTokenURL})
+		}
+	}()
 
 	page = page.Context(ctx)
 	if err := page.Navigate(targetURL); err != nil {
@@ -447,6 +487,7 @@ func (s *Kuramanime) watchOnce(ctx context.Context, queryParams models.AnimeQuer
 		logError(ctx, "find video player", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
+	time.Sleep(time.Second)
 	if err := playerButton.Click(proto.InputMouseButtonLeft, 1); err != nil {
 		logError(ctx, "click video player", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err

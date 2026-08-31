@@ -171,13 +171,13 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, models.Meta, error) {
 	episodeWatch := contract.EpisodeWatch{}
 
-	cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
-	if found {
-		cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
-		if err == nil && sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch) == nil {
-			return episodeWatch, models.Meta{FromCache: true}, nil
-		}
-	}
+	// cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
+	// if found {
+	// 	cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
+	// 	if err == nil && sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch) == nil {
+	// 		return episodeWatch, models.Meta{FromCache: true}, nil
+	// 	}
+	// }
 
 	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
 	if err != nil {
@@ -199,9 +199,9 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 		return episodeWatch, models.Meta{}, err
 	}
 
-	if validWatchForCache(episodeWatch) {
-		datastore.Get().GoCache.Set(queryParams.ToKey("Watch"), episodeWatch, time.Hour)
-	}
+	// if validWatchForCache(episodeWatch) {
+	// 	datastore.Get().GoCache.Set(queryParams.ToKey("Watch"), episodeWatch, time.Hour)
+	// }
 
 	go AnimeEpisodeSync(context.Background(), queryParams, contract.Episode{
 		AnimeID: queryParams.SourceID,

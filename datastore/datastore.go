@@ -122,6 +122,37 @@ func Close() {
 	}
 }
 
+// NewBrowser creates an isolated browser context using the Chrome instance started by Initialize.
+func NewBrowser() (*rod.Browser, error) {
+	var version struct {
+		WebSocketDebuggerURL string `json:"webSocketDebuggerUrl"`
+	}
+
+	resp, err := (&http.Client{Timeout: time.Second}).Get("http://127.0.0.1:9222/json/version")
+	if err != nil {
+		return nil, fmt.Errorf("get Chrome debugger URL: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if err := json.NewDecoder(resp.Body).Decode(&version); err != nil {
+		return nil, fmt.Errorf("decode Chrome debugger URL: %w", err)
+	}
+	if version.WebSocketDebuggerURL == "" {
+		return nil, fmt.Errorf("Chrome debugger URL is empty")
+	}
+
+	browser := rod.New().ControlURL(version.WebSocketDebuggerURL)
+	if err := browser.Connect(); err != nil {
+		return nil, fmt.Errorf("connect to Chrome: %w", err)
+	}
+
+	isolatedBrowser, err := browser.Incognito()
+	if err != nil {
+		return nil, fmt.Errorf("create isolated browser context: %w", err)
+	}
+	return isolatedBrowser, nil
+}
+
 func Get() DataStore {
 	return dataStore
 }
