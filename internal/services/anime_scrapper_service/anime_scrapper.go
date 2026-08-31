@@ -171,16 +171,13 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, models.Meta, error) {
 	episodeWatch := contract.EpisodeWatch{}
 
-	// cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
-	// if found {
-	// 	cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
-	// 	if err == nil {
-	// 		err = sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch)
-	// 		if err == nil {
-	// 			return episodeWatch, models.Meta{FromCache: true}, nil
-	// 		}
-	// 	}
-	// }
+	cachedEpisodeWatch, found := datastore.Get().GoCache.Get(queryParams.ToKey("Watch"))
+	if found {
+		cachedEpisodeWatchByte, err := sonic.Marshal(cachedEpisodeWatch)
+		if err == nil && sonic.Unmarshal(cachedEpisodeWatchByte, &episodeWatch) == nil {
+			return episodeWatch, models.Meta{FromCache: true}, nil
+		}
+	}
 
 	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
 	if err != nil {
@@ -202,9 +199,9 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 		return episodeWatch, models.Meta{}, nil
 	}
 
-	// if episodeWatch.RawStreamUrl != "" || episodeWatch.IframeUrl != "" {
-	// 	datastore.Get().GoCache.Set(queryParams.ToKey("Watch"), episodeWatch, 24*time.Hour)
-	// }
+	if validWatchForCache(episodeWatch) {
+		datastore.Get().GoCache.Set(queryParams.ToKey("Watch"), episodeWatch, time.Hour)
+	}
 
 	go AnimeEpisodeSync(context.Background(), queryParams, contract.Episode{
 		AnimeID: queryParams.SourceID,
@@ -213,6 +210,19 @@ func Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.E
 	})
 
 	return episodeWatch, models.Meta{}, nil
+}
+
+func validWatchForCache(episodeWatch contract.EpisodeWatch) bool {
+	switch episodeWatch.StreamType {
+	case "gdrive":
+		return episodeWatch.GdriveConf.AccessToken != "" && episodeWatch.GdriveConf.Gid != ""
+	case "mp4":
+		return episodeWatch.RawStreamUrl != ""
+	case "iframe":
+		return episodeWatch.IframeUrl != ""
+	default:
+		return false
+	}
 }
 
 func GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
