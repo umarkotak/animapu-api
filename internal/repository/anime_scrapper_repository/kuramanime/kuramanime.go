@@ -41,6 +41,10 @@ func New() Kuramanime {
 
 var WAIT_DURATION = 60 * time.Second
 
+func logError(ctx context.Context, operation string, err error, fields logrus.Fields) {
+	logrus.WithContext(ctx).WithError(err).WithFields(fields).Error("Kuramanime " + operation)
+}
+
 func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
 	page := queryParams.Page
 	if page < 1 {
@@ -51,17 +55,21 @@ func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQuer
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
 	if err != nil {
+		logError(ctx, "create latest request", err, logrus.Fields{"url": targetURL, "page": page})
 		return nil, err
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		logError(ctx, "request latest anime", err, logrus.Fields{"url": targetURL, "page": page})
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return nil, fmt.Errorf("kuramanime returned status %s", resp.Status)
+		err := fmt.Errorf("kuramanime returned status %s", resp.Status)
+		logError(ctx, "request latest anime", err, logrus.Fields{"url": targetURL, "page": page, "status_code": resp.StatusCode})
+		return nil, err
 	}
 
 	var payload struct {
@@ -80,9 +88,11 @@ func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQuer
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		logError(ctx, "read latest response", err, logrus.Fields{"url": targetURL})
 		return nil, err
 	}
 	if err := sonic.Unmarshal(body, &payload); err != nil {
+		logError(ctx, "parse latest response", err, logrus.Fields{"url": targetURL, "body_length": len(body)})
 		return nil, err
 	}
 
@@ -115,17 +125,21 @@ func (s *Kuramanime) GetSearch(ctx context.Context, queryParams models.AnimeQuer
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
 	if err != nil {
+		logError(ctx, "create search request", err, logrus.Fields{"url": targetURL, "title": queryParams.Title})
 		return nil, err
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		logError(ctx, "request search anime", err, logrus.Fields{"url": targetURL, "title": queryParams.Title})
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return nil, fmt.Errorf("kuramanime returned status %s", resp.Status)
+		err := fmt.Errorf("kuramanime returned status %s", resp.Status)
+		logError(ctx, "request search anime", err, logrus.Fields{"url": targetURL, "title": queryParams.Title, "status_code": resp.StatusCode})
+		return nil, err
 	}
 
 	var payload struct {
@@ -144,9 +158,11 @@ func (s *Kuramanime) GetSearch(ctx context.Context, queryParams models.AnimeQuer
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		logError(ctx, "read search response", err, logrus.Fields{"url": targetURL, "title": queryParams.Title})
 		return nil, err
 	}
 	if err := sonic.Unmarshal(body, &payload); err != nil {
+		logError(ctx, "parse search response", err, logrus.Fields{"url": targetURL, "title": queryParams.Title, "body_length": len(body)})
 		return nil, err
 	}
 
@@ -176,7 +192,11 @@ func (s *Kuramanime) GetSearch(ctx context.Context, queryParams models.AnimeQuer
 func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, error) {
 	host := s.getHost()
 	targetURL := fmt.Sprintf("%s/anime/%s", host, queryParams.SourceID)
-	targetURL, _ = utils.GetFinalURL(targetURL)
+	if finalURL, err := utils.GetFinalURL(targetURL); err != nil {
+		logError(ctx, "resolve detail URL", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID})
+	} else {
+		targetURL = finalURL
+	}
 
 	anime := contract.Anime{
 		ID:           queryParams.SourceID,
@@ -227,6 +247,7 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 	c.OnHTML("#episodeLists", func(e *colly.HTMLElement) {
 		doc, err := goquery.NewDocumentFromReader(strings.NewReader(e.Attr("data-content")))
 		if err != nil {
+			logError(ctx, "parse episode list", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID})
 			return
 		}
 		doc.Find("a[href]").Each(func(_ int, episode *goquery.Selection) {
@@ -251,6 +272,7 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 	})
 
 	if err := c.Visit(targetURL); err != nil {
+		logError(ctx, "request anime detail", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID})
 		return anime, err
 	}
 	c.Wait()
@@ -261,7 +283,11 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
 	host := s.getHost()
 	targetURL := fmt.Sprintf("%s/anime/%s", host, queryParams.SourceID)
-	targetURL, _ = utils.GetFinalURL(targetURL)
+	if finalURL, err := utils.GetFinalURL(targetURL); err != nil {
+		logError(ctx, "resolve watch URL", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
+	} else {
+		targetURL = finalURL
+	}
 	targetURL = fmt.Sprintf("%s/episode/%s", targetURL, queryParams.EpisodeID)
 
 	episodeWatch := contract.EpisodeWatch{
@@ -270,9 +296,15 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 	}
 
 	browser := datastore.Get().Browser
+	if browser == nil {
+		err := fmt.Errorf("Rod browser is not initialized")
+		logError(ctx, "create watch page", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
+		return episodeWatch, err
+	}
 
 	page, err := browser.Page(proto.TargetCreateTarget{})
 	if err != nil {
+		logError(ctx, "create watch page", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
 	defer page.Close()
@@ -286,7 +318,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 			return
 		}
 		if err := h.LoadResponse(http.DefaultClient, true); err != nil {
-			logrus.WithError(err).WithField("url", h.Request.URL()).Warn("failed to read Kuramanime API response")
+			logError(ctx, "read Drive token response", err, logrus.Fields{"url": h.Request.URL().String(), "method": h.Request.Method()})
 			h.ContinueRequest(&proto.FetchContinueRequest{})
 			return
 		}
@@ -296,26 +328,18 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 				ID    string `json:"gid"`
 			}
 			if err := sonic.Unmarshal([]byte(h.Response.Body()), &driveToken); err != nil {
-				logrus.WithError(err).Warn("parse Kuramanime Drive token")
+				logError(ctx, "parse Drive token response", err, logrus.Fields{"url": h.Request.URL().String(), "response_length": len(h.Response.Body())})
+			} else if driveToken.Token == "" || driveToken.ID == "" {
+				logrus.WithContext(ctx).WithFields(logrus.Fields{"url": h.Request.URL().String(), "has_token": driveToken.Token != "", "has_gid": driveToken.ID != ""}).Warn("Kuramanime Drive token response is incomplete")
 			} else {
-				// logrus.WithFields(logrus.Fields{"token": driveToken.Token, "id": driveToken.ID}).Info("Kuramanime Drive token")
-				if driveToken.Token != "" {
-					select {
-					case driveTokenFound <- contract.GdriveConf{AccessToken: driveToken.Token, Gid: driveToken.ID}:
-					default:
-					}
+				select {
+				case driveTokenFound <- contract.GdriveConf{AccessToken: driveToken.Token, Gid: driveToken.ID}:
+				default:
 				}
 			}
 		}
-
-		logrus.WithFields(logrus.Fields{
-			"method":   h.Request.Method(),
-			"type":     h.Request.Type(),
-			"url":      h.Request.URL(),
-			"request":  h.Request.Body(),
-			"response": h.Response.Body(),
-		}).Info("Kuramanime API response")
 	}); err != nil {
+		logError(ctx, "register network listener", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
 	go router.Run()
@@ -323,9 +347,11 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 
 	page = page.Context(ctx)
 	if err := page.Navigate(targetURL); err != nil {
+		logError(ctx, "navigate watch page", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
 	if err := page.WaitLoad(); err != nil {
+		logError(ctx, "wait for watch page", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
 
@@ -378,14 +404,17 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 				delete(apiResponses, finished.RequestID)
 				body, err := (proto.NetworkGetResponseBody{RequestID: finished.RequestID}).Call(page)
 				if err != nil {
-					logrus.WithError(err).Debug("read Kuramanime API response")
+					logError(ctx, "read XHR response", err, logrus.Fields{"request_id": finished.RequestID})
 					continue
 				}
 				responseBody := body.Body
 				if body.Base64Encoded {
-					if decoded, err := base64.StdEncoding.DecodeString(responseBody); err == nil {
-						responseBody = string(decoded)
+					decoded, err := base64.StdEncoding.DecodeString(responseBody)
+					if err != nil {
+						logError(ctx, "decode XHR response", err, logrus.Fields{"request_id": finished.RequestID, "response_length": len(responseBody)})
+						continue
 					}
+					responseBody = string(decoded)
 				}
 				recordR2URLs(responseBody)
 			}
@@ -398,15 +427,19 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 
 	playerButton, err := page.Element("#animeVideoPlayer > div.mb-3 > div > div.plyr.plyr--full-ui.plyr--video")
 	if err != nil {
+		logError(ctx, "find video player", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
 	if err := playerButton.Click(proto.InputMouseButtonLeft, 1); err != nil {
+		logError(ctx, "click video player", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
 
 	select {
 	case <-ctx.Done():
-		return episodeWatch, ctx.Err()
+		err := ctx.Err()
+		logError(ctx, "wait for stream", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
+		return episodeWatch, err
 	case gdriveConf := <-driveTokenFound:
 		episodeWatch.StreamType = "gdrive"
 		episodeWatch.GdriveConf = gdriveConf
@@ -414,6 +447,7 @@ func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryPar
 		episodeWatch.StreamType = "mp4"
 		episodeWatch.RawStreamUrl = strings.ReplaceAll(r2StreamURL, "&amp;", "&")
 	case <-time.After(WAIT_DURATION):
+		logrus.WithContext(ctx).WithFields(logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID, "wait_duration": WAIT_DURATION.String()}).Warn("Kuramanime stream discovery timed out")
 	}
 
 	return episodeWatch, nil
