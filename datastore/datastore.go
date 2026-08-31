@@ -1,10 +1,12 @@
 package datastore
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -18,9 +20,17 @@ import (
 )
 
 type DataStore struct {
-	Db      *sqlx.DB // required
-	GoCache *cache.Cache
+	Db          *sqlx.DB // required
+	GoCache     *cache.Cache
+	BrowserPool chan *rod.Browser
+	Browsers    []*rod.Browser
+}
+
+type BrowserLease struct {
 	Browser *rod.Browser
+	root    *rod.Browser
+	pool    chan *rod.Browser
+	once    sync.Once
 }
 
 var dataStore DataStore
@@ -33,28 +43,40 @@ func Initialize() error {
 	}
 
 	goCache := cache.New(5*time.Minute, 10*time.Minute)
-	browser, err := launchChrome()
-	if err != nil {
-		return err
+	poolSize := config.Get().RodBrowserPoolSize
+	browsers := make([]*rod.Browser, 0, poolSize)
+	pool := make(chan *rod.Browser, poolSize)
+	for slot := 0; slot < poolSize; slot++ {
+		browser, err := launchChrome(9222 + slot)
+		if err != nil {
+			for _, startedBrowser := range browsers {
+				_ = startedBrowser.Close()
+			}
+			return err
+		}
+		browsers = append(browsers, browser)
+		pool <- browser
 	}
 
 	dataStore = DataStore{
-		Db:      db,
-		GoCache: goCache,
-		Browser: browser,
+		Db:          db,
+		GoCache:     goCache,
+		BrowserPool: pool,
+		Browsers:    browsers,
 	}
 
 	return nil
 }
 
-func launchChrome() (*rod.Browser, error) {
+func launchChrome(port int) (*rod.Browser, error) {
 	var version struct {
 		WebSocketDebuggerURL string `json:"webSocketDebuggerUrl"`
 	}
 	client := http.Client{Timeout: time.Second}
 	closedExistingChrome := false
+	debuggerURL := fmt.Sprintf("http://127.0.0.1:%d/json/version", port)
 
-	resp, err := client.Get("http://127.0.0.1:9222/json/version")
+	resp, err := client.Get(debuggerURL)
 	if err == nil {
 		err = json.NewDecoder(resp.Body).Decode(&version)
 		resp.Body.Close()
@@ -73,7 +95,7 @@ func launchChrome() (*rod.Browser, error) {
 	for attempt := 0; attempt <= 20; attempt++ {
 		if attempt == 0 {
 			for waitAttempt := 0; closedExistingChrome && waitAttempt <= 20; waitAttempt++ {
-				resp, err := client.Get("http://127.0.0.1:9222/json/version")
+				resp, err := client.Get(debuggerURL)
 				if err != nil {
 					break
 				}
@@ -81,13 +103,13 @@ func launchChrome() (*rod.Browser, error) {
 				time.Sleep(250 * time.Millisecond)
 			}
 			if closedExistingChrome {
-				resp, err := client.Get("http://127.0.0.1:9222/json/version")
+				resp, err := client.Get(debuggerURL)
 				if err == nil {
 					resp.Body.Close()
 					return nil, fmt.Errorf("existing Chrome did not close")
 				}
 			}
-			args := []string{"-na", "Google Chrome", "--args", "--remote-debugging-port=9222", "--user-data-dir=/tmp/chrome-rod", "--mute-audio"}
+			args := []string{"-na", "Google Chrome", "--args", fmt.Sprintf("--remote-debugging-port=%d", port), fmt.Sprintf("--user-data-dir=/tmp/chrome-rod-%d", port), "--mute-audio"}
 			if config.Get().RodHeadless {
 				args = append(args, "--headless=new")
 			}
@@ -96,7 +118,7 @@ func launchChrome() (*rod.Browser, error) {
 			}
 		}
 
-		resp, err := client.Get("http://127.0.0.1:9222/json/version")
+		resp, err := client.Get(debuggerURL)
 		if err == nil {
 			err = json.NewDecoder(resp.Body).Decode(&version)
 			resp.Body.Close()
@@ -111,46 +133,43 @@ func launchChrome() (*rod.Browser, error) {
 		time.Sleep(250 * time.Millisecond)
 	}
 
-	return nil, fmt.Errorf("Chrome debugger did not start")
+	return nil, fmt.Errorf("Chrome debugger on port %d did not start", port)
 }
 
 func Close() {
-	if dataStore.Browser != nil {
-		if err := dataStore.Browser.Close(); err != nil {
+	for _, browser := range dataStore.Browsers {
+		if err := browser.Close(); err != nil {
 			logrus.WithError(err).Warn("close Chrome")
 		}
 	}
 }
 
-// NewBrowser creates an isolated browser context using the Chrome instance started by Initialize.
-func NewBrowser() (*rod.Browser, error) {
-	var version struct {
-		WebSocketDebuggerURL string `json:"webSocketDebuggerUrl"`
+// NewBrowser borrows an isolated browser context from the Chrome pool.
+func NewBrowser(ctx context.Context) (*BrowserLease, error) {
+	if dataStore.BrowserPool == nil {
+		return nil, fmt.Errorf("browser pool is not initialized")
 	}
 
-	resp, err := (&http.Client{Timeout: time.Second}).Get("http://127.0.0.1:9222/json/version")
-	if err != nil {
-		return nil, fmt.Errorf("get Chrome debugger URL: %w", err)
+	select {
+	case root := <-dataStore.BrowserPool:
+		browser, err := root.Context(ctx).Incognito()
+		if err != nil {
+			dataStore.BrowserPool <- root
+			return nil, fmt.Errorf("create isolated browser context: %w", err)
+		}
+		return &BrowserLease{Browser: browser, root: root, pool: dataStore.BrowserPool}, nil
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
-	defer resp.Body.Close()
+}
 
-	if err := json.NewDecoder(resp.Body).Decode(&version); err != nil {
-		return nil, fmt.Errorf("decode Chrome debugger URL: %w", err)
-	}
-	if version.WebSocketDebuggerURL == "" {
-		return nil, fmt.Errorf("Chrome debugger URL is empty")
-	}
-
-	browser := rod.New().ControlURL(version.WebSocketDebuggerURL)
-	if err := browser.Connect(); err != nil {
-		return nil, fmt.Errorf("connect to Chrome: %w", err)
-	}
-
-	isolatedBrowser, err := browser.Incognito()
-	if err != nil {
-		return nil, fmt.Errorf("create isolated browser context: %w", err)
-	}
-	return isolatedBrowser, nil
+func (lease *BrowserLease) Release() {
+	lease.once.Do(func() {
+		if err := lease.Browser.Context(context.Background()).Close(); err != nil {
+			logrus.WithError(err).Warn("close isolated browser context")
+		}
+		lease.pool <- lease.root
+	})
 }
 
 func Get() DataStore {

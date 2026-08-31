@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -18,6 +19,7 @@ type (
 		CollyTimeout                time.Duration
 		DbUrl                       string
 		RodHeadless                 bool
+		RodBrowserPoolSize          int
 	}
 )
 
@@ -28,12 +30,17 @@ var (
 func Initialize() error {
 	err := godotenv.Load()
 	if err != nil {
-		logrus.Errorf("Error load env", err)
+		logrus.WithError(err).Warn("load env")
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "6001"
+	}
+
+	poolSize, _ := strconv.Atoi(os.Getenv("ROD_BROWSER_POOL_SIZE"))
+	if poolSize < 1 {
+		poolSize = 2
 	}
 
 	config = Config{
@@ -45,6 +52,7 @@ func Initialize() error {
 		CollyTimeout:                5 * time.Minute,
 		DbUrl:                       os.Getenv("DB_URL"),
 		RodHeadless:                 os.Getenv("ROD_HEADLESS") == "true",
+		RodBrowserPoolSize:          poolSize,
 	}
 
 	return nil

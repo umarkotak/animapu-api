@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -28,7 +27,6 @@ type Kuramanime struct {
 }
 
 var r2URLPattern = regexp.MustCompile(`(?i)https?://[^\s"'\\]*r2\.cloudflarestorage\.com[^\s"'\\]*`)
-var kuramanimeFetchMu sync.Mutex
 
 func r2URLs(value string) []string {
 	return r2URLPattern.FindAllString(strings.ReplaceAll(value, `\/`, "/"), -1)
@@ -282,9 +280,6 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 }
 
 func (s *Kuramanime) Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error) {
-	kuramanimeFetchMu.Lock()
-	defer kuramanimeFetchMu.Unlock()
-
 	for attempt := 1; attempt <= 2; attempt++ {
 		episodeWatch, err := s.watchOnce(ctx, queryParams)
 		if err != nil || episodeWatch.StreamType != "" || attempt == 2 {
@@ -316,12 +311,13 @@ func (s *Kuramanime) watchOnce(ctx context.Context, queryParams models.AnimeQuer
 		GdriveConf:  contract.GdriveConf{},
 	}
 
-	browser, err := datastore.NewBrowser()
+	lease, err := datastore.NewBrowser(ctx)
 	if err != nil {
 		logError(ctx, "create isolated browser", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID, "episode_id": queryParams.EpisodeID})
 		return episodeWatch, err
 	}
-	defer browser.Close()
+	defer lease.Release()
+	browser := lease.Browser
 
 	page, err := browser.Page(proto.TargetCreateTarget{})
 	if err != nil {
