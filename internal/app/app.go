@@ -15,6 +15,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_repository"
+	"github.com/umarkotak/animapu-api/internal/repository/history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_chapter_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
@@ -42,6 +43,7 @@ func Initialize() error {
 	manga_library_repository.Initialize()
 	anime_repository.Initialize()
 	anime_history_repository.Initialize()
+	history_repository.Initialize()
 
 	return nil
 }
@@ -71,13 +73,14 @@ func Start() error {
 	r.Get("/mangas/weeb_central/image_proxy/*", fiber_ctx.Wrap(proxy_controller.WeebCentralImage))
 	r.Get("/image_proxy", fiber_ctx.Wrap(proxy_controller.GenericImage))
 
-	r.Get("/mangas/:manga_source/latest", fiber_ctx.Wrap(manga_controller.GetMangaLatest))
-	r.Get("/mangas/:manga_source/detail/:manga_id", fiber_ctx.Wrap(manga_controller.GetMangaDetail))
 	r.Get("/mangas/:manga_source/read/:manga_id/:chapter_id", fiber_ctx.Wrap(manga_controller.ReadManga))
+	r.Get("/mangas/:manga_source/detail/:manga_id", fiber_ctx.Wrap(manga_controller.GetMangaDetail))
+	r.Get("/mangas/:manga_source/latest", fiber_ctx.Wrap(manga_controller.GetMangaLatest))
 	r.Get("/mangas/:manga_source/read/:manga_id/:chapter_id/manga_chapter.pdf", fiber_ctx.Wrap(manga_controller.DownloadMangaChapter))
 	r.Get("/mangas/:manga_source/search", fiber_ctx.Wrap(manga_controller.SearchManga))
 
 	r.Get("/users/mangas/histories_v2", fiber_ctx.Wrap(user_controller.GetHistoriesV2))
+	r.Get("/users/histories", fiber_ctx.Wrap(user_controller.GetHistories))
 	r.Get("/users/mangas/activities", fiber_ctx.Wrap(user_controller.GetUserMangaActivities))
 	r.Get("/users/animes/histories", fiber_ctx.Wrap(user_controller.GetAnimeHistories))
 	r.Get("/users/animes/activities", fiber_ctx.Wrap(user_controller.GetUserAnimeActivities))
@@ -86,12 +89,12 @@ func Start() error {
 	r.Post("/users/mangas/libraries/:source/:source_id/remove", fiber_ctx.Wrap(user_controller.DeleteLibrary))
 	r.Get("/users/mangas/libraries", fiber_ctx.Wrap(user_controller.GetLibraries))
 
+	r.Get("/animes/:anime_source/season/:release_year/:release_season", fiber_ctx.Wrap(anime_controller.GetPerSeason))
+	r.Get("/animes/:anime_source/watch/:anime_id/:episode_id", fiber_ctx.Wrap(anime_controller.GetWatch))
+	r.Get("/animes/:anime_source/detail/:anime_id", fiber_ctx.Wrap(anime_controller.GetDetail))
 	r.Get("/animes/:anime_source/latest", fiber_ctx.Wrap(anime_controller.GetLatest))
 	r.Get("/animes/:anime_source/search", fiber_ctx.Wrap(anime_controller.GetSearch))
 	r.Get("/animes/:anime_source/random", fiber_ctx.Wrap(anime_controller.GetRandom))
-	r.Get("/animes/:anime_source/season/:release_year/:release_season", fiber_ctx.Wrap(anime_controller.GetPerSeason))
-	r.Get("/animes/:anime_source/detail/:anime_id", fiber_ctx.Wrap(anime_controller.GetDetail))
-	r.Get("/animes/:anime_source/watch/:anime_id/:episode_id", fiber_ctx.Wrap(anime_controller.GetWatch))
 
 	return r.Listen(":" + config.Get().Port)
 }

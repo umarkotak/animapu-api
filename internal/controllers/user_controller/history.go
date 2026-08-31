@@ -8,6 +8,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/anime_history_service"
 	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
+	"github.com/umarkotak/animapu-api/internal/services/history_service"
 	"github.com/umarkotak/animapu-api/internal/services/manga_history_service"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
@@ -46,6 +47,23 @@ func GetHistoriesV2(c *fiber_ctx.Context) {
 		mangaHistories,
 		nil, 200,
 	)
+}
+
+func GetHistories(c *fiber_ctx.Context) {
+	pagination := models.Pagination{
+		Limit: utils.StringMustInt64(c.Query("limit")),
+		Page:  utils.StringMustInt64(c.Query("page")),
+	}
+	pagination.SetDefault(100)
+
+	histories, err := history_service.GetHistories(c.Request.Context(), common_ctx.GetFromFiberCtx(c).User, pagination)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Error(err)
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	render.Response(c.Request.Context(), c, histories, nil, 200)
 }
 
 func GetUserMangaActivities(c *fiber_ctx.Context) {
