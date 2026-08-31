@@ -67,8 +67,8 @@ func Start() error {
 	r.Get("/mangas/sources", fiber_ctx.Wrap(setting_controller.GetAvailableSource))
 	r.Get("/animes/sources", fiber_ctx.Wrap(setting_controller.GetAnimeAvailableSource))
 
-	r.Get("/mangas/komikindo/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.KomikindoImage))
-	r.Get("/mangas/weeb_central/image_proxy/*url", fiber_ctx.Wrap(proxy_controller.WeebCentralImage))
+	r.Get("/mangas/komikindo/image_proxy/*", fiber_ctx.Wrap(proxy_controller.KomikindoImage))
+	r.Get("/mangas/weeb_central/image_proxy/*", fiber_ctx.Wrap(proxy_controller.WeebCentralImage))
 	r.Get("/image_proxy", fiber_ctx.Wrap(proxy_controller.GenericImage))
 
 	r.Get("/mangas/:manga_source/latest", fiber_ctx.Wrap(manga_controller.GetMangaLatest))
