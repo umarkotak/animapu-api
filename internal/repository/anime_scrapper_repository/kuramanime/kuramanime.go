@@ -249,25 +249,34 @@ func (s *Kuramanime) GetDetail(ctx context.Context, queryParams models.AnimeQuer
 			logError(ctx, "parse episode list", err, logrus.Fields{"url": targetURL, "anime_id": queryParams.SourceID})
 			return
 		}
+		minEpisode, maxEpisode := 0, 0
 		doc.Find("a[href]").Each(func(_ int, episode *goquery.Selection) {
 			link, _ := episode.Attr("href")
-			title := strings.TrimSpace(episode.Text())
-			number := utils.ForceSanitizeStringToFloat(title)
+			number := int(utils.ForceSanitizeStringToFloat(strings.TrimSpace(episode.Text())))
 			if link == "" || number == 0 {
 				return
 			}
+			if minEpisode == 0 || number < minEpisode {
+				minEpisode = number
+			}
+			if number > maxEpisode {
+				maxEpisode = number
+			}
+		})
+
+		for number := minEpisode; number <= maxEpisode; number++ {
 			anime.Episodes = append(anime.Episodes, contract.Episode{
 				AnimeID:      anime.ID,
 				Source:       models.ANIME_SOURCE_KURAMANIME,
 				ID:           fmt.Sprint(number),
-				Number:       number,
-				Title:        title,
-				OriginalLink: link,
+				Number:       float64(number),
+				Title:        fmt.Sprintf("Episode %d", number),
+				OriginalLink: fmt.Sprintf("%s/episode/%d", targetURL, number),
 				CoverUrl:     strings.Join(anime.CoverUrls, ""),
 				CoverUrls:    anime.CoverUrls,
 				UseTitle:     true,
 			})
-		})
+		}
 	})
 
 	if err := c.Visit(targetURL); err != nil {

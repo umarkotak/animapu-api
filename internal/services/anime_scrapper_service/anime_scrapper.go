@@ -130,16 +130,16 @@ func GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (con
 func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, models.Meta, error) {
 	anime := contract.Anime{}
 
-	cachedAnime, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetDetail"))
-	if found {
-		cachedAnimeByte, err := sonic.Marshal(cachedAnime)
-		if err == nil {
-			err = sonic.Unmarshal(cachedAnimeByte, &anime)
-			if err == nil {
-				return anime, models.Meta{FromCache: true}, nil
-			}
-		}
-	}
+	// cachedAnime, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetDetail"))
+	// if found {
+	// 	cachedAnimeByte, err := sonic.Marshal(cachedAnime)
+	// 	if err == nil {
+	// 		err = sonic.Unmarshal(cachedAnimeByte, &anime)
+	// 		if err == nil {
+	// 			return anime, models.Meta{FromCache: true}, nil
+	// 		}
+	// 	}
+	// }
 
 	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
 	if err != nil {
@@ -160,10 +160,10 @@ func GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contra
 		return anime, models.Meta{}, err
 	}
 
-	if anime.ID != "" {
-		go datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 6*time.Hour)
-		go AnimeSync(context.Background(), []contract.Anime{anime})
-	}
+	// if anime.ID != "" {
+	// 	go datastore.Get().GoCache.Set(queryParams.ToKey("GetDetail"), anime, 6*time.Hour)
+	// 	go AnimeSync(context.Background(), []contract.Anime{anime})
+	// }
 
 	return anime, models.Meta{}, nil
 }
