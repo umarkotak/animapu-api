@@ -41,16 +41,18 @@ type (
 )
 
 type WeebCentral struct {
-	Host    string
-	Source  string
-	ImgHost string
+	Host              string
+	Source            string
+	ImgHost           string
+	LookUpImagesCount int64
 }
 
 func New() WeebCentral {
 	return WeebCentral{
-		Source:  "weeb_central",
-		Host:    "https://weebcentral.com",
-		ImgHost: "https://temp.compsci88.com",
+		Source:            "weeb_central",
+		Host:              "https://weebcentral.com",
+		ImgHost:           "https://temp.compsci88.com",
+		LookUpImagesCount: 200,
 	}
 }
 
@@ -295,7 +297,7 @@ func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryP
 		// https://scans-hot.planeptune.us/manga/Kingdom
 		imageLinkPrefix := strings.TrimSuffix(firstImageLink, chapterAndImageIdx)
 
-		for i := 1; i <= 150; i++ {
+		for i := 1; i <= int(sc.LookUpImagesCount); i++ {
 			imageUrl := fmt.Sprintf("%s%s-%03d.%s", imageLinkPrefix, chapterNoStr, i, extension)
 			imageUrl = fmt.Sprintf("%v/mangas/weeb_central/image_proxy/%v", config.Get().AnimapuOnlineHost, imageUrl)
 

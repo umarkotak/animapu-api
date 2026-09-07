@@ -78,6 +78,9 @@ func ReadManga(c *fiber_ctx.Context) {
 		render.ErrorResponse(ctx, c, err, false)
 		return
 	}
+	if err := manga_scrapper_service.MangaChapterSync(ctx, queryParams, chapter); err != nil {
+		logrus.WithContext(ctx).Error(err)
+	}
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(ctx, c, chapter, nil, 200)

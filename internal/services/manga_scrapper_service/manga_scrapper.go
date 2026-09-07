@@ -173,7 +173,6 @@ func GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.C
 
 	if len(chapter.ChapterImages) > 5 {
 		go datastore.Get().GoCache.Set(queryParams.ToKey("page_read"), chapter, 30*24*time.Hour)
-		go MangaChapterSync(context.Background(), queryParams, chapter)
 	}
 
 	return chapter, models.Meta{}, nil
