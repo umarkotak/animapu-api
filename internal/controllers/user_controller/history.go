@@ -66,7 +66,7 @@ func GetHistories(c *fiber_ctx.Context) {
 	render.Response(c.Request.Context(), c, histories, nil, 200)
 }
 
-func GetUserMangaActivities(c *fiber_ctx.Context) {
+func GetUserActivities(c *fiber_ctx.Context) {
 	ctx := c.Request.Context()
 
 	user := common_ctx.GetFromFiberCtx(c).User
@@ -82,7 +82,7 @@ func GetUserMangaActivities(c *fiber_ctx.Context) {
 	}
 	pagination.SetDefault(100)
 
-	data, err := manga_history_service.GetUserMangaActivities(ctx, pagination)
+	data, err := history_service.GetUserActivities(ctx, pagination)
 	if err != nil {
 		render.ErrorResponse(ctx, c, err, true)
 		return
@@ -114,29 +114,4 @@ func GetAnimeHistories(c *fiber_ctx.Context) {
 		animeHistories,
 		nil, 200,
 	)
-}
-
-func GetUserAnimeActivities(c *fiber_ctx.Context) {
-	ctx := c.Request.Context()
-
-	user := common_ctx.GetFromFiberCtx(c).User
-
-	if !slices.Contains(models.AdminEmails, user.Email.String) {
-		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
-		return
-	}
-
-	pagination := models.Pagination{
-		Limit: utils.StringMustInt64(c.Query("limit")),
-		Page:  utils.StringMustInt64(c.Query("page")),
-	}
-	pagination.SetDefault(100)
-
-	data, err := anime_history_service.GetUserAnimeActivities(ctx, pagination)
-	if err != nil {
-		render.ErrorResponse(ctx, c, err, true)
-		return
-	}
-
-	render.Response(ctx, c, data, nil, 200)
 }

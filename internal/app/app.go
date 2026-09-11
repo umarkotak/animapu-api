@@ -81,9 +81,8 @@ func Start() error {
 
 	r.Get("/users/mangas/histories_v2", fiber_ctx.Wrap(user_controller.GetHistoriesV2))
 	r.Get("/users/histories", fiber_ctx.Wrap(user_controller.GetHistories))
-	r.Get("/users/mangas/activities", fiber_ctx.Wrap(user_controller.GetUserMangaActivities))
+	r.Get("/users/activities", fiber_ctx.Wrap(user_controller.GetUserActivities))
 	r.Get("/users/animes/histories", fiber_ctx.Wrap(user_controller.GetAnimeHistories))
-	r.Get("/users/animes/activities", fiber_ctx.Wrap(user_controller.GetUserAnimeActivities))
 
 	r.Post("/users/mangas/libraries/:source/:source_id/add", fiber_ctx.Wrap(user_controller.AddLibrary))
 	r.Post("/users/mangas/libraries/:source/:source_id/remove", fiber_ctx.Wrap(user_controller.DeleteLibrary))

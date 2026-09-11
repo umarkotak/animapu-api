@@ -20,3 +20,16 @@ func GetByUserID(ctx context.Context, userID int64, pagination models.Pagination
 
 	return histories, nil
 }
+
+func GetRecentActivities(ctx context.Context, pagination models.Pagination) ([]models.History, error) {
+	histories := []models.History{}
+	if err := stmtGetRecentActivities.SelectContext(ctx, &histories, map[string]any{
+		"limit":  pagination.Limit,
+		"offset": pagination.Offset,
+	}); err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return histories, err
+	}
+
+	return histories, nil
+}

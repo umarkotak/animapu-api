@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS affiliate_links;
 DROP TABLE IF EXISTS manga_libraries;
 DROP TABLE IF EXISTS anime_libraries;
 DROP TABLE IF EXISTS manga_histories;

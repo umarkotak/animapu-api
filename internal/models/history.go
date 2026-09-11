@@ -7,6 +7,7 @@ import (
 )
 
 type History struct {
+	UserID       int64          `json:"-" db:"user_id"`
 	MediaType    string         `json:"media_type" db:"media_type"`
 	Source       string         `json:"source" db:"source"`
 	SourceID     string         `json:"source_id" db:"source_id"`

@@ -93,18 +93,3 @@ func GetByUserAndSourceDetail(ctx context.Context, userID int64, sources, source
 
 	return objs, nil
 }
-
-func GetRecentHistories(ctx context.Context, pagination models.Pagination) ([]models.AnimeHistoryDetailed, error) {
-	objs := []models.AnimeHistoryDetailed{}
-
-	err := stmtGetRecentHistories.SelectContext(ctx, &objs, map[string]any{
-		"limit":  pagination.Limit,
-		"offset": pagination.Offset,
-	})
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return objs, err
-	}
-
-	return objs, nil
-}
