@@ -34,8 +34,6 @@ func CORSMiddleware() fiber.Handler {
 			"Access-Control-Allow-Headers",
 			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Animapu-User-Uid, Animapu-User-Email, X-Visitor-Id, X-From-Path",
 		)
-		legacy.Header("Access-Control-Allow-Credentials", "true")
-
 		if legacy.Request.Method == "OPTIONS" {
 			render.Response(legacy.Request.Context(), legacy, nil, nil, 200)
 			return nil

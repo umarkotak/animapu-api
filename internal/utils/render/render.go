@@ -16,18 +16,13 @@ func Response(ctx context.Context, c *fiber_ctx.Context, bodyPayload any, err an
 
 	// logrus.Infof("BODY RESPONSE: %+v", bodyPayload)
 
-	if c.Request.URL.Path == "/dummy-cookie" {
-		c.Header("Access-Control-Allow-Origin", c.Request.URL.Query().Get("origin"))
-	} else {
-		c.Header("Access-Control-Allow-Origin", "*")
-	}
+	c.Header("Access-Control-Allow-Origin", "*")
 
 	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	c.Header(
 		"Access-Control-Allow-Headers",
 		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Animapu-User-Uid, Animapu-User-Email, X-Visitor-Id, X-From-Path",
 	)
-	c.Header("Access-Control-Allow-Credentials", "true")
 	c.JSON(status, map[string]any{
 		"success": success,
 		"data":    bodyPayload,
