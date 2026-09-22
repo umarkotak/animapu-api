@@ -34,6 +34,7 @@ type BrowserLease struct {
 }
 
 var dataStore DataStore
+var browsersMu sync.Mutex
 
 func Initialize() error {
 	db, err := sqlx.Connect("postgres", config.Get().DbUrl)
@@ -44,28 +45,34 @@ func Initialize() error {
 
 	goCache := cache.New(5*time.Minute, 10*time.Minute)
 	poolSize := config.Get().RodBrowserPoolSize
-	browsers := make([]*rod.Browser, 0, poolSize)
 	pool := make(chan *rod.Browser, poolSize)
-	for slot := 0; slot < poolSize; slot++ {
-		browser, err := launchChrome(9222 + slot)
-		if err != nil {
-			for _, startedBrowser := range browsers {
-				_ = startedBrowser.Close()
-			}
-			return err
-		}
-		browsers = append(browsers, browser)
-		pool <- browser
-	}
 
 	dataStore = DataStore{
 		Db:          db,
 		GoCache:     goCache,
 		BrowserPool: pool,
-		Browsers:    browsers,
+	}
+	for slot := 0; slot < poolSize; slot++ {
+		go retryChrome(pool, 9222+slot)
 	}
 
 	return nil
+}
+
+func retryChrome(pool chan<- *rod.Browser, port int) {
+	for {
+		browser, err := launchChrome(port)
+		if err == nil {
+			browsersMu.Lock()
+			dataStore.Browsers = append(dataStore.Browsers, browser)
+			browsersMu.Unlock()
+			pool <- browser
+			return
+		}
+
+		logrus.WithError(err).Warnf("launch Chrome on port %d; retrying", port)
+		time.Sleep(5 * time.Second)
+	}
 }
 
 func launchChrome(port int) (*rod.Browser, error) {
@@ -137,7 +144,10 @@ func launchChrome(port int) (*rod.Browser, error) {
 }
 
 func Close() {
-	for _, browser := range dataStore.Browsers {
+	browsersMu.Lock()
+	browsers := dataStore.Browsers
+	browsersMu.Unlock()
+	for _, browser := range browsers {
 		if err := browser.Close(); err != nil {
 			logrus.WithError(err).Warn("close Chrome")
 		}
