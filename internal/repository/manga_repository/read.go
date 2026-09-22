@@ -59,3 +59,14 @@ func GetBySourceAndSourceIDs(ctx context.Context, source, sourceIDs pq.StringArr
 
 	return mangas, nil
 }
+
+func GetByTag(ctx context.Context, tag string) ([]models.Manga, error) {
+	mangas := []models.Manga{}
+
+	err := stmtGetByTag.SelectContext(ctx, &mangas, map[string]any{"tag": tag})
+	if err != nil {
+		logrus.WithContext(ctx).WithField("tag", tag).Error(err)
+	}
+
+	return mangas, err
+}

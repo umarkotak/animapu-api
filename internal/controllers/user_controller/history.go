@@ -1,9 +1,8 @@
 package user_controller
 
 import (
-	"slices"
-
 	"github.com/sirupsen/logrus"
+	"github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/services/anime_history_service"
@@ -71,7 +70,7 @@ func GetUserActivities(c *fiber_ctx.Context) {
 
 	user := common_ctx.GetFromFiberCtx(c).User
 
-	if !slices.Contains(models.AdminEmails, user.Email.String) {
+	if !config.IsAdminEmail(user.Email.String) {
 		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
 		return
 	}

@@ -2,6 +2,7 @@ package fiber_ctx
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
@@ -52,8 +53,10 @@ func Wrap(handler func(*Context)) fiber.Handler {
 	}
 }
 
-func (c *Context) Param(name string) string { return c.Ctx.Params(name) }
-func (c *Context) Query(name string) string { return c.Ctx.Query(name) }
+// Fiber reuses request buffers, so values that can outlive a handler must not
+// retain their backing storage.
+func (c *Context) Param(name string) string { return strings.Clone(c.Ctx.Params(name)) }
+func (c *Context) Query(name string) string { return strings.Clone(c.Ctx.Query(name)) }
 
 func (c *Context) Set(key string, value any) { c.Ctx.Locals(key, value) }
 

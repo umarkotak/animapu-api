@@ -20,6 +20,7 @@ var (
 		"m.title",
 		"m.cover_urls",
 		"m.latest_chapter",
+		"m.tags",
 	}, ", ")
 
 	queryGetByID = fmt.Sprintf(`
@@ -49,6 +50,16 @@ var (
 			m.source = :source
 			AND m.source_id = ANY(:source_ids)
 			AND m.deleted_at IS NULL
+	`, allColumns)
+
+	queryGetByTag = fmt.Sprintf(`
+		SELECT
+			%s
+		FROM mangas m
+		WHERE
+			:tag = ANY(m.tags)
+			AND m.deleted_at IS NULL
+		ORDER BY m.updated_at DESC
 	`, allColumns)
 
 	queryInsert = `
@@ -93,15 +104,23 @@ var (
 			source = :source
 			AND source_id = :source_id
 	`
+
+	queryUpdateTags = `
+		UPDATE mangas
+		SET tags = :tags
+		WHERE id = :id
+	`
 )
 
 var (
 	stmtGetByID                   *sqlx.NamedStmt
 	stmtGetBySourceAndSourceID    *sqlx.NamedStmt
 	stmtGetBySourceAndSourceIDs   *sqlx.NamedStmt
+	stmtGetByTag                  *sqlx.NamedStmt
 	stmtInsert                    *sqlx.NamedStmt
 	stmtUpdate                    *sqlx.NamedStmt
 	stmtUpdateBySourceAndSourceID *sqlx.NamedStmt
+	stmtUpdateTags                *sqlx.NamedStmt
 )
 
 func Initialize() {
@@ -122,6 +141,11 @@ func Initialize() {
 		logrus.Fatal(err)
 	}
 
+	stmtGetByTag, err = datastore.Get().Db.PrepareNamed(queryGetByTag)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
 	stmtInsert, err = datastore.Get().Db.PrepareNamed(queryInsert)
 	if err != nil {
 		logrus.Fatal(err)
@@ -133,6 +157,11 @@ func Initialize() {
 	}
 
 	stmtUpdateBySourceAndSourceID, err = datastore.Get().Db.PrepareNamed(queryUpdateBySourceAndSourceID)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	stmtUpdateTags, err = datastore.Get().Db.PrepareNamed(queryUpdateTags)
 	if err != nil {
 		logrus.Fatal(err)
 	}

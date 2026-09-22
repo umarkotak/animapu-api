@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -20,6 +21,7 @@ type (
 		DbUrl                       string
 		RodHeadless                 bool
 		RodBrowserPoolSize          int
+		AdminEmails                 []string
 	}
 )
 
@@ -42,6 +44,17 @@ func Initialize() error {
 	if poolSize < 1 {
 		poolSize = 2
 	}
+	adminEmailsValue := os.Getenv("ADMIN_EMAILS")
+	adminEmails := strings.Split(adminEmailsValue, ",")
+	if adminEmailsValue == "" {
+		adminEmails = []string{"umarkotak@gmail.com"}
+	}
+	configuredAdminEmails := adminEmails[:0]
+	for _, email := range adminEmails {
+		if email = strings.TrimSpace(email); email != "" {
+			configuredAdminEmails = append(configuredAdminEmails, email)
+		}
+	}
 
 	config = Config{
 		Port:                        port,
@@ -53,6 +66,7 @@ func Initialize() error {
 		DbUrl:                       os.Getenv("DB_URL"),
 		RodHeadless:                 os.Getenv("ROD_HEADLESS") == "true",
 		RodBrowserPoolSize:          poolSize,
+		AdminEmails:                 configuredAdminEmails,
 	}
 
 	return nil
@@ -60,4 +74,13 @@ func Initialize() error {
 
 func Get() Config {
 	return config
+}
+
+func IsAdminEmail(value string) bool {
+	for _, email := range config.AdminEmails {
+		if strings.EqualFold(value, email) {
+			return true
+		}
+	}
+	return false
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/umarkotak/animapu-api/internal/controllers/proxy_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/setting_controller"
 	"github.com/umarkotak/animapu-api/internal/controllers/user_controller"
+	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_history_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/anime_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/history_repository"
@@ -21,8 +22,10 @@ import (
 	"github.com/umarkotak/animapu-api/internal/repository/manga_library_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
 	"github.com/umarkotak/animapu-api/internal/repository/user_repository"
+	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/logger"
+	"github.com/umarkotak/animapu-api/internal/utils/render"
 )
 
 func Initialize() error {
@@ -67,6 +70,11 @@ func Start() error {
 	r.Get("/visitor_logs", fiber_ctx.Wrap(health_controller.GetVisitorLogs))
 
 	r.Get("/mangas/sources", fiber_ctx.Wrap(setting_controller.GetAvailableSource))
+	r.Get("/admin/status", fiber_ctx.Wrap(AdminStatus))
+	r.Post("/admin/cache/flush", fiber_ctx.Wrap(FlushCache))
+	r.Get("/mangas/kids", fiber_ctx.Wrap(manga_controller.GetMangaKids))
+	r.Put("/admin/mangas/:manga_id/tags", fiber_ctx.Wrap(manga_controller.UpdateMangaTags))
+	r.Put("/admin/mangas/:manga_source/:source_id/tags", fiber_ctx.Wrap(manga_controller.UpdateMangaTagsBySource))
 	r.Get("/animes/sources", fiber_ctx.Wrap(setting_controller.GetAnimeAvailableSource))
 
 	r.Get("/mangas/komikindo/image_proxy/*", fiber_ctx.Wrap(proxy_controller.KomikindoImage))
@@ -96,4 +104,19 @@ func Start() error {
 	r.Get("/animes/:anime_source/random", fiber_ctx.Wrap(anime_controller.GetRandom))
 
 	return r.Listen(":" + config.Get().Port)
+}
+
+func FlushCache(c *fiber_ctx.Context) {
+	ctx := c.Request.Context()
+	if !config.IsAdminEmail(common_ctx.GetFromFiberCtx(c).User.Email.String) {
+		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
+		return
+	}
+
+	datastore.Get().GoCache.Flush()
+	render.Response(ctx, c, map[string]string{"message": "cache flushed"}, nil, 200)
+}
+
+func AdminStatus(c *fiber_ctx.Context) {
+	render.Response(c.Request.Context(), c, map[string]bool{"is_admin": config.IsAdminEmail(common_ctx.GetFromFiberCtx(c).User.Email.String)}, nil, 200)
 }

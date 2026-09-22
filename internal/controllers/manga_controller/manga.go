@@ -16,12 +16,119 @@ import (
 	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 
 	"github.com/sirupsen/logrus"
+	app_config "github.com/umarkotak/animapu-api/config"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/repository/manga_repository"
 	"github.com/umarkotak/animapu-api/internal/services/manga_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
 	"github.com/umarkotak/animapu-api/internal/utils/utils"
 )
+
+type UpdateMangaTagsParams struct {
+	Tags []string `json:"tags"`
+	Mode string   `json:"mode"`
+}
+
+func GetMangaKids(c *fiber_ctx.Context) {
+	mangas, err := manga_repository.GetByTag(c.Request.Context(), "for_kids:true")
+	if err != nil {
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	render.Response(c.Request.Context(), c, mangas, nil, 200)
+}
+
+func UpdateMangaTags(c *fiber_ctx.Context) {
+	ctx := c.Request.Context()
+	if !app_config.IsAdminEmail(common_ctx.GetFromFiberCtx(c).User.Email.String) {
+		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
+		return
+	}
+
+	mangaID, err := strconv.ParseInt(c.Param("manga_id"), 10, 64)
+	if err != nil {
+		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
+		return
+	}
+
+	manga, err := manga_repository.GetByID(ctx, mangaID)
+	if err != nil {
+		render.ErrorResponse(ctx, c, models.ErrNotFound, true)
+		return
+	}
+	updateMangaTags(c, manga)
+}
+
+func UpdateMangaTagsBySource(c *fiber_ctx.Context) {
+	ctx := c.Request.Context()
+	if !app_config.IsAdminEmail(common_ctx.GetFromFiberCtx(c).User.Email.String) {
+		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
+		return
+	}
+
+	manga, err := manga_repository.GetBySourceAndSourceID(ctx, c.Param("manga_source"), c.Param("source_id"))
+	if err != nil {
+		render.ErrorResponse(ctx, c, models.ErrNotFound, true)
+		return
+	}
+	updateMangaTags(c, manga)
+}
+
+func updateMangaTags(c *fiber_ctx.Context, manga models.Manga) {
+	ctx := c.Request.Context()
+	params := UpdateMangaTagsParams{}
+	if err := c.BindJSON(&params); err != nil {
+		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
+		return
+	}
+	tags, ok := updateTags(manga.Tags, params.Tags, params.Mode)
+	if !ok {
+		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
+		return
+	}
+	manga.Tags = tags
+	if err := manga_repository.UpdateTags(ctx, manga); err != nil {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+
+	render.Response(ctx, c, manga, nil, 200)
+}
+
+func updateTags(current, incoming []string, mode string) ([]string, bool) {
+	switch mode {
+	case "replace":
+		return incoming, true
+	case "add":
+		seen := make(map[string]bool, len(current)+len(incoming))
+		for _, tag := range current {
+			seen[tag] = true
+		}
+		for _, tag := range incoming {
+			if !seen[tag] {
+				current = append(current, tag)
+				seen[tag] = true
+			}
+		}
+		return current, true
+	case "remove":
+		remove := make(map[string]bool, len(incoming))
+		for _, tag := range incoming {
+			remove[tag] = true
+		}
+		tags := current[:0]
+		for _, tag := range current {
+			if !remove[tag] {
+				tags = append(tags, tag)
+			}
+		}
+		return tags, true
+	default:
+		return nil, false
+	}
+}
 
 func GetMangaLatest(c *fiber_ctx.Context) {
 	commonCtx := common_ctx.GetFromFiberCtx(c)

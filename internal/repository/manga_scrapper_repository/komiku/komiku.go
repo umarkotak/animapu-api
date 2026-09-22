@@ -95,14 +95,14 @@ func (sc *Komiku) GetDetail(ctx context.Context, queryParams models.QueryParams)
 		Chapters:    []contract.Chapter{},
 	}
 
-	c.OnHTML("#Judul > p.j2", func(e *colly.HTMLElement) {
+	c.OnHTML("#Informasi > table > tbody > tr:nth-child(1) > td:nth-child(2)", func(e *colly.HTMLElement) {
 		if e.Text == "" {
 			return
 		}
 		manga.Title = e.Text
 	})
 
-	c.OnHTML("#Judul > p.desc", func(e *colly.HTMLElement) {
+	c.OnHTML("#Informasi > p", func(e *colly.HTMLElement) {
 		if e.Text == "" {
 			return
 		}

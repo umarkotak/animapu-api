@@ -1,0 +1,1 @@
+ALTER TABLE mangas ADD COLUMN tags TEXT[] NOT NULL DEFAULT '{}';

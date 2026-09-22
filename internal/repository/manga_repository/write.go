@@ -61,6 +61,14 @@ func Update(ctx context.Context, tx *sqlx.Tx, manga models.Manga) error {
 	return nil
 }
 
+func UpdateTags(ctx context.Context, manga models.Manga) error {
+	_, err := stmtUpdateTags.ExecContext(ctx, manga)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+	}
+	return err
+}
+
 func UpdateBySourceAndSourceID(ctx context.Context, tx *sqlx.Tx, manga models.Manga) error {
 	var err error
 	var namedStmt *sqlx.NamedStmt

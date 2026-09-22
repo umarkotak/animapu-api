@@ -1,0 +1,1 @@
+ALTER TABLE mangas DROP COLUMN tags;

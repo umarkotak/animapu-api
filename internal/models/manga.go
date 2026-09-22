@@ -19,5 +19,6 @@ type (
 		Title         string         `json:"title" db:"title"`                   //
 		CoverUrls     pq.StringArray `json:"cover_urls" db:"cover_urls"`         //
 		LatestChapter float64        `json:"latest_chapter" db:"latest_chapter"` //
+		Tags          pq.StringArray `json:"tags" db:"tags"`                     //
 	}
 )
