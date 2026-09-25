@@ -13,6 +13,7 @@ type History struct {
 	SourceID     string         `json:"source_id" db:"source_id"`
 	Title        string         `json:"title" db:"title"`
 	CoverURLs    pq.StringArray `json:"cover_urls" db:"cover_urls"`
+	Tags         pq.StringArray `json:"tags" db:"tags"`
 	LatestNumber float64        `json:"latest_number" db:"latest_number"`
 	Progress     float64        `json:"progress" db:"progress"`
 	LastLink     string         `json:"last_link" db:"last_link"`

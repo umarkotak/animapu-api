@@ -8,6 +8,7 @@ type History struct {
 	SourceID     string    `json:"source_id"`
 	Title        string    `json:"title"`
 	CoverURLs    []string  `json:"cover_urls"`
+	Tags         []string  `json:"tags"`
 	LatestNumber float64   `json:"latest_number"`
 	Progress     float64   `json:"progress"`
 	LastLink     string    `json:"last_link"`

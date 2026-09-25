@@ -24,6 +24,7 @@ func GetHistories(ctx context.Context, user models.User, pagination models.Pagin
 			SourceID:     history.SourceID,
 			Title:        history.Title,
 			CoverURLs:    history.CoverURLs,
+			Tags:         history.Tags,
 			LatestNumber: history.LatestNumber,
 			Progress:     history.Progress,
 			LastLink:     history.LastLink,
@@ -69,6 +70,7 @@ func GetUserActivities(ctx context.Context, pagination models.Pagination) (contr
 		result.Users[index].Histories = append(result.Users[index].Histories, contract.History{
 			MediaType: history.MediaType, Source: history.Source, SourceID: history.SourceID,
 			Title: history.Title, CoverURLs: history.CoverURLs, LatestNumber: history.LatestNumber,
+			Tags:     history.Tags,
 			Progress: history.Progress, LastLink: history.LastLink, UpdatedAt: history.UpdatedAt,
 		})
 	}

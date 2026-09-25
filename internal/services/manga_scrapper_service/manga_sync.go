@@ -53,11 +53,17 @@ func MangaChapterSync(ctx context.Context, queryParams models.QueryParams, chapt
 	existingManga, err := manga_repository.GetBySourceAndSourceID(ctx, chapter.Source, chapter.SourceID)
 	if err != nil && err != sql.ErrNoRows {
 		logrus.WithContext(ctx).Error(err)
-		return nil
+		return err
 	}
 
 	if existingManga.ID == 0 {
-		GetDetail(ctx, models.QueryParams{Source: chapter.Source, SourceID: chapter.SourceID})
+		manga, _, err := GetDetail(ctx, models.QueryParams{Source: chapter.Source, SourceID: chapter.SourceID})
+		if err != nil {
+			return err
+		}
+		if err := MangaSync(ctx, []contract.Manga{manga}); err != nil {
+			return err
+		}
 
 		existingManga, err = manga_repository.GetBySourceAndSourceID(ctx, chapter.Source, chapter.SourceID)
 		if err != nil {
