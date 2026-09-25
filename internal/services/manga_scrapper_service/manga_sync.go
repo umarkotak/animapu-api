@@ -61,15 +61,30 @@ func MangaChapterSync(ctx context.Context, queryParams models.QueryParams, chapt
 		if err != nil {
 			return err
 		}
-		if err := MangaSync(ctx, []contract.Manga{manga}); err != nil {
-			return err
+		existingManga = models.Manga{
+			Source:        chapter.Source,
+			SourceID:      chapter.SourceID,
+			Title:         manga.Title,
+			CoverUrls:     manga.ImageURLs(),
+			LatestChapter: manga.LatestChapterNumber,
 		}
-
-		existingManga, err = manga_repository.GetBySourceAndSourceID(ctx, chapter.Source, chapter.SourceID)
+		existingManga.ID, err = manga_repository.Insert(ctx, nil, existingManga)
 		if err != nil {
-			logrus.WithContext(ctx).Error(err)
 			return err
 		}
+	}
+
+	mangaHistory := models.MangaHistory{
+		UserID:          queryParams.User.ID,
+		MangaID:         existingManga.ID,
+		ChapterNumber:   chapter.Number,
+		SourceChapterID: chapter.ID,
+		FrontendPath:    fmt.Sprintf("/mangas/%s/%s/read/%s", existingManga.Source, existingManga.SourceID, chapter.ID),
+	}
+	_, err = manga_history_repository.Insert(ctx, nil, mangaHistory)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return err
 	}
 
 	mangaChapter := models.MangaChapter{
@@ -78,23 +93,8 @@ func MangaChapterSync(ctx context.Context, queryParams models.QueryParams, chapt
 		ChapterNumber:   chapter.Number,
 		ImageUrls:       chapter.ImageURLs(),
 	}
-	mangaChapter.ID, err = manga_chapter_repository.Insert(ctx, nil, mangaChapter)
-	if err != nil {
+	if _, err := manga_chapter_repository.Insert(ctx, nil, mangaChapter); err != nil {
 		logrus.WithContext(ctx).Error(err)
-		return err
-	}
-
-	mangaHistory := models.MangaHistory{
-		UserID:          queryParams.User.ID,
-		MangaID:         mangaChapter.MangaID,
-		ChapterNumber:   mangaChapter.ChapterNumber,
-		SourceChapterID: mangaChapter.SourceChapterID,
-		FrontendPath:    fmt.Sprintf("/mangas/%s/%s/read/%s", existingManga.Source, existingManga.SourceID, mangaChapter.SourceChapterID),
-	}
-	_, err = manga_history_repository.Insert(ctx, nil, mangaHistory)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return err
 	}
 
 	return nil
