@@ -59,6 +59,7 @@ func MangaChapterSync(ctx context.Context, queryParams models.QueryParams, chapt
 	if existingManga.ID == 0 {
 		manga, _, err := GetDetail(ctx, models.QueryParams{Source: chapter.Source, SourceID: chapter.SourceID})
 		if err != nil {
+			logrus.WithContext(ctx).Error(err)
 			return err
 		}
 		existingManga = models.Manga{
@@ -70,6 +71,7 @@ func MangaChapterSync(ctx context.Context, queryParams models.QueryParams, chapt
 		}
 		existingManga.ID, err = manga_repository.Insert(ctx, nil, existingManga)
 		if err != nil {
+			logrus.WithContext(ctx).Error(err)
 			return err
 		}
 	}
