@@ -7,15 +7,13 @@
 <key>Label</key>
 <string>com.animapu-api</string>
 
-<!-- The path to the compiled Go binary. This is kept as-is based on your project path. -->
 <key>ProgramArguments</key>
 <array>
-    <string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api</string>
+    <string>@APP_DIR@/animapu-api</string>
 </array>
 
-<!-- Defines the directory the program executes from. Crucial for relative path lookups (e.g., config files). -->
 <key>WorkingDirectory</key>
-<string>/Users/umar/umar/personal_project/go/animapu-api</string>
+<string>@APP_DIR@</string>
 
 <!-- Start the service automatically when the system loads. -->
 <key>RunAtLoad</key>
@@ -27,13 +25,11 @@
 
 <!-- We remove ThrottleInterval so launchd uses its default, less aggressive restart backoff policy if it crashes repeatedly. -->
 
-<!-- **FIXED:** Route standard output to a log file for debugging. -->
 <key>StandardOutPath</key>
-<string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api.log</string>
+<string>@APP_DIR@/animapu-api.log</string>
 
-<!-- **FIXED:** Route standard error to a separate log file for crash reports and errors. -->
 <key>StandardErrorPath</key>
-<string>/Users/umar/umar/personal_project/go/animapu-api/animapu-api.error.log</string>
+<string>@APP_DIR@/animapu-api.log</string>
 
 <!-- Optional: Use your specific username to run the service as a non-root user for security. -->
 <!-- <key>UserName</key>
