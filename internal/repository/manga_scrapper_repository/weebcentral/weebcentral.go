@@ -41,18 +41,16 @@ type (
 )
 
 type WeebCentral struct {
-	Host              string
-	Source            string
-	ImgHost           string
-	LookUpImagesCount int64
+	Host    string
+	Source  string
+	ImgHost string
 }
 
 func New() WeebCentral {
 	return WeebCentral{
-		Source:            "weeb_central",
-		Host:              "https://weebcentral.com",
-		ImgHost:           "https://temp.compsci88.com",
-		LookUpImagesCount: 200,
+		Source:  "weeb_central",
+		Host:    "https://weebcentral.com",
+		ImgHost: "https://temp.compsci88.com",
 	}
 }
 
@@ -247,9 +245,15 @@ func (sc *WeebCentral) GetSearch(ctx context.Context, queryParams models.QueryPa
 }
 
 func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryParams) (contract.Chapter, error) {
-	var err error
 	c := colly.NewCollector()
 	c.SetRequestTimeout(10 * time.Minute)
+	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("Upgrade-Insecure-Requests", "1")
+		r.Headers.Set("User-Agent", "Mozilla/5.0 (Linux; Android 16; Pixel 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36")
+		r.Headers.Set("sec-ch-ua", `"Chromium";v="154", "Google Chrome";v="154", "Not A(Brand";v="99"`)
+		r.Headers.Set("sec-ch-ua-mobile", "?1")
+		r.Headers.Set("sec-ch-ua-platform", `"Android"`)
+	})
 
 	chapter := contract.Chapter{
 		ID:            queryParams.ChapterID,
@@ -257,70 +261,38 @@ func (sc *WeebCentral) GetChapter(ctx context.Context, queryParams models.QueryP
 		Source:        sc.Source,
 		Number:        0,
 		ChapterImages: []contract.ChapterImage{},
-		SourceLink:    "",
+		SourceLink:    fmt.Sprintf("%v/chapters/%v", sc.Host, queryParams.ChapterID),
 	}
 
-	// sample link: https://scans-hot.planeptune.us/manga/Kingdom/0825-001.png
-	c.OnHTML("head > link", func(e *colly.HTMLElement) {
-		if e.Attr("as") != "image" {
+	c.OnHTML("#chapter-images img", func(e *colly.HTMLElement) {
+		imageUrl := e.Attr("src")
+		if imageUrl == "" {
 			return
 		}
 
-		if e.Attr("rel") != "preload" {
-			return
+		if len(chapter.ChapterImages) == 0 {
+			imageLinkSplit := strings.Split(imageUrl, "/")
+			chapterAndImageIdxSplit := strings.Split(imageLinkSplit[len(imageLinkSplit)-1], "-")
+			if len(chapterAndImageIdxSplit) == 2 {
+				chapter.Number = utils.ForceSanitizeStringToFloat(chapterAndImageIdxSplit[0])
+			}
 		}
-
-		firstImageLink := e.Attr("href")
-		imageLinkSplit := strings.Split(firstImageLink, "/")
-
-		if len(imageLinkSplit) == 0 {
-			return
-		}
-
-		chapterAndImageIdx := imageLinkSplit[len(imageLinkSplit)-1]
-		chapterAndImageIdxSplit := strings.Split(chapterAndImageIdx, "-")
-		if len(chapterAndImageIdxSplit) != 2 {
-			return
-		}
-
-		chapterNoStr := chapterAndImageIdxSplit[0]
-		chapter.Number = utils.ForceSanitizeStringToFloat(chapterNoStr)
-
-		imageNoAndExtensionSplit := strings.Split(chapterAndImageIdxSplit[1], ".")
-		if len(imageNoAndExtensionSplit) != 2 {
-			return
-		}
-
-		// imageNoStr := imageNoAndExtensionSplit[0]
-		extension := imageNoAndExtensionSplit[1]
-
-		// https://scans-hot.planeptune.us/manga/Kingdom
-		imageLinkPrefix := strings.TrimSuffix(firstImageLink, chapterAndImageIdx)
-
-		for i := 1; i <= int(sc.LookUpImagesCount); i++ {
-			imageUrl := fmt.Sprintf("%s%s-%03d.%s", imageLinkPrefix, chapterNoStr, i, extension)
-			imageUrl = fmt.Sprintf("%v/mangas/weeb_central/image_proxy/%v", config.Get().AnimapuOnlineHost, imageUrl)
-
-			// _, err = http.Head(imageUrl)
-			// if err != nil {
-			// 	break
-			// }
-
-			chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
-				Index:     int64(i),
-				ImageUrls: []string{imageUrl},
-			})
-		}
+		imageUrl = fmt.Sprintf("%v/mangas/weeb_central/image_proxy/%v", config.Get().AnimapuOnlineHost, imageUrl)
+		chapter.ChapterImages = append(chapter.ChapterImages, contract.ChapterImage{
+			Index:     int64(len(chapter.ChapterImages) + 1),
+			ImageUrls: []string{imageUrl},
+		})
 	})
 
-	targetLinks := []string{
-		fmt.Sprintf("%v/chapters/%v", sc.Host, queryParams.ChapterID),
+	targetLink := chapter.SourceLink + "/images?reading_style=long_strip"
+	logrus.WithContext(ctx).Infof("Visiting link: %v", targetLink)
+	if err := c.Visit(targetLink); err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return chapter, err
 	}
-	for _, targetLink := range targetLinks {
-		c.Visit(targetLink)
+	if len(chapter.ChapterImages) == 0 {
+		return chapter, fmt.Errorf("no chapter images found at %s", targetLink)
 	}
 
-	chapter.SourceLink = targetLinks[0]
-
-	return chapter, err
+	return chapter, nil
 }

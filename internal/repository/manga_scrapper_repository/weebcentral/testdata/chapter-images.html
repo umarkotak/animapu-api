@@ -1,0 +1,206 @@
+<section
+	id="chapter-images"
+	class="w-full flex-1 flex flex-col pb-4 cursor-pointer"
+	style="gap: var(--strip-gap, 0px)"
+	x-data="{
+		scrollDown() { window.scrollBy({ top: window.innerHeight * 0.75, behavior: 'smooth' }); },
+		scrollUp() { window.scrollBy({ top: -window.innerHeight * 0.75, behavior: 'smooth' }); },
+		handleClick(e) {
+			const clickX = e.clientX;
+			const sectionWidth = e.currentTarget.getBoundingClientRect().width;
+			const isLeftHalf = clickX < sectionWidth / 2;
+
+			if (isLeftHalf) {
+				this.scrollUp();
+			} else {
+				this.scrollDown();
+			}
+		},
+	}"
+	hx-get="https://weebcentral.com/chapters/01M43Q7CFX4XXN7WBVZH1MTEFS/images"
+	hx-trigger="change from:[name='reading_style']"
+	hx-include="[name='reading_style'],[name='current_page']"
+	hx-swap="outerHTML"
+	@click="handleClick">
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-001.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 1"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-002.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 2"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-003.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 3"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-004.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 4"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-005.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 5"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-006.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 6"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-007.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 7"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-008.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 8"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-009.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 9"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-010.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 10"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-011.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 11"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-012.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 12"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-013.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 13"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-014.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 14"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-015.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 15"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-016.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 16"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-017.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 17"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+	<img
+		src="https://scans-hot.planeptune.us/manga/Centuria/0104-018.png"
+		class="max-w-full h-auto mx-auto"
+		style="min-height: 50vh"
+		alt="Page 18"
+		decoding="async"
+		loading="lazy"
+		onload="this.style.minHeight=''"
+		onerror="this.onerror=null; this.style.minHeight=''; this.src='/static/images/broken_image.jpg'" />
+	
+</section>
