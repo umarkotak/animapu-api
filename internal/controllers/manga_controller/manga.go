@@ -147,6 +147,12 @@ func GetMangaLatest(c *fiber_ctx.Context) {
 		return
 	}
 
+	mangas, err = manga_scrapper_service.FilterNSFW(c.Request.Context(), queryParams.Source, mangas)
+	if err != nil {
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
 	mangas = manga_scrapper_service.MultiInjectLibraryAndHistory(c.Request.Context(), commonCtx.User, mangas)
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
@@ -211,6 +217,12 @@ func SearchManga(c *fiber_ctx.Context) {
 	mangas, meta, err := manga_scrapper_service.GetSearch(c.Request.Context(), queryParams)
 	if err != nil {
 		logrus.WithContext(c.Request.Context()).Error(err)
+		render.ErrorResponse(c.Request.Context(), c, err, false)
+		return
+	}
+
+	mangas, err = manga_scrapper_service.FilterNSFW(c.Request.Context(), queryParams.Source, mangas)
+	if err != nil {
 		render.ErrorResponse(c.Request.Context(), c, err, false)
 		return
 	}
