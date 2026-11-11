@@ -13,7 +13,7 @@ func TestHistoryQueriesBindNamedParameters(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if strings.Contains(bound, ":") || !strings.Contains(bound, "CAST(ARRAY[] AS text[])") {
+		if strings.Contains(bound, ":") || !strings.Contains(bound, "a.tags") {
 			t.Fatalf("invalid named query: %s", bound)
 		}
 	}

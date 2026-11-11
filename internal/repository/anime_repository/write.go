@@ -84,3 +84,8 @@ func UpdateBySourceAndSourceID(ctx context.Context, tx *sqlx.Tx, obj models.Anim
 
 	return nil
 }
+
+func UpdateTags(ctx context.Context, anime models.Anime) error {
+	_, err := stmtUpdateTags.ExecContext(ctx, anime)
+	return err
+}

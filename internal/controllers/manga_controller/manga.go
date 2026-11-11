@@ -3,6 +3,7 @@ package manga_controller
 import (
 	"context"
 	"fmt"
+	"github.com/umarkotak/animapu-api/internal/utils/tag_utils"
 	"sort"
 	"strconv"
 	"sync"
@@ -84,7 +85,7 @@ func updateMangaTags(c *fiber_ctx.Context, manga models.Manga) {
 		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
 		return
 	}
-	tags, ok := updateTags(manga.Tags, params.Tags, params.Mode)
+	tags, ok := tag_utils.Update(manga.Tags, params.Tags, params.Mode)
 	if !ok {
 		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
 		return
@@ -96,39 +97,6 @@ func updateMangaTags(c *fiber_ctx.Context, manga models.Manga) {
 	}
 
 	render.Response(ctx, c, manga, nil, 200)
-}
-
-func updateTags(current, incoming []string, mode string) ([]string, bool) {
-	switch mode {
-	case "replace":
-		return incoming, true
-	case "add":
-		seen := make(map[string]bool, len(current)+len(incoming))
-		for _, tag := range current {
-			seen[tag] = true
-		}
-		for _, tag := range incoming {
-			if !seen[tag] {
-				current = append(current, tag)
-				seen[tag] = true
-			}
-		}
-		return current, true
-	case "remove":
-		remove := make(map[string]bool, len(incoming))
-		for _, tag := range incoming {
-			remove[tag] = true
-		}
-		tags := current[:0]
-		for _, tag := range current {
-			if !remove[tag] {
-				tags = append(tags, tag)
-			}
-		}
-		return tags, true
-	default:
-		return nil, false
-	}
 }
 
 func GetMangaLatest(c *fiber_ctx.Context) {

@@ -6,32 +6,51 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
-func TestGetLatest(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/quick/ongoing" {
-			return
-		}
-		if r.URL.Query().Get("page") != "2" {
-			t.Fatalf("page = %q, want 2", r.URL.Query().Get("page"))
-		}
-		_, _ = w.Write([]byte(`{"animes":{"data":[{"id":5044,"title":"Saijo no Osewa","slug":"saijo-no-osewa","synopsis":"Synopsis","latest_episode":9,"score":7.3,"image_portrait_url":"https://example.com/cover.jpg","full_alt_titles":"Title A, Title B"}]}}`))
-	}))
-	defer server.Close()
+func TestGetLatestAndAll(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		endpoint string
+		get      func(*Kuramanime, context.Context, models.AnimeQueryParams) ([]contract.Anime, error)
+	}{
+		{"latest", "/quick/ongoing", (*Kuramanime).GetLatest},
+		{"all", "/anime", (*Kuramanime).GetAll},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/" {
+					return
+				}
+				if r.URL.Path != tc.endpoint || r.URL.Query().Get("order_by") != "updated" || r.URL.Query().Get("need_json") != "true" {
+					t.Errorf("unexpected request: %s", r.URL)
+				}
+				if r.URL.Query().Get("page") != "2" {
+					t.Fatalf("page = %q, want 2", r.URL.Query().Get("page"))
+				}
+				_, _ = w.Write([]byte(`{"animes":{"data":[{"id":5044,"title":"Saijo no Osewa","slug":"saijo-no-osewa","synopsis":"Synopsis","latest_episode":9,"score":7.3,"image_portrait_url":"https://example.com/cover.jpg","full_alt_titles":"Title A, Title B"},{"id":100,"title":"A Finished Anime","slug":"a-finished-anime","latest_episode":12}]}}`))
+			}))
+			defer server.Close()
 
-	animes, err := (&Kuramanime{KuramanimeAggregator: server.URL}).GetLatest(context.Background(), models.AnimeQueryParams{Page: 2})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(animes) != 1 {
-		t.Fatalf("len(animes) = %d, want 1", len(animes))
-	}
+			animes, err := tc.get(&Kuramanime{KuramanimeAggregator: server.URL}, context.Background(), models.AnimeQueryParams{Page: 2})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(animes) != 2 {
+				t.Fatalf("len(animes) = %d, want 2", len(animes))
+			}
 
-	anime := animes[0]
-	if anime.ID != "5044" || anime.LatestEpisode != 9 || anime.OriginalLink != server.URL+"/anime/5044/saijo-no-osewa" {
-		t.Fatalf("unexpected anime: %#v", anime)
+			if animes[0].ID != "5044" || animes[1].ID != "100" {
+				t.Fatalf("source order changed: %#v", animes)
+			}
+
+			anime := animes[0]
+			if anime.ID != "5044" || anime.LatestEpisode != 9 || anime.OriginalLink != server.URL+"/anime/5044/saijo-no-osewa" {
+				t.Fatalf("unexpected anime: %#v", anime)
+			}
+		})
 	}
 }
 

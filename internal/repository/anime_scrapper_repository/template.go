@@ -7,6 +7,20 @@ import (
 	"github.com/umarkotak/animapu-api/internal/models"
 )
 
+type (
+	AnimeScrapper interface {
+		GetCapabilities(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.AnimeCapability, error)
+		GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error)
+		GetSearch(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error)
+		GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error)
+		GetDetail(ctx context.Context, queryParams models.AnimeQueryParams) (contract.Anime, error)
+		Watch(ctx context.Context, queryParams models.AnimeQueryParams) (contract.EpisodeWatch, error)
+		GetPerSeason(ctx context.Context, queryParams models.AnimeQueryParams) (contract.AnimePerSeason, error)
+		GetCompleted(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error)
+		GetAll(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error)
+	}
+)
+
 type Template struct {
 	AnimapuSource string
 }
@@ -38,5 +52,17 @@ func (s *Template) GetPerSeason(ctx context.Context, queryParams models.AnimeQue
 }
 
 func (s *Template) GetRandom(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	return []contract.Anime{}, nil
+}
+
+func (s *Template) GetCapabilities(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.AnimeCapability, error) {
+	return []contract.AnimeCapability{{}}, nil
+}
+
+func (s *Template) GetCompleted(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	return []contract.Anime{}, nil
+}
+
+func (s *Template) GetAll(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
 	return []contract.Anime{}, nil
 }

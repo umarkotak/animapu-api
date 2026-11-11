@@ -16,6 +16,7 @@ type (
 	}
 
 	AnimeQueryParams struct {
+		SpecialFilter   string `json:"special_filter"`
 		User            User   `json:"-"`                 //
 		Source          string `json:"source"`            //
 		SourceID        string `json:"source_id"`         //

@@ -11,12 +11,73 @@ import (
 	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
 	"github.com/umarkotak/animapu-api/internal/repository/anichart_api.go"
+	"github.com/umarkotak/animapu-api/internal/repository/anime_scrapper_repository"
 )
 
+func GetCapabilities(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.AnimeCapability, error) {
+	scrapper, err := animeScrapperGenerator(queryParams.Source)
+	if err != nil {
+		return nil, err
+	}
+	return scrapper.GetCapabilities(ctx, queryParams)
+}
+
+func GetList(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	switch queryParams.SpecialFilter {
+	case "":
+		return GetLatest(ctx, queryParams)
+	case "completed":
+		return GetCompleted(ctx, queryParams)
+	case "all":
+		return GetAll(ctx, queryParams)
+	default:
+		return nil, models.Meta{}, models.ErrInvalidFormat
+	}
+}
+
 func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	queryParams.SpecialFilter = ""
+	return getAnimeList(ctx, queryParams)
+}
+
+func GetCompleted(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	queryParams.SpecialFilter = "completed"
+	return getAnimeList(ctx, queryParams)
+}
+
+func GetAll(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
+	queryParams.SpecialFilter = "all"
+	return getAnimeList(ctx, queryParams)
+}
+
+func animeListMethod(scrapper anime_scrapper_repository.AnimeScrapper, filter string) (func(context.Context, models.AnimeQueryParams) ([]contract.Anime, error), error) {
+	switch filter {
+	case "":
+		return scrapper.GetLatest, nil
+	case "completed":
+		return scrapper.GetCompleted, nil
+	case "all":
+		return scrapper.GetAll, nil
+	default:
+		return nil, models.ErrInvalidFormat
+	}
+}
+
+func getAnimeList(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, models.Meta, error) {
 	animes := []contract.Anime{}
 
-	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetLatest"))
+	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return animes, models.Meta{}, err
+	}
+
+	getList, err := animeListMethod(animeScrapper, queryParams.SpecialFilter)
+	if err != nil {
+		return animes, models.Meta{}, err
+	}
+
+	cachedAnimes, found := datastore.Get().GoCache.Get(queryParams.ToKey("GetList"))
 	if found {
 		cachedAnimesByte, err := sonic.Marshal(cachedAnimes)
 		if err == nil {
@@ -27,14 +88,8 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]cont
 		}
 	}
 
-	animeScrapper, err := animeScrapperGenerator(queryParams.Source)
-	if err != nil {
-		logrus.WithContext(ctx).Error(err)
-		return animes, models.Meta{}, err
-	}
-
 	for i := 1; i <= 3; i++ {
-		animes, err = animeScrapper.GetLatest(ctx, queryParams)
+		animes, err = getList(ctx, queryParams)
 		if err == nil {
 			break
 		} else {
@@ -47,7 +102,7 @@ func GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]cont
 	}
 
 	if len(animes) > 0 {
-		go datastore.Get().GoCache.Set(queryParams.ToKey("GetLatest"), animes, 1*time.Hour)
+		go datastore.Get().GoCache.Set(queryParams.ToKey("GetList"), animes, 1*time.Hour)
 		go AnimeSync(context.Background(), animes)
 	}
 

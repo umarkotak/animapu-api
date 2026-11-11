@@ -44,30 +44,53 @@ func logError(ctx context.Context, operation string, err error, fields logrus.Fi
 	logrus.WithContext(ctx).WithError(err).WithFields(fields).Error("Kuramanime " + operation)
 }
 
+func (s *Kuramanime) GetCapabilities(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.AnimeCapability, error) {
+	return []contract.AnimeCapability{{
+		GetCompleted: true,
+		GetAll:       true,
+		GetLatest:    true,
+		GetSearch:    true,
+		GetDetail:    true,
+		Watch:        true,
+	}}, nil
+}
+
+func (s *Kuramanime) GetCompleted(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	return s.getList(ctx, queryParams, "/quick/finished", "latest")
+}
+
+func (s *Kuramanime) GetAll(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	return s.getList(ctx, queryParams, "/anime", "updated")
+}
+
 func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	return s.getList(ctx, queryParams, "/quick/ongoing", "updated")
+}
+
+func (s *Kuramanime) getList(ctx context.Context, queryParams models.AnimeQueryParams, endpoint, orderBy string) ([]contract.Anime, error) {
 	page := queryParams.Page
 	if page < 1 {
 		page = 1
 	}
 	host := s.getHost()
-	targetURL := fmt.Sprintf("%s/quick/ongoing?order_by=updated&page=%d&need_json=true", host, page)
+	targetURL := fmt.Sprintf("%s%s?order_by=%s&page=%d&need_json=true", host, endpoint, orderBy, page)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
 	if err != nil {
-		logError(ctx, "create latest request", err, logrus.Fields{"url": targetURL, "page": page})
+		logError(ctx, "create "+endpoint+" request", err, logrus.Fields{"url": targetURL, "page": page})
 		return nil, err
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		logError(ctx, "request latest anime", err, logrus.Fields{"url": targetURL, "page": page})
+		logError(ctx, "request "+endpoint+" anime", err, logrus.Fields{"url": targetURL, "page": page})
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		err := fmt.Errorf("kuramanime returned status %s", resp.Status)
-		logError(ctx, "request latest anime", err, logrus.Fields{"url": targetURL, "page": page, "status_code": resp.StatusCode})
+		logError(ctx, "request "+endpoint+" anime", err, logrus.Fields{"url": targetURL, "page": page, "status_code": resp.StatusCode})
 		return nil, err
 	}
 
@@ -87,11 +110,11 @@ func (s *Kuramanime) GetLatest(ctx context.Context, queryParams models.AnimeQuer
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logError(ctx, "read latest response", err, logrus.Fields{"url": targetURL})
+		logError(ctx, "read "+endpoint+" response", err, logrus.Fields{"url": targetURL})
 		return nil, err
 	}
 	if err := sonic.Unmarshal(body, &payload); err != nil {
-		logError(ctx, "parse latest response", err, logrus.Fields{"url": targetURL, "body_length": len(body)})
+		logError(ctx, "parse "+endpoint+" response", err, logrus.Fields{"url": targetURL, "body_length": len(body)})
 		return nil, err
 	}
 

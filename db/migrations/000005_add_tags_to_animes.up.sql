@@ -1,0 +1,1 @@
+ALTER TABLE animes ADD COLUMN tags TEXT[] NOT NULL DEFAULT '{}';

@@ -49,6 +49,25 @@ func New() Otakudesu {
 	}
 }
 
+func (s *Otakudesu) GetCapabilities(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.AnimeCapability, error) {
+	return []contract.AnimeCapability{{
+		GetLatest: true,
+		GetSearch: true,
+		GetDetail: true,
+		Watch:     true,
+	}}, nil
+}
+
+func (s *Otakudesu) GetCompleted(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	// TODO: Implement completed anime retrieval and enable GetCompleted in capabilities.
+	return []contract.Anime{}, nil
+}
+
+func (s *Otakudesu) GetAll(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
+	// TODO: Implement all anime retrieval and enable GetAll in capabilities.
+	return []contract.Anime{}, nil
+}
+
 func (s *Otakudesu) GetLatest(ctx context.Context, queryParams models.AnimeQueryParams) ([]contract.Anime, error) {
 	animes := []contract.Anime{}
 

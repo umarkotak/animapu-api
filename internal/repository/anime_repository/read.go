@@ -62,3 +62,9 @@ func GetBySourceAndSourceIDs(ctx context.Context, source, sourceIDs pq.StringArr
 
 	return objs, nil
 }
+
+func GetByTag(ctx context.Context, tag string) ([]models.Anime, error) {
+	animes := []models.Anime{}
+	err := stmtGetByTag.SelectContext(ctx, &animes, map[string]any{"tag": tag})
+	return animes, err
+}

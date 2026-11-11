@@ -8,10 +8,22 @@ import (
 )
 
 type (
+	AnimeCapability struct {
+		GetLatest    bool `json:"get_latest"`
+		GetSearch    bool `json:"get_search"`
+		GetRandom    bool `json:"get_random"`
+		GetDetail    bool `json:"get_detail"`
+		Watch        bool `json:"watch"`
+		GetPerSeason bool `json:"get_per_season"`
+		GetCompleted bool `json:"get_completed"`
+		GetAll       bool `json:"get_all"`
+	}
+
 	Anime struct {
 		ID                 string    `json:"id"`
 		Source             string    `json:"source"`
 		Title              string    `json:"title"`
+		Tags               []string  `json:"tags"`
 		AltTitles          []string  `json:"alt_titles"`
 		Description        string    `json:"description"`
 		LatestEpisode      float64   `json:"latest_episode"`

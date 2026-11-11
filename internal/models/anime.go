@@ -15,10 +15,11 @@ type (
 		UpdatedAt time.Time    `json:"updated_at" db:"updated_at"` //
 		DeletedAt sql.NullTime `json:"deleted_at" db:"deleted_at"` //
 
-		Source        string         `json:"source" db:"source"`                 //
-		SourceID      string         `json:"source_id" db:"source_id"`           //
-		Title         string         `json:"title" db:"title"`                   //
-		CoverUrls     pq.StringArray `json:"cover_urls" db:"cover_urls"`         //
+		Source        string         `json:"source" db:"source"`         //
+		SourceID      string         `json:"source_id" db:"source_id"`   //
+		Title         string         `json:"title" db:"title"`           //
+		CoverUrls     pq.StringArray `json:"cover_urls" db:"cover_urls"` //
+		Tags          pq.StringArray `json:"tags" db:"tags"`
 		LatestEpisode float64        `json:"latest_episode" db:"latest_episode"` //
 	}
 )

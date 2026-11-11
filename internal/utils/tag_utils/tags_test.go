@@ -1,4 +1,4 @@
-package manga_controller
+package tag_utils
 
 import (
 	"reflect"
@@ -19,9 +19,9 @@ func TestUpdateTags(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, ok := updateTags(tt.current, tt.incoming, tt.mode)
+			got, ok := Update(tt.current, tt.incoming, tt.mode)
 			if ok != tt.ok || !reflect.DeepEqual(got, tt.want) {
-				t.Fatalf("updateTags() = %v, %v; want %v, %v", got, ok, tt.want, tt.ok)
+				t.Fatalf("Update() = %v, %v; want %v, %v", got, ok, tt.want, tt.ok)
 			}
 		})
 	}

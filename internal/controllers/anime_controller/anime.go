@@ -1,16 +1,21 @@
 package anime_controller
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
+	app_config "github.com/umarkotak/animapu-api/config"
+	"github.com/umarkotak/animapu-api/internal/contract"
 	"github.com/umarkotak/animapu-api/internal/models"
+	"github.com/umarkotak/animapu-api/internal/repository/anime_repository"
 	"github.com/umarkotak/animapu-api/internal/services/anime_scrapper_service"
 	"github.com/umarkotak/animapu-api/internal/utils/common_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/fiber_ctx"
 	"github.com/umarkotak/animapu-api/internal/utils/render"
+	"github.com/umarkotak/animapu-api/internal/utils/tag_utils"
 )
 
 func GetLatest(c *fiber_ctx.Context) {
@@ -20,11 +25,12 @@ func GetLatest(c *fiber_ctx.Context) {
 
 	page, _ := strconv.ParseInt(c.Query("page"), 10, 64)
 	queryParams := models.AnimeQueryParams{
-		Source: c.Param("anime_source"),
-		Page:   page,
+		Source:        c.Param("anime_source"),
+		Page:          page,
+		SpecialFilter: c.Query("special_filter"),
 	}
 
-	animes, meta, err := anime_scrapper_service.GetLatest(ctx, queryParams)
+	animes, meta, err := anime_scrapper_service.GetList(ctx, queryParams)
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, true)
@@ -92,6 +98,13 @@ func GetDetail(c *fiber_ctx.Context) {
 		return
 	}
 
+	stored, err := anime_repository.GetBySourceAndSourceID(ctx, queryParams.Source, queryParams.SourceID)
+	if err != nil && err != sql.ErrNoRows {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+	anime.Tags = stored.Tags
+
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(ctx, c, anime, nil, 200)
 }
@@ -143,4 +156,82 @@ func GetRandom(c *fiber_ctx.Context) {
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
 	render.Response(ctx, c, animes, nil, 200)
+}
+
+func GetAnimeKids(c *fiber_ctx.Context) {
+	ctx := c.Request.Context()
+	animes, err := anime_repository.GetByTag(ctx, "for_kids:true")
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, false)
+		return
+	}
+	result := make([]contract.Anime, 0, len(animes))
+	for _, anime := range animes {
+		result = append(result, contract.Anime{
+			ID: anime.SourceID, Source: anime.Source, Title: anime.Title,
+			CoverUrls: anime.CoverUrls, LatestEpisode: anime.LatestEpisode, Tags: anime.Tags,
+		})
+	}
+	render.Response(ctx, c, result, nil, 200)
+}
+
+func UpdateAnimeTagsBySource(c *fiber_ctx.Context) {
+	ctx := c.Request.Context()
+	if !app_config.IsAdminEmail(common_ctx.GetFromFiberCtx(c).User.Email.String) {
+		render.ErrorResponse(ctx, c, models.ErrUnauthorized, true)
+		return
+	}
+	params := struct {
+		Tags []string `json:"tags"`
+		Mode string   `json:"mode"`
+	}{}
+	if err := c.BindJSON(&params); err != nil {
+		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
+		return
+	}
+	if _, ok := tag_utils.Update(nil, params.Tags, params.Mode); !ok {
+		render.ErrorResponse(ctx, c, models.ErrInvalidFormat, true)
+		return
+	}
+	source, sourceID := c.Param("anime_source"), c.Param("source_id")
+	anime, err := anime_repository.GetBySourceAndSourceID(ctx, source, sourceID)
+	if err == sql.ErrNoRows {
+		// Search and season results may not have been saved yet.
+		detail, _, detailErr := anime_scrapper_service.GetDetail(ctx, models.AnimeQueryParams{Source: source, SourceID: sourceID})
+		if detailErr != nil {
+			render.ErrorResponse(ctx, c, detailErr, true)
+			return
+		}
+		_, err = anime_repository.Insert(ctx, nil, models.Anime{
+			Source: source, SourceID: sourceID, Title: detail.Title,
+			CoverUrls: detail.CoverUrls, LatestEpisode: detail.LatestEpisode,
+		})
+		if err == nil {
+			anime, err = anime_repository.GetBySourceAndSourceID(ctx, source, sourceID)
+		}
+	}
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+	tags, _ := tag_utils.Update(anime.Tags, params.Tags, params.Mode)
+	anime.Tags = tags
+	if anime.Tags == nil {
+		anime.Tags = []string{}
+	}
+	if err := anime_repository.UpdateTags(ctx, anime); err != nil {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+	render.Response(ctx, c, anime, nil, 200)
+}
+
+func GetCapabilities(c *fiber_ctx.Context) {
+	ctx := c.Request.Context()
+	capabilities, err := anime_scrapper_service.GetCapabilities(ctx, models.AnimeQueryParams{Source: c.Param("anime_source")})
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+	render.Response(ctx, c, capabilities, nil, http.StatusOK)
 }

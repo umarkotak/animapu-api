@@ -75,6 +75,8 @@ func Start() error {
 	r.Get("/mangas/kids", fiber_ctx.Wrap(manga_controller.GetMangaKids))
 	r.Put("/admin/mangas/:manga_id/tags", fiber_ctx.Wrap(manga_controller.UpdateMangaTags))
 	r.Put("/admin/mangas/:manga_source/:source_id/tags", fiber_ctx.Wrap(manga_controller.UpdateMangaTagsBySource))
+	r.Get("/animes/kids", fiber_ctx.Wrap(anime_controller.GetAnimeKids))
+	r.Put("/admin/animes/:anime_source/:source_id/tags", fiber_ctx.Wrap(anime_controller.UpdateAnimeTagsBySource))
 	r.Get("/animes/sources", fiber_ctx.Wrap(setting_controller.GetAnimeAvailableSource))
 
 	r.Get("/mangas/komikindo/image_proxy/*", fiber_ctx.Wrap(proxy_controller.KomikindoImage))
@@ -99,6 +101,7 @@ func Start() error {
 	r.Get("/animes/:anime_source/season/:release_year/:release_season", fiber_ctx.Wrap(anime_controller.GetPerSeason))
 	r.Get("/animes/:anime_source/watch/:anime_id/:episode_id", fiber_ctx.Wrap(anime_controller.GetWatch))
 	r.Get("/animes/:anime_source/detail/:anime_id", fiber_ctx.Wrap(anime_controller.GetDetail))
+	r.Get("/animes/:anime_source/capabilities", fiber_ctx.Wrap(anime_controller.GetCapabilities))
 	r.Get("/animes/:anime_source/latest", fiber_ctx.Wrap(anime_controller.GetLatest))
 	r.Get("/animes/:anime_source/search", fiber_ctx.Wrap(anime_controller.GetSearch))
 	r.Get("/animes/:anime_source/random", fiber_ctx.Wrap(anime_controller.GetRandom))

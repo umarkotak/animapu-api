@@ -20,6 +20,7 @@ var (
 		"a.title",
 		"a.cover_urls",
 		"a.latest_episode",
+		"a.tags",
 	}, ", ")
 
 	queryGetByID = fmt.Sprintf(`
@@ -50,6 +51,14 @@ var (
 			AND a.source_id = ANY(:source_ids)
 			AND a.deleted_at IS NULL
 	`, allColumns)
+
+	queryGetByTag = fmt.Sprintf(`
+        SELECT %s FROM animes a
+        WHERE :tag = ANY(a.tags) AND a.deleted_at IS NULL
+        ORDER BY a.updated_at DESC
+    `, allColumns)
+
+	queryUpdateTags = `UPDATE animes SET tags = :tags WHERE id = :id`
 
 	queryInsert = `
 		INSERT INTO animes (
@@ -96,6 +105,8 @@ var (
 )
 
 var (
+	stmtGetByTag                  *sqlx.NamedStmt
+	stmtUpdateTags                *sqlx.NamedStmt
 	stmtGetByID                   *sqlx.NamedStmt
 	stmtGetBySourceAndSourceID    *sqlx.NamedStmt
 	stmtGetBySourceAndSourceIDs   *sqlx.NamedStmt
@@ -106,6 +117,14 @@ var (
 
 func Initialize() {
 	var err error
+	stmtGetByTag, err = datastore.Get().Db.PrepareNamed(queryGetByTag)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	stmtUpdateTags, err = datastore.Get().Db.PrepareNamed(queryUpdateTags)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	stmtGetByID, err = datastore.Get().Db.PrepareNamed(queryGetByID)
 	if err != nil {
