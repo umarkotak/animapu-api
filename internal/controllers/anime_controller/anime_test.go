@@ -14,7 +14,7 @@ import (
 func TestUpdateAnimeTagsRejectsNonAdmin(t *testing.T) {
 	app := fiber.New()
 	app.Put("/admin/animes/:anime_source/:source_id/tags", fiber_ctx.Wrap(UpdateAnimeTagsBySource))
-	request := httptest.NewRequest(http.MethodPut, "/admin/animes/test/title/tags", strings.NewReader(`{"mode":"add","tags":["for_kids:true"]}`))
+	request := httptest.NewRequest(http.MethodPut, "/admin/animes/test/title/tags", strings.NewReader(`{"mode":"add","tags":["nsfw:true"]}`))
 	request.Header.Set("Content-Type", "application/json")
 	response, err := app.Test(request)
 	if err != nil {

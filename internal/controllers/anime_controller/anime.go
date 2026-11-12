@@ -37,6 +37,14 @@ func GetLatest(c *fiber_ctx.Context) {
 		return
 	}
 
+	c.Writer.Header().Set("X-Anime-Has-More", strconv.FormatBool(len(animes) > 0))
+	c.Writer.Header().Set("Access-Control-Expose-Headers", "Res-From-Cache, X-Anime-Has-More")
+	animes, err = anime_scrapper_service.FilterNSFW(ctx, queryParams.Source, animes)
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, false)
+		return
+	}
+
 	animes = anime_scrapper_service.MultiInjectLibraryAndHistoryForLatest(c.Request.Context(), commonCtx.User, animes)
 
 	c.Writer.Header().Set("Res-From-Cache", fmt.Sprintf("%v", meta.FromCache))
@@ -55,6 +63,12 @@ func GetSearch(c *fiber_ctx.Context) {
 	if err != nil {
 		logrus.WithContext(ctx).Error(err)
 		render.ErrorResponse(ctx, c, err, true)
+		return
+	}
+
+	animes, err = anime_scrapper_service.FilterNSFW(ctx, queryParams.Source, animes)
+	if err != nil {
+		render.ErrorResponse(ctx, c, err, false)
 		return
 	}
 

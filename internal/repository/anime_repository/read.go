@@ -45,10 +45,10 @@ func GetBySourceAndSourceID(ctx context.Context, source, sourceID string) (model
 	return obj, nil
 }
 
-func GetBySourceAndSourceIDs(ctx context.Context, source, sourceIDs pq.StringArray) ([]models.Anime, error) {
+func GetBySourceAndSourceIDs(ctx context.Context, source string, sourceIDs pq.StringArray) ([]models.Anime, error) {
 	objs := []models.Anime{}
 
-	err := stmtGetBySourceAndSourceID.SelectContext(ctx, &objs, map[string]any{
+	err := stmtGetBySourceAndSourceIDs.SelectContext(ctx, &objs, map[string]any{
 		"source":     source,
 		"source_ids": sourceIDs,
 	})
